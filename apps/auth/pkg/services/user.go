@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 
@@ -27,8 +28,7 @@ func NewUserService() *UserService {
 }
 
 // Admin API for creating accounts on behalf of users
-func (s *UserService) CreateUser(ctx context.Context, r models.SignUpRequest) error {
-
+func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpRequest) error {
 	username, err := createUsername(r.Email)
 	if err != nil {
 		return fmt.Errorf("error creating username: %w", err)
@@ -44,11 +44,20 @@ func (s *UserService) CreateUser(ctx context.Context, r models.SignUpRequest) er
 	if err != nil {
 		return fmt.Errorf("error during sign up: %w", err)
 	}
-	fmt.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
+	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
+
+	// Add User to Group. Allow fail, add user in through AWS console
+	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cognitoidentityprovider.AdminAddUserToGroupInput{
+		GroupName: aws.String(auth.AdminGroup),
+		UserPoolId: aws.String(config.UserPoolId),
+		Username: aws.String(username),
+	})
+	if err != nil {
+		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
+	}
+
 	return nil
 }
-
-func (s *UserService) VerifyUser() {}
 
 func createUsername(email string) (string, error) {
 	username := strings.Split(email, "@")[0]

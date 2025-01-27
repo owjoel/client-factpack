@@ -35,7 +35,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "Invalid email"})
 	}
 	
-	if err := h.service.CreateUser(c.Request.Context(), req); err != nil {
+	if err := h.service.AdminCreateUser(c.Request.Context(), req); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "Error"})
 	}
