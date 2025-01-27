@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	ClientId = os.Getenv("AWS_COGNITO_CLIENT_ID")
-	ClientSecret = os.Getenv("AWS_COGNITO_CLIENT_SECRET")
+	ClientId = os.Getenv("COGNITO_USERPOOL_CLIENT_ID")
+	ClientSecret = os.Getenv("COGNITO_USERPOOL_CLIENT_SECRET")
 	UserPoolId = os.Getenv("COGNITO_USERPOOL_ID")
+	AutoResetPassword = os.Getenv("AUTO_RESET_PASSWORD") // temp flag
 )
 
 func GetPort(defaultPort int) int {

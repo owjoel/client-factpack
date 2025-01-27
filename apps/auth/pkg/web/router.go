@@ -31,6 +31,9 @@ func NewRouter() *Router {
 	v1API := router.Group("/api/v1")
 	v1API.GET("/health", handler.HealthCheck)
 	v1API.POST("/createUser", handler.CreateUser)
+	v1API.POST("/forgetPassword", handler.ForgetPassword)
+	v1API.POST("/user/login", handler.UserLogin) // maybe wanna group admin endpoints together
+
 
 	return &Router{router}
 }
