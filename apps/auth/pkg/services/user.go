@@ -88,7 +88,8 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 
 	_, err := s.CognitoClient.ForgotPassword(context.Background(), input)
 	if err != nil {
-		return fmt.Errorf("failed to initiate password reset: %w", err)
+		fmt.Printf("failed to initiate password reset: %s", err)
+		return err
 	}
 
 	fmt.Println("Password reset code sent successfully")
@@ -110,7 +111,8 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) erro
 	// returns tokens on success, see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_InitiateAuth.html
 	response, err := s.CognitoClient.InitiateAuth(ctx, input)
 	if err != nil {
-		return fmt.Errorf("failed to initiate auth: %w", err)
+		fmt.Printf("failed to initiate auth: %s\n", err)
+		return err
 	}
 
 	if response.ChallengeName == types.ChallengeNameTypeNewPasswordRequired {
@@ -128,6 +130,25 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) erro
 
 	return nil
 }
+
+func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordRequest) error {
+	input := &cognitoidentityprovider.ConfirmForgotPasswordInput{
+		ClientId: aws.String(config.ClientId),
+		Username: aws.String(r.Username),
+		Password: aws.String(r.NewPassword),
+		ConfirmationCode: aws.String(r.Code),
+		SecretHash: aws.String(CalculateSecretHash(r.Username)),
+	}
+
+	_, err := s.CognitoClient.ConfirmForgotPassword(ctx, input)
+	if err != nil {
+		fmt.Printf("failed to confirm password reset: %s\n", err)
+		return err
+	}
+
+	return nil
+}
+
 
 func (s *UserService) handleNewPasswordChallenge(ctx context.Context, username, newPassword, session string) error {
 	// flag for testing
@@ -153,7 +174,8 @@ func (s *UserService) handleNewPasswordChallenge(ctx context.Context, username, 
 
 	_, err = s.CognitoClient.RespondToAuthChallenge(ctx, challengeInput)
 	if err != nil {
-		return fmt.Errorf("failed to respond to auth challenge: %w", err)
+		fmt.Printf("failed to respond to auth challenge: %s", err)
+		return err
 	}
 
 	return nil

@@ -17,3 +17,9 @@ type LoginRequest struct {
 	Username string `form:"username"`
 	Password string `form:"password"`
 }
+
+type ConfirmForgetPasswordRequest struct {
+	Username string `form:"username"`
+	Code     string `form:"code"`
+	NewPassword string `form:"newPassword"`
+}
