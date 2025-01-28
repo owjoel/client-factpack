@@ -69,13 +69,15 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.UserLogin(c.Request.Context(), req); err != nil {
+	accessToken, err := h.service.UserLogin(c.Request.Context(), req)
+	if err != nil {
 		status, message := errors.CognitoErrorHandler(err)
 		fmt.Println(status, message)
 		c.JSON(status, gin.H{"message": message})
 		return
 	}
 
+	c.SetCookie("access_token", accessToken, 3600, "/", "", false, true)
 	// TODO: return some token probs
 	c.JSON(http.StatusOK, gin.H{"status": "Success"})
 }

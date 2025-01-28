@@ -96,7 +96,7 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 	return nil
 }
 
-func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) error {
+func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) (accessToken string, err error) {
 
 	input := &cognitoidentityprovider.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
@@ -112,23 +112,27 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) erro
 	response, err := s.CognitoClient.InitiateAuth(ctx, input)
 	if err != nil {
 		fmt.Printf("failed to initiate auth: %s\n", err)
-		return err
+		return "", err
 	}
 
 	if response.ChallengeName == types.ChallengeNameTypeNewPasswordRequired {
 		fmt.Println("New password required") // TODO: return Session token or store it in db
 
 		// TODO: (FOR TESTING ONLY) remove in future
-		err := s.handleNewPasswordChallenge(ctx, r.Username, "Password@1", *response.Session)
+		err = s.handleNewPasswordChallenge(ctx, r.Username, "Password@1", *response.Session)
 		if err != nil {
-			return err
+			return "", err
 		}
 		fmt.Println("Password updated successfully.")
 	} else {
 		fmt.Println("Authentication successful.")
 	}
 
-	return nil
+	// TODO: Extract the other tokens if required
+	// extract access token
+	accessToken = *response.AuthenticationResult.AccessToken
+
+	return accessToken, nil
 }
 
 func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordRequest) error {

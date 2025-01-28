@@ -3,6 +3,11 @@ module github.com/owjoel/client-factpack/apps/auth
 go 1.21.5
 
 require (
+	github.com/MicahParks/keyfunc/v2 v2.1.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
+)
+
+require (
 	github.com/aws/aws-sdk-go-v2 v1.34.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.29.2 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.55 // indirect

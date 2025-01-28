@@ -10,9 +10,11 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/MicahParks/keyfunc/v2"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/auth/config"
+	"github.com/owjoel/client-factpack/apps/auth/pkg/auth"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/web/handlers"
 )
 
@@ -35,6 +37,12 @@ func NewRouter() *Router {
 	v1API.POST("/confirmForgetPassword", handler.ConfirmForgetPassword)
 	v1API.POST("/user/login", handler.UserLogin)
 
+	jwks, err := GetJWKS(config.AwsRegion, config.UserPoolId)
+	if err != nil {
+		log.Fatalf("Failed to retrieve Cognito JWKS\nError: %s", err)
+	}
+
+	v1API.GET("/protectedhealth", auth.AuthMiddleware("access", jwks), handler.HealthCheck)
 
 	return &Router{router}
 }
@@ -42,7 +50,7 @@ func NewRouter() *Router {
 func (r *Router) Run() {
 	port := config.GetPort(8080)
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%v", port),
+		Addr:    fmt.Sprintf(":%v", port),
 		Handler: r.Engine,
 	}
 
@@ -57,7 +65,7 @@ func (r *Router) Run() {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<- quit
+	<-quit
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -70,4 +78,15 @@ func (r *Router) Run() {
 
 func Run() {
 	NewRouter().Run()
+}
+
+func GetJWKS(awsRegion string, cognitoUserPoolId string) (*keyfunc.JWKS, error) {
+
+	jwksURL := fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", awsRegion, cognitoUserPoolId)
+
+	jwks, err := keyfunc.Get(jwksURL, keyfunc.Options{})
+	if err != nil {
+		return nil, err
+	}
+	return jwks, nil
 }
