@@ -112,9 +112,10 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) erro
 	if err != nil {
 		return fmt.Errorf("failed to initiate auth: %w", err)
 	}
-
+	
 	if response.ChallengeName == types.ChallengeNameTypeNewPasswordRequired {
 		fmt.Println("New password required") // TODO: return Session token or store it in db
+
 
 		// TODO: (FOR TESTING ONLY) remove in future
 		err := s.handleNewPasswordChallenge(ctx, r.Username, "Password@1", *response.Session)
