@@ -34,7 +34,11 @@ func NewRouter() *Router {
 	v1API.POST("/createUser", handler.CreateUser)
 	v1API.POST("/forgetPassword", handler.ForgetPassword)
 	v1API.POST("/user/login", handler.UserLogin) // maybe wanna group admin endpoints together
+	v1API.POST("/confirmForgetPassword", handler.ConfirmForgetPassword)
+
+	// MFA
 	v1API.POST("/auth/associateToken", handler.AssociateToken)
+
 
 
 	return &Router{router}
