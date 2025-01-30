@@ -30,13 +30,22 @@ const docTemplate = `{
                 "summary": "Confirm Forget Password",
                 "parameters": [
                     {
-                        "description": "OTP Code",
-                        "name": "email",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.ConfirmForgetPasswordReq"
-                        }
+                        "type": "string",
+                        "example": "ABCDEF",
+                        "name": "code",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "example": "67890",
+                        "name": "newPassword",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "example": "joel.ow.2022",
+                        "name": "username",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -88,13 +97,10 @@ const docTemplate = `{
                 "summary": "Create Users",
                 "parameters": [
                     {
-                        "description": "User email",
+                        "type": "string",
+                        "example": "example@gmail.com",
                         "name": "email",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.SignUpReq"
-                        }
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -134,13 +140,10 @@ const docTemplate = `{
                 "summary": "Forget Password",
                 "parameters": [
                     {
-                        "description": "Username",
-                        "name": "email",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.ForgetPasswordReq"
-                        }
+                        "type": "string",
+                        "example": "joel.ow.2022",
+                        "name": "username",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -192,13 +195,16 @@ const docTemplate = `{
                 "summary": "Login",
                 "parameters": [
                     {
-                        "description": "Username, Password",
-                        "name": "email",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.LoginReq"
-                        }
+                        "type": "string",
+                        "example": "12345",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "example": "joel.ow.2022",
+                        "name": "username",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -257,54 +263,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.ConfirmForgetPasswordReq": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string",
-                    "example": "ABCDEF"
-                },
-                "newPassword": {
-                    "type": "string",
-                    "example": "67890"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "joel.ow.2022"
-                }
-            }
-        },
-        "models.ForgetPasswordReq": {
-            "type": "object",
-            "properties": {
-                "username": {
-                    "type": "string",
-                    "example": "joel.ow.2022"
-                }
-            }
-        },
-        "models.LoginReq": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string",
-                    "example": "12345"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "joel.ow.2022"
-                }
-            }
-        },
-        "models.SignUpReq": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "example@gmail.com"
-                }
-            }
-        },
         "models.StatusRes": {
             "type": "object",
             "properties": {

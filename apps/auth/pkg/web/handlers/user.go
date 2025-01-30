@@ -35,7 +35,7 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
-//	@Param			email	body		models.SignUpReq	true	"User email"
+//	@Param			email	formData		models.SignUpReq	true	"User email"
 //	@Success		200		{object}	models.StatusRes
 //	@Failure		400		{object}	models.StatusRes
 //	@Failure		500		{object}	models.StatusRes
@@ -64,7 +64,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
-//	@Param			email	body		models.ForgetPasswordReq	true	"Username"
+//	@Param			request	formData		models.ForgetPasswordReq	true	"Username"
 //	@Success		200		{object}	models.StatusRes
 //	@Failure		400		{object}	models.StatusRes
 //	@Failure		401		{object}	models.StatusRes
@@ -94,7 +94,7 @@ func (h *UserHandler) ForgetPassword(c *gin.Context) {
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
-//	@Param			email	body		models.LoginReq	true	"Username, Password"
+//	@Param			request	formData		models.LoginReq	true	"Username, Password"
 //	@Success		200		{object}	models.StatusRes
 //	@Failure		400		{object}	models.StatusRes
 //	@Failure		401		{object}	models.StatusRes
@@ -125,7 +125,7 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
-//	@Param			email	body		models.ConfirmForgetPasswordReq	true	"OTP Code"
+//	@Param			request	formData		models.ConfirmForgetPasswordReq	true	"OTP Code"
 //	@Success		200		{object}	models.StatusRes
 //	@Failure		400		{object}	models.StatusRes
 //	@Failure		401		{object}	models.StatusRes

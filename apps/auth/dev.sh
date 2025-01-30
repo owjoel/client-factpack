@@ -11,6 +11,6 @@ set -a
 source .env
 set +a
 
-swag init -g ./cmd/main.go
+swag init -q -g ./cmd/main.go
 
 go run ./cmd

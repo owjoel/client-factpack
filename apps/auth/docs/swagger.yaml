@@ -1,38 +1,5 @@
 basePath: /api/v1
 definitions:
-  models.ConfirmForgetPasswordReq:
-    properties:
-      code:
-        example: ABCDEF
-        type: string
-      newPassword:
-        example: "67890"
-        type: string
-      username:
-        example: joel.ow.2022
-        type: string
-    type: object
-  models.ForgetPasswordReq:
-    properties:
-      username:
-        example: joel.ow.2022
-        type: string
-    type: object
-  models.LoginReq:
-    properties:
-      password:
-        example: "12345"
-        type: string
-      username:
-        example: joel.ow.2022
-        type: string
-    type: object
-  models.SignUpReq:
-    properties:
-      email:
-        example: example@gmail.com
-        type: string
-    type: object
   models.StatusRes:
     properties:
       status:
@@ -52,12 +19,18 @@ paths:
       description: Submit Cognito OTP sent to user's email to proceed with password
         reset
       parameters:
-      - description: OTP Code
-        in: body
-        name: email
-        required: true
-        schema:
-          $ref: '#/definitions/models.ConfirmForgetPasswordReq'
+      - example: ABCDEF
+        in: formData
+        name: code
+        type: string
+      - example: "67890"
+        in: formData
+        name: newPassword
+        type: string
+      - example: joel.ow.2022
+        in: formData
+        name: username
+        type: string
       produces:
       - application/json
       responses:
@@ -90,12 +63,10 @@ paths:
       - application/x-www-form-urlencoded
       description: Admin registers user with Cognito user pool via email
       parameters:
-      - description: User email
-        in: body
+      - example: example@gmail.com
+        in: formData
         name: email
-        required: true
-        schema:
-          $ref: '#/definitions/models.SignUpReq'
+        type: string
       produces:
       - application/json
       responses:
@@ -120,12 +91,10 @@ paths:
       - application/x-www-form-urlencoded
       description: Forget password
       parameters:
-      - description: Username
-        in: body
-        name: email
-        required: true
-        schema:
-          $ref: '#/definitions/models.ForgetPasswordReq'
+      - example: joel.ow.2022
+        in: formData
+        name: username
+        type: string
       produces:
       - application/json
       responses:
@@ -158,12 +127,14 @@ paths:
       - application/x-www-form-urlencoded
       description: Cognito SSO login using username and password
       parameters:
-      - description: Username, Password
-        in: body
-        name: email
-        required: true
-        schema:
-          $ref: '#/definitions/models.LoginReq'
+      - example: "12345"
+        in: formData
+        name: password
+        type: string
+      - example: joel.ow.2022
+        in: formData
+        name: username
+        type: string
       produces:
       - application/json
       responses:
