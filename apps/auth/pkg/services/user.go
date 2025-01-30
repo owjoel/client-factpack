@@ -28,7 +28,7 @@ func NewUserService() *UserService {
 }
 
 // Admin API for creating accounts on behalf of users
-func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpRequest) error {
+func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
 	username, err := createUsername(r.Email)
 	if err != nil {
 		return fmt.Errorf("error creating username: %w", err)
@@ -76,7 +76,7 @@ func CalculateSecretHash(username string) string {
 	return base64.StdEncoding.EncodeToString(h.Sum(nil))
 }
 
-func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswordRequest) error {
+func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswordReq) error {
 
 	username := r.Username
 
@@ -96,7 +96,7 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 	return nil
 }
 
-func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) error {
+func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) error {
 
 	input := &cognitoidentityprovider.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
@@ -132,7 +132,7 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginRequest) erro
 	return nil
 }
 
-func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordRequest) error {
+func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordReq) error {
 	input := &cognitoidentityprovider.ConfirmForgotPasswordInput{
 		ClientId: aws.String(config.ClientId),
 		Username: aws.String(r.Username),

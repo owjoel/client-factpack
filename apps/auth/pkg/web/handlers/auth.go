@@ -30,4 +30,5 @@ func (h *UserHandler) AssociateToken(c *gin.Context) {
 	input := &cognitoidentityprovider.AssociateSoftwareTokenInput{
 		AccessToken: aws.String(tokenString),
 	}
+	fmt.Println(input)
 }

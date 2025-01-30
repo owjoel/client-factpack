@@ -14,6 +14,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/web/handlers"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	swaggerfiles "github.com/swaggo/files"
 )
 
 type Router struct {
@@ -31,15 +33,18 @@ func NewRouter() *Router {
 	// Use RPC styling rather than REST
 	v1API := router.Group("/api/v1")
 	v1API.GET("/health", handler.HealthCheck)
-	v1API.POST("/createUser", handler.CreateUser)
-	v1API.POST("/forgetPassword", handler.ForgetPassword)
-	v1API.POST("/user/login", handler.UserLogin) // maybe wanna group admin endpoints together
-	v1API.POST("/confirmForgetPassword", handler.ConfirmForgetPassword)
+	{
+		auth := v1API.Group("/auth")
+		auth.POST("/createUser", handler.CreateUser)
+		auth.POST("/forgetPassword", handler.ForgetPassword)
+		auth.POST("/confirmForgetPassword", handler.ConfirmForgetPassword)
+		auth.POST("/login", handler.UserLogin) // maybe wanna group admin endpoints together
+	}
 
 	// MFA
 	v1API.POST("/auth/associateToken", handler.AssociateToken)
 
-
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	return &Router{router}
 }

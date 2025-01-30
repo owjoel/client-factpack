@@ -1,0 +1,206 @@
+basePath: /api/v1
+definitions:
+  models.ConfirmForgetPasswordReq:
+    properties:
+      code:
+        example: ABCDEF
+        type: string
+      newPassword:
+        example: "67890"
+        type: string
+      username:
+        example: joel.ow.2022
+        type: string
+    type: object
+  models.ForgetPasswordReq:
+    properties:
+      username:
+        example: joel.ow.2022
+        type: string
+    type: object
+  models.LoginReq:
+    properties:
+      password:
+        example: "12345"
+        type: string
+      username:
+        example: joel.ow.2022
+        type: string
+    type: object
+  models.SignUpReq:
+    properties:
+      email:
+        example: example@gmail.com
+        type: string
+    type: object
+  models.StatusRes:
+    properties:
+      status:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Authentication service for managing auth flows
+  title: client-factpack/auth
+  version: "1.0"
+paths:
+  /auth/confirmForgetPassword:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Submit Cognito OTP sent to user's email to proceed with password
+        reset
+      parameters:
+      - description: OTP Code
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/models.ConfirmForgetPasswordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Confirm Forget Password
+      tags:
+      - auth
+  /auth/createUser:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Admin registers user with Cognito user pool via email
+      parameters:
+      - description: User email
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUpReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Create Users
+      tags:
+      - auth
+  /auth/forgetPassword:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Forget password
+      parameters:
+      - description: Username
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgetPasswordReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Forget Password
+      tags:
+      - auth
+  /auth/login:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Cognito SSO login using username and password
+      parameters:
+      - description: Username, Password
+        in: body
+        name: email
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Login
+      tags:
+      - auth
+  /health:
+    get:
+      description: Basic health check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Connection status
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: ping
+      tags:
+      - health
+swagger: "2.0"

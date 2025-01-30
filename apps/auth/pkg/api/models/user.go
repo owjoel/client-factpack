@@ -1,11 +1,11 @@
 package models
 
-type SignUpRequest struct {
-	Email string `form:"email"`
+type SignUpReq struct {
+	Email string `form:"email" example:"example@gmail.com"`
 }
 
-type ForgetPasswordRequest struct {
-	Username string `form:"username"`
+type ForgetPasswordReq struct {
+	Username string `form:"username" example:"joel.ow.2022"`
 }
 
 type User struct {
@@ -13,13 +13,17 @@ type User struct {
 	Password string
 }
 
-type LoginRequest struct {
-	Username string `form:"username"`
-	Password string `form:"password"`
+type LoginReq struct {
+	Username string `form:"username" example:"joel.ow.2022"`
+	Password string `form:"password" example:"12345"`
 }
 
-type ConfirmForgetPasswordRequest struct {
-	Username string `form:"username"`
-	Code     string `form:"code"`
-	NewPassword string `form:"newPassword"`
+type ConfirmForgetPasswordReq struct {
+	Username string `form:"username" example:"joel.ow.2022"`
+	Code     string `form:"code" example:"ABCDEF"`
+	NewPassword string `form:"newPassword" example:"67890"`
+}
+
+type StatusRes struct {
+	Status string `json:"status"`
 }
