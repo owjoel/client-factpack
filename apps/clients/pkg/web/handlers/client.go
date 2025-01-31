@@ -1,0 +1,21 @@
+package handlers
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/service"
+)
+
+type ClientHandler struct {
+	service *service.ClientService
+}
+
+func New() *ClientHandler {
+	return &ClientHandler{service: service.NewClientService()}
+}
+
+func (h *ClientHandler) HealthCheck(c *gin.Context) {
+	c.JSON(http.StatusOK, model.StatusRes{Status: "Connection successful"})
+}
