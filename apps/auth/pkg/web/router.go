@@ -10,12 +10,13 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/web/handlers"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Router struct {
@@ -25,6 +26,16 @@ type Router struct {
 func NewRouter() *Router {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+
+	// enable CORS
+	router.Use(
+		cors.New(cors.Config{
+			AllowOrigins:     []string{"http://localhost:5173"},
+			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Content-Type", "Authorization"},
+			AllowCredentials: true,
+		}),
+	)
 
 	pprof.Register(router)
 
@@ -52,7 +63,7 @@ func NewRouter() *Router {
 func (r *Router) Run() {
 	port := config.GetPort(8080)
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%v", port),
+		Addr:    fmt.Sprintf(":%v", port),
 		Handler: r.Engine,
 	}
 
@@ -67,7 +78,7 @@ func (r *Router) Run() {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<- quit
+	<-quit
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
