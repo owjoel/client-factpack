@@ -1,6 +1,6 @@
 package main
 
-import ()
+import "github.com/owjoel/client-factpack/apps/clients/pkg/web"
 
 // 	Swagger
 //	@title			client-factpack/clients
@@ -10,5 +10,5 @@ import ()
 //	@BasePath		/api/v1
 
 func main() {
-
+	web.Run()
 }
