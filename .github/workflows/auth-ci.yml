@@ -32,7 +32,7 @@ jobs:
 
       - name: Run golangci-lint
         run: |
-          cd auth
+          cd apps/auth
           golangci-lint run --timeout=2m
 
   # Test Job (Dummy Test)
