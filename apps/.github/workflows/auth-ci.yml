@@ -1,0 +1,76 @@
+name: CI - Auth
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'auth/**'
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'auth/**'
+
+jobs:
+  # Code Analysis Job
+  lint:
+    name: Code Analysis (Linting)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Install golangci-lint
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+      - name: Run golangci-lint
+        run: |
+          cd auth
+          golangci-lint run --timeout=2m
+
+  # Test Job (Dummy Test)
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: lint  # Runs only after linting succeeds
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Dummy Test (Echo)
+        run: echo "Running dummy tests..."
+
+  # Build Job (Push Docker Image to GitHub Container Registry)
+  build:
+    name: Build and Push Docker Image to GHCR
+    runs-on: ubuntu-latest
+    needs: test  # Runs only after tests succeed
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./auth
+          push: true
+          tags: ghcr.io/${{ github.repository }}/auth:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.repositoryUrl }}
