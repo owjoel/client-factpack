@@ -11,7 +11,6 @@ var (
 	DBHost     = os.Getenv("DB_HOST")
 	DBPort     = os.Getenv("DB_PORT")
 	DBName     = os.Getenv("DB_NAME")
-	DBProtocol = os.Getenv("DB_PROTOCOL")
 )
 
 func GetPort(defaultPort int) int {

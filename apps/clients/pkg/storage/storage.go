@@ -28,14 +28,14 @@ func Init() {
 
 // username:password@protocol(address)/dbname?param=value
 func GetDSN() string {
-	return fmt.Sprintf("%s:%s@%s(%s:%s)/%s",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 		config.DBUser,
 		config.DBPassword,
-		config.DBProtocol,
 		config.DBHost,
 		config.DBPort,
 		config.DBName,
 	)
+	return dsn
 }
 
 func GetInstance() *storage {
