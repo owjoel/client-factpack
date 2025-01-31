@@ -1,5 +1,5 @@
 package main
-
+// added comment to test github actions
 import (
 	"github.com/owjoel/client-factpack/apps/auth/pkg/web"
 	_ "github.com/owjoel/client-factpack/apps/auth/docs"
