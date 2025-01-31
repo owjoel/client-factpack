@@ -1,0 +1,10 @@
+basePath: /api/v1
+host: localhost:8080
+info:
+  contact: {}
+  description: Client resource module. Manages manually typed and compiled online
+    data of prospective clients
+  title: client-factpack/clients
+  version: "1.0"
+paths: {}
+swagger: "2.0"
