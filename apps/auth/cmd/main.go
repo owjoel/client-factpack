@@ -11,7 +11,7 @@ import (
 //	@description	Authentication service for managing auth flows
 //	@host			localhost:8080
 //	@BasePath		/api/v1
-
+// Git Workflow Test
 
 func main() {
 	web.Run()
