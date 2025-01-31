@@ -4,13 +4,13 @@ on:
     branches:
       - main
     paths:
-      - 'clients/**'
+      - 'apps/clients/**'
 
   pull_request:
     branches:
       - main
     paths:
-      - 'clients/**'
+      - 'apps/clients/**'
 
 jobs:
   # Code Analysis Job
@@ -69,8 +69,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./clients
+          context: ./apps/clients
           push: true
-          tags: ghcr.io/${{ github.repository }}/clients:latest
+          tags: ghcr.io/${{ github.repository }}/apps/clients:latest
           labels: |
             org.opencontainers.image.source=${{ github.repositoryUrl }}

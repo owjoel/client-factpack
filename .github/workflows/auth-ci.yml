@@ -4,13 +4,13 @@ on:
     branches:
       - main
     paths:
-      - 'auth/**'
+      - 'apps/auth/**'
 
   pull_request:
     branches:
       - main
     paths:
-      - 'auth/**'
+      - 'apps/auth/**'
 
 jobs:
   # Code Analysis Job
@@ -69,8 +69,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./auth
+          context: ./apps/auth
           push: true
-          tags: ghcr.io/${{ github.repository }}/auth:latest
+          tags: ghcr.io/${{ github.repository }}/apps/auth:latest
           labels: |
             org.opencontainers.image.source=${{ github.repositoryUrl }}
