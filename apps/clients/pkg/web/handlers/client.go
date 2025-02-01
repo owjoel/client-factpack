@@ -19,3 +19,19 @@ func New() *ClientHandler {
 func (h *ClientHandler) HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, model.StatusRes{Status: "Connection successful"})
 }
+
+func (h *ClientHandler) CreateClient(c *gin.Context) {
+	
+}
+
+func (h *ClientHandler) GetClient(c *gin.Context) {
+
+}
+
+func (h *ClientHandler) UpdateClient(c *gin.Context) {
+
+}
+
+func (h *ClientHandler) DeleteClient(c *gin.Context) {
+
+}

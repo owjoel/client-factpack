@@ -1,39 +1,77 @@
 package storage
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
 	"gorm.io/gorm"
 )
 
 type Client struct {
 	gorm.Model
-	Name        string
-	Nationality string
+	Name        string `gorm:"name"`
+	Age         uint `gorm:"age"`
+	Nationality string `gorm:"nationality"`
+	Status string `gorm:"status"`
 }
 
 type ClientInterface interface {
-	Create(r *model.CreateClientReq) (model.StatusRes, error)
-	Get(clientID string) (*model.GetClientRes)
-	Update(r *model.UpdateClientReq) (model.StatusRes, error)
-	Delete(r *model.DeleteClientReq) (model.StatusRes, error)
+	Create(c *model.Client) error
+	Get(clientID uint) (*model.Client, error)
+	Update(c *model.Client) error
+	// Delete(c *model.Client) error
 }
 
 type ClientStorage struct {
 	*gorm.DB
 }
 
-func (c *ClientStorage) Get(clientID string) (*model.GetClientRes) {
+func (s *ClientStorage) Get(clientID uint) (*model.Client, error) {
+	var c Client
+	if res := s.DB.First(&c, clientID); res.Error != nil {
+		return nil, fmt.Errorf("Error retrieving from DB: %w", res.Error)
+	}
+	return &model.Client{
+		Name: c.Name,
+		Age: c.Age,
+		Nationality: c.Nationality,
+		Status: c.Status,
+		CreatedAt: c.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: c.UpdatedAt.Format(time.RFC3339),
+	}, nil
+}
+
+func (s *ClientStorage) Create(c *model.Client) error {
+	client := Client{
+		Name: c.Name,
+		Age: c.Age,
+		Nationality: c.Nationality,
+		Status: c.Status,
+	}
+	if res := s.DB.Create(&client); res.Error != nil {
+		return fmt.Errorf("Error creating client in DB: %w", res.Error)
+	}
 	return nil
 }
 
-func (c *ClientStorage) Create(r *model.CreateClientReq) (model.StatusRes, error) {
-	return model.StatusRes{}, nil
+func (s *ClientStorage) Update(c *model.Client) error {
+	client := &Client{
+		Model: gorm.Model{ID: c.ID},
+		Name: c.Name,
+		Age: c.Age,
+		Nationality: c.Nationality,
+	}
+	if res := s.DB.Model(&client).Updates(client); res.Error != nil {
+		return fmt.Errorf("Error updating client in DB: %w", res.Error)
+	}
+	return nil
 }
 
-func (c *ClientStorage) Update(r *model.UpdateClientReq) (model.StatusRes, error) {
-	return model.StatusRes{}, nil
-}
-
-func (c *ClientStorage) Delete(r *model.DeleteClientReq) (model.StatusRes, error) {
-	return model.StatusRes{}, nil
-}
+// func (s *ClientStorage) Delete(c *model.Client) error {
+// 	client := &Client{Model: gorm.Model{ID: c.ID}}
+// 	if res := s.DB.Model(&client).Update("status", "Inactive"); res.Error != nil {
+// 		return fmt.Errorf("Error deactivating client in DB: %w", res.Error)
+// 	}
+// 	return nil
+// }

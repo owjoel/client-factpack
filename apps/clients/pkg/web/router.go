@@ -36,7 +36,6 @@ func NewRouter() *Router {
 	v1API := router.Group("/api/v1")
 	v1API.GET("/health", handler.HealthCheck)
 
-
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	return &Router{router}
