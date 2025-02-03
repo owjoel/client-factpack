@@ -109,7 +109,7 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.UserLogin(c.Request.Context(), req); err != nil {
+	if _, err := h.service.UserLogin(c.Request.Context(), req); err != nil {
 		status, message := errors.CognitoErrorHandler(err)
 		fmt.Println(status, message)
 		c.JSON(status, models.StatusRes{Status: message})

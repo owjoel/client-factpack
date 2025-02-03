@@ -21,7 +21,7 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 	c.Next()
 }
 
-func (h *UserHandler) AssociateToken(c *gin.Context) {
+func (h *UserHandler) VerifyMFA(c *gin.Context) {
 	token, exists := c.Get("accessToken")
 	if !exists {
 		c.JSON(http.StatusForbidden, gin.H{"message": "Could not verify identity"})
