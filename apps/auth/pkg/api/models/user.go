@@ -2,6 +2,11 @@ package models
 
 import "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 
+type User struct {
+	Username string
+	Password string
+}
+
 type SignUpReq struct {
 	Email string `form:"email" example:"example@gmail.com"`
 }
@@ -10,14 +15,14 @@ type ForgetPasswordReq struct {
 	Username string `form:"username" example:"joel.ow.2022"`
 }
 
-type User struct {
-	Username string
-	Password string
-}
-
 type LoginReq struct {
 	Username string `form:"username" example:"joel.ow.2022"`
 	Password string `form:"password" example:"12345"`
+}
+
+type LoginRes struct {
+	Challenge string
+	Session string
 }
 
 type ConfirmForgetPasswordReq struct {
@@ -32,6 +37,11 @@ type SetNewPasswordReq struct {
 	Session string
 }
 
+type SetNewPasswordRes struct {
+	Challenge string
+	Session string
+}
+
 type VerifyMFAReq struct {
 	Code string `form:"code"`
 	Session string
@@ -39,6 +49,20 @@ type VerifyMFAReq struct {
 
 type AuthenticationRes struct {
 	Result types.AuthenticationResultType
+	Challenge string
+}
+
+type AuthChallengeRes struct {
+	Challenge string `json:"challenge"`
+}
+
+type AssociateTokenRes struct {
+	Token string
+	Session string
+}
+
+type SetupMFARes struct {
+	Token string `json:"token"`
 }
 
 type SignInMFAReq struct {

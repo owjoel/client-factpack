@@ -49,11 +49,13 @@ func NewRouter() *Router {
 		auth.POST("/createUser", handler.CreateUser)
 		auth.POST("/forgetPassword", handler.ForgetPassword)
 		auth.POST("/confirmForgetPassword", handler.ConfirmForgetPassword)
-		auth.POST("/login", handler.UserLogin) // maybe wanna group admin endpoints together
-	}
 
-	// MFA
-	v1API.POST("/auth/associateToken", handler.AssociateToken)
+		auth.POST("/login", handler.UserLogin)
+		auth.POST("/changePassword", handler.UserInitialChangePassword)
+		auth.GET("/setupMFA", handler.UserSetupMFA)
+		auth.POST("/verifyMFA", handler.UserVerifyMFA)
+		auth.POST("/loginMFA", handler.UserLoginMFA)
+	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 

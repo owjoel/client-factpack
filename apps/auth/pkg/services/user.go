@@ -96,7 +96,7 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 }
 
 // User logs in through username, password
-func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (string, error) {
+func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error) {
 
 	input := &cip.InitiateAuthInput{                                                                                                                                    
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
@@ -111,10 +111,13 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (string,
 	// returns tokens on success, see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_InitiateAuth.html
 	response, err := s.CognitoClient.InitiateAuth(ctx, input)
 	if err != nil {
-		return "", fmt.Errorf("failed to initiate auth: %w\n", err)
+		return nil, fmt.Errorf("failed to initiate auth: %w\n", err)
 	}
 
-	return getChallengeName(response.ChallengeName), nil
+	return &models.LoginRes{
+		Challenge: getChallengeName(response.ChallengeName),
+		Session: *response.Session,
+	}, nil
 	
 	// Return based on challenges
 	// if response.ChallengeName == types.ChallengeNameTypeNewPasswordRequired {
@@ -144,14 +147,14 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (string,
 }
 
 // Sets new password by user, check for next auth challenge
-func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswordReq) (string, error) {
+func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswordReq) (*models.SetNewPasswordRes, error) {
 	autoResetEnabled, err := strconv.ParseBool(config.AutoResetPassword)
 	if err != nil {
-		return "", fmt.Errorf("invalid AUTO_RESET_PASSWORD value: %w", err)
+		return nil, fmt.Errorf("invalid AUTO_RESET_PASSWORD value: %w", err)
 	}
 
 	if !autoResetEnabled {
-		return "", fmt.Errorf("auto-reset password is disabled")
+		return nil, fmt.Errorf("auto-reset password is disabled")
 	}
 
 	challengeInput := &cip.RespondToAuthChallengeInput{
@@ -167,19 +170,28 @@ func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswor
 
 	res, err := s.CognitoClient.RespondToAuthChallenge(ctx, challengeInput)
 	if err != nil {
-		return "", fmt.Errorf("failed to respond to auth challenge: %s", err)
+		return nil, fmt.Errorf("failed to respond to auth challenge: %s", err)
 	}
 
-	return getChallengeName(res.ChallengeName), nil
+	return &models.SetNewPasswordRes{
+		Challenge: getChallengeName(res.ChallengeName),
+		Session: *res.Session,
+	}, nil
 }
 
 // Associates the user's auth challenge session with account, returns an OTP which can be returned as a QR to the client
-func (s *UserService) SetupMFA(ctx context.Context, session string) (string, error) {
-	secretKey, err := s.associateToken(ctx, session)
-	if err != nil {
-		return "", fmt.Errorf("Error associating token: %w", err)
+func (s *UserService) SetupMFA(ctx context.Context, session string) (*models.AssociateTokenRes, error) {
+	input := &cip.AssociateSoftwareTokenInput{
+		Session: aws.String(session),
 	}
-	return secretKey, nil
+	res, err := s.CognitoClient.AssociateSoftwareToken(ctx, input)
+	if err != nil {
+		return nil, fmt.Errorf("Error associating token: %w", err)
+	}
+	return &models.AssociateTokenRes{
+		Token: *res.SecretCode,
+		Session: *res.Session,
+	}, nil
 }
 
 // Submit code from user's authentication app. Cognito will update MFA settings, but does not complete authentication. Nothing is returned to user on success.
@@ -202,6 +214,7 @@ func (s *UserService) SignInMFA(ctx context.Context, r models.SignInMFAReq) (mod
 		Session: aws.String(r.Session),
 		ChallengeResponses: map[string]string{
 			"USERNAME": r.Username,
+			"SECRET_HASH": CalculateSecretHash(r.Username),
 			"SOFTWARE_TOKEN_MFA_CODE": r.Code,
 		},
 	}
@@ -209,7 +222,7 @@ func (s *UserService) SignInMFA(ctx context.Context, r models.SignInMFAReq) (mod
 	if err != nil {
 		return models.AuthenticationRes{}, fmt.Errorf("failed to sign in with MFA: %w", err)
 	}
-	return models.AuthenticationRes{Result: *res.AuthenticationResult}, nil
+	return models.AuthenticationRes{Result: *res.AuthenticationResult, Challenge: getChallengeName(res.ChallengeName)}, nil
 }
 
 func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordReq) error {
