@@ -8,7 +8,8 @@ type User struct {
 }
 
 type SignUpReq struct {
-	Email string `form:"email" example:"example@gmail.com"`
+	Email    string `form:"email" example:"example@gmail.com"`
+	Password string `form:"password" binding:"required"`
 }
 
 type ForgetPasswordReq struct {
@@ -26,8 +27,8 @@ type LoginRes struct {
 }
 
 type ConfirmForgetPasswordReq struct {
-	Username string `form:"username" example:"joel.ow.2022"`
-	Code     string `form:"code" example:"ABCDEF"`
+	Username    string `form:"username" example:"joel.ow.2022"`
+	Code        string `form:"code" example:"ABCDEF"`
 	NewPassword string `form:"newPassword" example:"67890"`
 }
 

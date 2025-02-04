@@ -27,30 +27,33 @@ func NewUserService() *UserService {
 	return &UserService{CognitoClient: auth.Init()}
 }
 
-// Admin API for creating accounts on behalf of users
-func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
-	username, err := createUsername(r.Email)
+func (s *UserService) SignUpUser(ctx context.Context, r models.SignUpReq) error {
+	username, err := createUsername((r.Email))
 	if err != nil {
-		return fmt.Errorf("error creating username: %w", err)
+		return fmt.Errorf("error create username: %w", err)
 	}
 
-	output, err := s.CognitoClient.AdminCreateUser(ctx, &cip.AdminCreateUserInput{
-		UserPoolId: aws.String(config.UserPoolId),
+	input := &cip.SignUpInput{
+		ClientId:   aws.String(config.ClientId),
 		Username:   aws.String(username),
-		UserAttributes: []types.AttributeType{
-			{Name: aws.String("email"), Value: aws.String(r.Email)},
-		},
-	})
+		Password:   aws.String(r.Password),
+		SecretHash: aws.String(CalculateSecretHash(username)),
+		UserAttributes: []types.AttributeType{{
+			Name: aws.String("email"), Value: aws.String(r.Email),
+		}},
+	}
+
+	_, err = s.CognitoClient.SignUp(ctx, input)
 	if err != nil {
 		return fmt.Errorf("error during sign up: %w", err)
 	}
-	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
+	log.Printf("User %s created", username)
 
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
-		GroupName: aws.String(auth.AdminGroup),
+		GroupName:  aws.String(auth.AdminGroup),
 		UserPoolId: aws.String(config.UserPoolId),
-		Username: aws.String(username),
+		Username:   aws.String(username),
 	})
 	if err != nil {
 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
@@ -80,8 +83,8 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 	username := r.Username
 
 	input := &cip.ForgotPasswordInput{
-		ClientId: aws.String(config.ClientId),
-		Username: aws.String(username),
+		ClientId:   aws.String(config.ClientId),
+		Username:   aws.String(username),
 		SecretHash: aws.String(CalculateSecretHash(username)),
 	}
 
@@ -98,14 +101,14 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 // User logs in through username, password
 func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error) {
 
-	input := &cip.InitiateAuthInput{                                                                                                                                    
+	input := &cip.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
 		AuthParameters: map[string]string{
-			"USERNAME": r.Username,
-			"PASSWORD": r.Password,
+			"USERNAME":    r.Username,
+			"PASSWORD":    r.Password,
 			"SECRET_HASH": CalculateSecretHash(r.Username),
 		},
-		ClientId:   aws.String(config.ClientId),
+		ClientId: aws.String(config.ClientId),
 	}
 
 	// returns tokens on success, see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_InitiateAuth.html
@@ -116,13 +119,12 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models
 
 	return &models.LoginRes{
 		Challenge: getChallengeName(response.ChallengeName),
-		Session: *response.Session,
+		Session:   *response.Session,
 	}, nil
-	
+
 	// Return based on challenges
 	// if response.ChallengeName == types.ChallengeNameTypeNewPasswordRequired {
 	// 	fmt.Println("New password required") // TODO: return Session token or store it in db
-
 
 	// 	// TODO: (FOR TESTING ONLY) remove in future
 	// 	err := s.handleNewPasswordChallenge(ctx, r.Username, "Password@1", *response.Session)
@@ -133,7 +135,6 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models
 	// } else {
 	// 	fmt.Println("Authentication successful.")
 	// }
-
 
 	// If challenge is to set up MFA on first time login, get OTP and send back as QR code
 	// if response.ChallengeName == types.ChallengeNameTypeMfaSetup {
@@ -164,7 +165,7 @@ func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswor
 		ChallengeResponses: map[string]string{
 			"USERNAME":     r.Username,
 			"NEW_PASSWORD": r.NewPassword,
-			"SECRET_HASH": CalculateSecretHash(r.Username),
+			"SECRET_HASH":  CalculateSecretHash(r.Username),
 		},
 	}
 
@@ -175,7 +176,7 @@ func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswor
 
 	return &models.SetNewPasswordRes{
 		Challenge: getChallengeName(res.ChallengeName),
-		Session: *res.Session,
+		Session:   *res.Session,
 	}, nil
 }
 
@@ -186,10 +187,10 @@ func (s *UserService) SetupMFA(ctx context.Context, session string) (*models.Ass
 	}
 	res, err := s.CognitoClient.AssociateSoftwareToken(ctx, input)
 	if err != nil {
-		return nil, fmt.Errorf("Error associating token: %w", err)
+		return nil, fmt.Errorf("error associating token: %w", err)
 	}
 	return &models.AssociateTokenRes{
-		Token: *res.SecretCode,
+		Token:   *res.SecretCode,
 		Session: *res.Session,
 	}, nil
 }
@@ -197,7 +198,7 @@ func (s *UserService) SetupMFA(ctx context.Context, session string) (*models.Ass
 // Submit code from user's authentication app. Cognito will update MFA settings, but does not complete authentication. Nothing is returned to user on success.
 func (s *UserService) VerifyMFA(ctx context.Context, r models.VerifyMFAReq) error {
 	input := &cip.VerifySoftwareTokenInput{
-		Session: aws.String(r.Session),
+		Session:  aws.String(r.Session),
 		UserCode: aws.String(r.Code),
 	}
 	res, err := s.CognitoClient.VerifySoftwareToken(ctx, input)
@@ -210,11 +211,11 @@ func (s *UserService) VerifyMFA(ctx context.Context, r models.VerifyMFAReq) erro
 func (s *UserService) SignInMFA(ctx context.Context, r models.SignInMFAReq) (models.AuthenticationRes, error) {
 	input := &cip.RespondToAuthChallengeInput{
 		ChallengeName: types.ChallengeNameTypeSoftwareTokenMfa,
-		ClientId: aws.String(config.ClientId),
-		Session: aws.String(r.Session),
+		ClientId:      aws.String(config.ClientId),
+		Session:       aws.String(r.Session),
 		ChallengeResponses: map[string]string{
-			"USERNAME": r.Username,
-			"SECRET_HASH": CalculateSecretHash(r.Username),
+			"USERNAME":                r.Username,
+			"SECRET_HASH":             CalculateSecretHash(r.Username),
 			"SOFTWARE_TOKEN_MFA_CODE": r.Code,
 		},
 	}
@@ -227,11 +228,11 @@ func (s *UserService) SignInMFA(ctx context.Context, r models.SignInMFAReq) (mod
 
 func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordReq) error {
 	input := &cip.ConfirmForgotPasswordInput{
-		ClientId: aws.String(config.ClientId),
-		Username: aws.String(r.Username),
-		Password: aws.String(r.NewPassword),
+		ClientId:         aws.String(config.ClientId),
+		Username:         aws.String(r.Username),
+		Password:         aws.String(r.NewPassword),
 		ConfirmationCode: aws.String(r.Code),
-		SecretHash: aws.String(CalculateSecretHash(r.Username)),
+		SecretHash:       aws.String(CalculateSecretHash(r.Username)),
 	}
 
 	_, err := s.CognitoClient.ConfirmForgotPassword(ctx, input)
@@ -241,7 +242,6 @@ func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.Confir
 	}
 	return nil
 }
-
 
 // func (s *UserService) handleNewPasswordChallenge(ctx context.Context, username, newPassword, session string) error {
 // 	// flag for testing

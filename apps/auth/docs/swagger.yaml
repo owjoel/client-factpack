@@ -61,11 +61,17 @@ paths:
     post:
       consumes:
       - application/x-www-form-urlencoded
-      description: Admin registers user with Cognito user pool via email
+      description: Admin registers user with Cognito user pool via email and password
       parameters:
-      - example: example@gmail.com
+      - description: User's email address
         in: formData
         name: email
+        required: true
+        type: string
+      - description: User's password
+        in: formData
+        name: password
+        required: true
         type: string
       produces:
       - application/json
