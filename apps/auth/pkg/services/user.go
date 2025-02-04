@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -27,35 +26,26 @@ func NewUserService() *UserService {
 	return &UserService{CognitoClient: auth.Init()}
 }
 
-// Admin API for creating accounts on behalf of users
-func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
-	username, err := createUsername(r.Email)
+func (s *UserService) SignUpUser(ctx context.Context, r models.SignUpReq) error {
+	username, err := createUsername((r.Email))
 	if err != nil {
-		return fmt.Errorf("error creating username: %w", err)
+		return fmt.Errorf("error create username: %w", err)
 	}
 
-	output, err := s.CognitoClient.AdminCreateUser(ctx, &cognitoidentityprovider.AdminCreateUserInput{
-		UserPoolId: aws.String(config.UserPoolId),
+	input := &cognitoidentityprovider.SignUpInput{
+		ClientId:   aws.String(config.ClientId),
 		Username:   aws.String(username),
-		UserAttributes: []types.AttributeType{
-			{Name: aws.String("email"), Value: aws.String(r.Email)},
-		},
-	})
+		Password:   aws.String(r.Password),
+		SecretHash: aws.String(CalculateSecretHash(username)),
+		UserAttributes: []types.AttributeType{{
+			Name: aws.String("email"), Value: aws.String(r.Email),
+		}},
+	}
+
+	_, err = s.CognitoClient.SignUp(ctx, input)
 	if err != nil {
 		return fmt.Errorf("error during sign up: %w", err)
 	}
-	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
-
-	// Add User to Group. Allow fail, add user in through AWS console
-	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cognitoidentityprovider.AdminAddUserToGroupInput{
-		GroupName: aws.String(auth.AdminGroup),
-		UserPoolId: aws.String(config.UserPoolId),
-		Username: aws.String(username),
-	})
-	if err != nil {
-		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
-	}
-
 	return nil
 }
 
@@ -81,8 +71,8 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 	username := r.Username
 
 	input := &cognitoidentityprovider.ForgotPasswordInput{
-		ClientId: aws.String(config.ClientId),
-		Username: aws.String(username),
+		ClientId:   aws.String(config.ClientId),
+		Username:   aws.String(username),
 		SecretHash: aws.String(CalculateSecretHash(username)),
 	}
 
@@ -101,11 +91,11 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) error {
 	input := &cognitoidentityprovider.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
 		AuthParameters: map[string]string{
-			"USERNAME": r.Username,
-			"PASSWORD": r.Password,
+			"USERNAME":    r.Username,
+			"PASSWORD":    r.Password,
 			"SECRET_HASH": CalculateSecretHash(r.Username),
 		},
-		ClientId:   aws.String(config.ClientId),
+		ClientId: aws.String(config.ClientId),
 	}
 
 	// returns tokens on success, see https://docs.aws.amazon.com/cognito-user-identity-pools/latest/APIReference/API_InitiateAuth.html
@@ -114,10 +104,9 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) error {
 		fmt.Printf("failed to initiate auth: %s\n", err)
 		return err
 	}
-	
+
 	if response.ChallengeName == types.ChallengeNameTypeNewPasswordRequired {
 		fmt.Println("New password required") // TODO: return Session token or store it in db
-
 
 		// TODO: (FOR TESTING ONLY) remove in future
 		err := s.handleNewPasswordChallenge(ctx, r.Username, "Password@1", *response.Session)
@@ -134,11 +123,11 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) error {
 
 func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordReq) error {
 	input := &cognitoidentityprovider.ConfirmForgotPasswordInput{
-		ClientId: aws.String(config.ClientId),
-		Username: aws.String(r.Username),
-		Password: aws.String(r.NewPassword),
+		ClientId:         aws.String(config.ClientId),
+		Username:         aws.String(r.Username),
+		Password:         aws.String(r.NewPassword),
 		ConfirmationCode: aws.String(r.Code),
-		SecretHash: aws.String(CalculateSecretHash(r.Username)),
+		SecretHash:       aws.String(CalculateSecretHash(r.Username)),
 	}
 
 	_, err := s.CognitoClient.ConfirmForgotPassword(ctx, input)
@@ -149,7 +138,6 @@ func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.Confir
 
 	return nil
 }
-
 
 func (s *UserService) handleNewPasswordChallenge(ctx context.Context, username, newPassword, session string) error {
 	// flag for testing
@@ -169,7 +157,7 @@ func (s *UserService) handleNewPasswordChallenge(ctx context.Context, username, 
 		ChallengeResponses: map[string]string{
 			"USERNAME":     username,
 			"NEW_PASSWORD": newPassword,
-			"SECRET_HASH": CalculateSecretHash(username),
+			"SECRET_HASH":  CalculateSecretHash(username),
 		},
 	}
 

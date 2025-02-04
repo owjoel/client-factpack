@@ -84,7 +84,7 @@ const docTemplate = `{
         },
         "/auth/createUser": {
             "post": {
-                "description": "Admin registers user with Cognito user pool via email",
+                "description": "Admin registers user with Cognito user pool via email and password",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -98,9 +98,17 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "example@gmail.com",
+                        "description": "User's email address",
                         "name": "email",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User's password",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
