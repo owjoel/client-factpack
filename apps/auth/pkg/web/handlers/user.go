@@ -54,21 +54,25 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	if err := c.ShouldBind(&req); err != nil {
 		fmt.Printf("%v", fmt.Errorf("error binding request: %w", err))
 		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Error"})
+		return
 	}
 
 	// Validate email
 	if _, err := mail.ParseAddress(req.Email); err != nil {
 		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Email"})
+		return
 	}
 	// Validate email domain
 	domain := strings.Split(req.Email, "@")[1]
 	if !utils.IsAllowedDomain(domain) {
 		c.JSON(http.StatusForbidden, models.StatusRes{Status: "You cannot access this system."})
+		return
 	}
 
 	if err := h.service.SignUpUser(c.Request.Context(), req); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, models.StatusRes{Status: "Failed to sign up user"})
+		return
 	}
 	c.JSON(http.StatusCreated, models.StatusRes{Status: "Success"})
 }
