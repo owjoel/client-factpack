@@ -222,7 +222,7 @@ func (h *UserHandler) UserSetupMFA(c *gin.Context) {
 //	@Failure		400		{object}	models.StatusRes
 //	@Failure		401		{object}	models.StatusRes
 //	@Failure		500		{object}	models.StatusRes
-//	@Router			/auth/changePassword [post]
+//	@Router			/auth/verifyMFA [post]
 func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 	var req models.VerifyMFAReq
 	if err := c.ShouldBind(&req); err != nil {
