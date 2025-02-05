@@ -93,12 +93,12 @@ func (h *UserHandler) ForgetPassword(c *gin.Context) {
 
 
 //	@Summary		Login
-//	@Description	Cognito SSO login using username and password
+//	@Description	Cognito SSO login using username and password, returns the next auth challenge, either 
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
 //	@Param			request	formData		models.LoginReq	true	"Username, Password"
-//	@Success		200		{object}	models.StatusRes
+//	@Success		200		{object}	models.AuthChallengeRes
 //	@Failure		400		{object}	models.StatusRes
 //	@Failure		401		{object}	models.StatusRes
 //	@Failure		403		{object}	models.StatusRes

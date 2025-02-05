@@ -53,7 +53,7 @@ type AuthenticationRes struct {
 }
 
 type AuthChallengeRes struct {
-	Challenge string `json:"challenge"`
+	Challenge string `json:"challenge" example:"SOFTWARE_TOKEN_MFA"`
 }
 
 type AssociateTokenRes struct {
