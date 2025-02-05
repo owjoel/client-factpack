@@ -168,7 +168,7 @@ func (h *UserHandler) VerifyMFA(c *gin.Context) {
 	input := &cognitoidentityprovider.AssociateSoftwareTokenInput{
 		AccessToken: aws.String(tokenString),
 	}
-	fmt.Println(input)
+	log.Println(input)
 }
 
 // Helper function for Authenticate middleware

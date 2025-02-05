@@ -3,7 +3,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -25,6 +24,6 @@ func Init() *cognitoidentityprovider.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Cognito connected")
+	log.Println("Cognito connected")
 	return cognitoidentityprovider.NewFromConfig(cfg)
 }

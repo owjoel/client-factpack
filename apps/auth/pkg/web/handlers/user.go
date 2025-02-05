@@ -61,7 +61,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	if err := h.service.AdminCreateUser(c.Request.Context(), req); err != nil {
-		fmt.Println(err)
+		log.Printf("%v", err)
 		c.JSON(http.StatusInternalServerError, models.StatusRes{Status: "Failed to sign up user"})
 		return
 	}
@@ -123,7 +123,7 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 	res, err := h.service.UserLogin(c.Request.Context(), req)
 	if err != nil {
 		status, message := errors.CognitoErrorHandler(err)
-		fmt.Println(status, message)
+		log.Printf("Status: %d, Message: %s\n", status, message)
 		c.JSON(status, models.StatusRes{Status: message})
 		return
 	}

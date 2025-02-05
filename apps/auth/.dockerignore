@@ -1,0 +1,18 @@
+.git/
+.gitignore
+
+Dockerfile
+.dockerignore
+
+*.env
+
+# Binaries and outputs
+dist/
+gin-bin
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
