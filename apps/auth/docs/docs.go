@@ -15,6 +15,59 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/changePassword": {
+            "post": {
+                "description": "User submits the code from their authenticator app to verify the TOTP setup\nRequest must contain \"session\" cookie containing the session token to respond to the challenge\nOn success, the user can proceed to sign in again",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Verify initial code from authenticator app",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "code",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "session",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/confirmForgetPassword": {
             "post": {
                 "description": "Submit Cognito OTP sent to user's email to proceed with password reset",
@@ -190,7 +243,7 @@ const docTemplate = `{
         },
         "/auth/login": {
             "post": {
-                "description": "Cognito SSO login using username and password",
+                "description": "Cognito SSO login using username and password, returns the next auth challenge, either",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -219,7 +272,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.StatusRes"
+                            "$ref": "#/definitions/models.AuthChallengeRes"
                         }
                     },
                     "400": {
@@ -249,6 +302,99 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/loginMFA": {
+            "post": {
+                "description": "Responds to Congito auth challenge after successful credential sign in\nRequest must contain \"session\" cookie containing the session token to respond to the challenge",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Submit user TOTP code from authenticator app for all subsequent log ins.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "code",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "session",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/setupMFA": {
+            "get": {
+                "description": "Submit GET query to cognito to obtain an OTP token.\nThe user can use this token to set up their authenticator app, either through QR code or by manual keying in of the token.\nRequest must contain \"session\" cookie containing the session token to respond to the challenge\nOn success, the token is returned, and the cookie is updated for the next auth step",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get OTP Token for setting up TOTP authenticator",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.AuthChallengeRes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    }
+                }
+            }
+        },
         "/health": {
             "get": {
                 "description": "Basic health check",
@@ -271,6 +417,20 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AuthChallengeRes": {
+            "type": "object",
+            "properties": {
+                "challenge": {
+                    "type": "string",
+                    "enum": [
+                        "NEW_PASSWORD_REQUIRED",
+                        "MFA_SETUP",
+                        "SOFTWARE_TOKEN_MFA"
+                    ],
+                    "example": "SOFTWARE_TOKEN_MFA"
+                }
+            }
+        },
         "models.StatusRes": {
             "type": "object",
             "properties": {

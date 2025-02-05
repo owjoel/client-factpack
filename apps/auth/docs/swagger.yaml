@@ -1,5 +1,15 @@
 basePath: /api/v1
 definitions:
+  models.AuthChallengeRes:
+    properties:
+      challenge:
+        enum:
+        - NEW_PASSWORD_REQUIRED
+        - MFA_SETUP
+        - SOFTWARE_TOKEN_MFA
+        example: SOFTWARE_TOKEN_MFA
+        type: string
+    type: object
   models.StatusRes:
     properties:
       status:
@@ -12,6 +22,43 @@ info:
   title: client-factpack/auth
   version: "1.0"
 paths:
+  /auth/changePassword:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        User submits the code from their authenticator app to verify the TOTP setup
+        Request must contain "session" cookie containing the session token to respond to the challenge
+        On success, the user can proceed to sign in again
+      parameters:
+      - in: formData
+        name: code
+        type: string
+      - in: formData
+        name: session
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Verify initial code from authenticator app
+      tags:
+      - auth
   /auth/confirmForgetPassword:
     post:
       consumes:
@@ -131,7 +178,8 @@ paths:
     post:
       consumes:
       - application/x-www-form-urlencoded
-      description: Cognito SSO login using username and password
+      description: Cognito SSO login using username and password, returns the next
+        auth challenge, either
       parameters:
       - example: "12345"
         in: formData
@@ -147,7 +195,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.StatusRes'
+            $ref: '#/definitions/models.AuthChallengeRes'
         "400":
           description: Bad Request
           schema:
@@ -165,6 +213,73 @@ paths:
           schema:
             $ref: '#/definitions/models.StatusRes'
       summary: Login
+      tags:
+      - auth
+  /auth/loginMFA:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        Responds to Congito auth challenge after successful credential sign in
+        Request must contain "session" cookie containing the session token to respond to the challenge
+      parameters:
+      - in: formData
+        name: code
+        type: string
+      - in: formData
+        name: session
+        type: string
+      - in: formData
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Submit user TOTP code from authenticator app for all subsequent log
+        ins.
+      tags:
+      - auth
+  /auth/setupMFA:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        Submit GET query to cognito to obtain an OTP token.
+        The user can use this token to set up their authenticator app, either through QR code or by manual keying in of the token.
+        Request must contain "session" cookie containing the session token to respond to the challenge
+        On success, the token is returned, and the cookie is updated for the next auth step
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthChallengeRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Get OTP Token for setting up TOTP authenticator
       tags:
       - auth
   /health:

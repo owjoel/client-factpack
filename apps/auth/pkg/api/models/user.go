@@ -40,8 +40,8 @@ type ConfirmForgetPasswordReq struct {
 
 // SetNewPasswordReq represents the request payload for setting a new password.
 type SetNewPasswordReq struct {
-	Username    string `form:"username"`
-	NewPassword string `form:"newPassword"`
+	Username    string `form:"username" example:"joel.ow.2022"`
+	NewPassword string `form:"newPassword" example:"ABCDEF"`
 	Session     string
 }
 
@@ -65,7 +65,7 @@ type AuthenticationRes struct {
 
 // AuthChallengeRes represents the response payload for an authentication challenge.
 type AuthChallengeRes struct {
-	Challenge string `json:"challenge" example:"SOFTWARE_TOKEN_MFA"`
+	Challenge string `json:"challenge" example:"SOFTWARE_TOKEN_MFA" enums:"NEW_PASSWORD_REQUIRED,MFA_SETUP,SOFTWARE_TOKEN_MFA"`
 }
 
 // AssociateTokenRes represents the response payload for associating a software token.
