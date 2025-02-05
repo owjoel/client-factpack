@@ -9,6 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Authenticate is a middleware that checks if the user is authenticated by validating the "accessToken" cookie.
+// If the cookie is missing or invalid, it returns a 403 Forbidden response.
+// Otherwise, it sets the token in the context for downstream handlers to use.
 func (h *UserHandler) Authenticate(c *gin.Context) {
 	token, err := c.Cookie("accessToken")
 	if err != nil {
@@ -21,6 +24,9 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 	c.Next()
 }
 
+// VerifyMFA verifies the user's multi-factor authentication (MFA) setup using their access token.
+// It retrieves the "accessToken" from the context, and if it doesn't exist, returns a 403 Forbidden response.
+// If the token exists, it prepares the input for associating an MFA software token with AWS Cognito.
 func (h *UserHandler) VerifyMFA(c *gin.Context) {
 	token, exists := c.Get("accessToken")
 	if !exists {

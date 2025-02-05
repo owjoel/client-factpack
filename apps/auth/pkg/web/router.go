@@ -19,10 +19,12 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// Router represents the router for the web service.
 type Router struct {
 	*gin.Engine
 }
 
+// NewRouter creates a new router.
 func NewRouter() *Router {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
@@ -62,6 +64,7 @@ func NewRouter() *Router {
 	return &Router{router}
 }
 
+// Run starts the web service.
 func (r *Router) Run() {
 	port := config.GetPort(8080)
 	srv := &http.Server{
@@ -91,6 +94,7 @@ func (r *Router) Run() {
 
 }
 
+// Run starts the web service.
 func Run() {
 	NewRouter().Run()
 }
