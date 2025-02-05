@@ -12,6 +12,7 @@ func isErrOfType[T error](err error) bool {
 	return errors.As(err, &target)
 }
 
+// CognitoErrorHandler handles errors from Cognito
 func CognitoErrorHandler(err error) (int, string) {
 	switch {
 	case isErrOfType[*types.UserNotFoundException](err):
