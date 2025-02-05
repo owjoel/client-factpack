@@ -1,4 +1,4 @@
-// Cognito init and config variables needed
+// Package auth is used to initialize the Cognito client and define the user groups.
 package auth
 
 import (
@@ -10,11 +10,16 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 )
 
+/*
+AdminGroup is the group name for admin users
+AgentGroup is the group name for agent users
+*/
 var (
 	AdminGroup = "admin"
 	AgentGroup = "agent"
 )
 
+// Init initializes the Cognito client
 func Init() *cognitoidentityprovider.Client {
 	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {

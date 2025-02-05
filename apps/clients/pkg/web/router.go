@@ -10,62 +10,37 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"github.com/owjoel/client-factpack/apps/auth/config"
-	"github.com/owjoel/client-factpack/apps/auth/pkg/web/handlers"
+	"github.com/owjoel/client-factpack/apps/clients/config"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/storage"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/web/handlers"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// Router represents the router for the web service.
 type Router struct {
 	*gin.Engine
 }
 
-// NewRouter creates a new router.
 func NewRouter() *Router {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
-	// enable CORS
-	router.Use(
-		cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost:5173"},
-			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-			AllowHeaders:     []string{"Content-Type", "Authorization"},
-			AllowCredentials: true,
-		}),
-	)
-
 	pprof.Register(router)
 
+	storage.Init()
 	handler := handlers.New()
 
 	// Use RPC styling rather than REST
 	v1API := router.Group("/api/v1")
 	v1API.GET("/health", handler.HealthCheck)
-	{
-		auth := v1API.Group("/auth")
-		auth.POST("/createUser", handler.CreateUser)
-		auth.POST("/forgetPassword", handler.ForgetPassword)
-		auth.POST("/confirmForgetPassword", handler.ConfirmForgetPassword)
-
-		auth.POST("/login", handler.UserLogin)
-		auth.POST("/changePassword", handler.UserInitialChangePassword)
-		auth.GET("/setupMFA", handler.UserSetupMFA)
-		auth.POST("/verifyMFA", handler.UserVerifyMFA)
-		auth.POST("/loginMFA", handler.UserLoginMFA)
-		auth.GET("/checkUser", handler.Authenticate, handler.HealthCheck)
-	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	return &Router{router}
 }
 
-// Run starts the web service.
 func (r *Router) Run() {
 	port := config.GetPort(8080)
 	srv := &http.Server{
@@ -95,7 +70,6 @@ func (r *Router) Run() {
 
 }
 
-// Run starts the web service.
 func Run() {
 	NewRouter().Run()
 }
