@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/auth/changePassword": {
             "post": {
-                "description": "User submits the code from their authenticator app to verify the TOTP setup\nRequest must contain \"session\" cookie containing the session token to respond to the challenge\nOn success, the user can proceed to sign in again",
+                "description": "Users are required to change password on first time login, using their username and password sent via email.\nSubmit The user's username and new password to respond to this auth challenge.\nRequest must contain \"session\" cookie containing the session token to respond to the challenge\nOn success, responds with next auth challenge, which should be to set up MFA",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -27,16 +27,23 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "Verify initial code from authenticator app",
+                "summary": "Change Password for first-time Login",
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "code",
+                        "example": "ABCDEF",
+                        "name": "newPassword",
                         "in": "formData"
                     },
                     {
                         "type": "string",
                         "name": "session",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "example": "joel.ow.2022",
+                        "name": "username",
                         "in": "formData"
                     }
                 ],
@@ -44,7 +51,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.StatusRes"
+                            "$ref": "#/definitions/models.AuthChallengeRes"
                         }
                     },
                     "400": {
@@ -55,12 +62,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/models.StatusRes"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/models.StatusRes"
                         }
@@ -137,7 +138,7 @@ const docTemplate = `{
         },
         "/auth/createUser": {
             "post": {
-                "description": "Admin registers user with Cognito user pool via email and password",
+                "description": "Admin registers user with Cognito user pool via email. Cognito sends an email with a temporary password to the user.",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -173,12 +174,6 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/models.StatusRes"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/models.StatusRes"
                         }
@@ -384,6 +379,59 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.SetupMFARes"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/verifyMFA": {
+            "post": {
+                "description": "User submits the code from their authenticator app to verify the TOTP setup\nRequest must contain \"session\" cookie containing the session token to respond to the challenge\nOn success, the user can proceed to sign in again",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Verify initial code from authenticator app",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "code",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "session",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
                         }
                     },
                     "401": {

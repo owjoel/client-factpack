@@ -28,42 +28,71 @@ func NewUserService() *UserService {
 	return &UserService{CognitoClient: auth.Init()}
 }
 
-// SignUpUser registers user with Cognito user pool via email and password
-func (s *UserService) SignUpUser(ctx context.Context, r models.SignUpReq) error {
-	username, err := createUsername((r.Email))
+func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
+	username, err := createUsername(r.Email)
 	if err != nil {
-		return fmt.Errorf("error create username: %w", err)
+		return fmt.Errorf("error creating username: %w", err)
 	}
 
-	
-
-	input := &cip.SignUpInput{
-		ClientId:   aws.String(config.ClientID),
+	output, err := s.CognitoClient.AdminCreateUser(ctx, &cip.AdminCreateUserInput{
+		UserPoolId: aws.String(config.UserPoolID),
 		Username:   aws.String(username),
-		Password:   aws.String(r.Password),
-		SecretHash: aws.String(CalculateSecretHash(username)),
-		UserAttributes: []types.AttributeType{{
-			Name: aws.String("email"), Value: aws.String(r.Email),
-		}},
-	}
-
-	_, err = s.CognitoClient.SignUp(ctx, input)
+		UserAttributes: []types.AttributeType{
+			{Name: aws.String("email"), Value: aws.String(r.Email)},
+			{Name: aws.String("email_verified"), Value: aws.String("true")},
+		},
+	})
 	if err != nil {
 		return fmt.Errorf("error during sign up: %w", err)
 	}
-	log.Printf("User %s created", username)
+	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
 
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
-		GroupName:  aws.String(auth.AdminGroup),
+		GroupName: aws.String(auth.AdminGroup),
 		UserPoolId: aws.String(config.UserPoolID),
-		Username:   aws.String(username),
+		Username: aws.String(username),
 	})
 	if err != nil {
 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
 	}
 	return nil
 }
+
+// SignUpUser registers user with Cognito user pool via email and password
+// func (s *UserService) SignUpUser(ctx context.Context, r models.SignUpReq) error {
+// 	username, err := createUsername((r.Email))
+// 	if err != nil {
+// 		return fmt.Errorf("error create username: %w", err)
+// 	}
+
+// 	input := &cip.SignUpInput{
+// 		ClientId:   aws.String(config.ClientID),
+// 		Username:   aws.String(username),
+// 		Password:   aws.String(r.Password),
+// 		SecretHash: aws.String(CalculateSecretHash(username)),
+// 		UserAttributes: []types.AttributeType{{
+// 			Name: aws.String("email"), Value: aws.String(r.Email),
+// 		}},
+// 	}
+
+// 	_, err = s.CognitoClient.SignUp(ctx, input)
+// 	if err != nil {
+// 		return fmt.Errorf("error during sign up: %w", err)
+// 	}
+// 	log.Printf("User %s created", username)
+
+// 	// Add User to Group. Allow fail, add user in through AWS console
+// 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
+// 		GroupName:  aws.String(auth.AdminGroup),
+// 		UserPoolId: aws.String(config.UserPoolID),
+// 		Username:   aws.String(username),
+// 	})
+// 	if err != nil {
+// 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
+// 	}
+// 	return nil
+// }
 
 func createUsername(email string) (string, error) {
 	username := strings.Split(email, "@")[0]

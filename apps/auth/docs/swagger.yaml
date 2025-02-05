@@ -32,15 +32,21 @@ paths:
       consumes:
       - application/x-www-form-urlencoded
       description: |-
-        User submits the code from their authenticator app to verify the TOTP setup
+        Users are required to change password on first time login, using their username and password sent via email.
+        Submit The user's username and new password to respond to this auth challenge.
         Request must contain "session" cookie containing the session token to respond to the challenge
-        On success, the user can proceed to sign in again
+        On success, responds with next auth challenge, which should be to set up MFA
       parameters:
-      - in: formData
-        name: code
+      - example: ABCDEF
+        in: formData
+        name: newPassword
         type: string
       - in: formData
         name: session
+        type: string
+      - example: joel.ow.2022
+        in: formData
+        name: username
         type: string
       produces:
       - application/json
@@ -48,7 +54,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.StatusRes'
+            $ref: '#/definitions/models.AuthChallengeRes'
         "400":
           description: Bad Request
           schema:
@@ -57,11 +63,7 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/models.StatusRes'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/models.StatusRes'
-      summary: Verify initial code from authenticator app
+      summary: Change Password for first-time Login
       tags:
       - auth
   /auth/confirmForgetPassword:
@@ -113,7 +115,8 @@ paths:
     post:
       consumes:
       - application/x-www-form-urlencoded
-      description: Admin registers user with Cognito user pool via email and password
+      description: Admin registers user with Cognito user pool via email. Cognito
+        sends an email with a temporary password to the user.
       parameters:
       - description: User's email address
         in: formData
@@ -134,10 +137,6 @@ paths:
             $ref: '#/definitions/models.StatusRes'
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/models.StatusRes'
-        "403":
-          description: Forbidden
           schema:
             $ref: '#/definitions/models.StatusRes'
         "500":
@@ -289,6 +288,43 @@ paths:
           schema:
             $ref: '#/definitions/models.StatusRes'
       summary: Get OTP Token for setting up TOTP authenticator
+      tags:
+      - auth
+  /auth/verifyMFA:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        User submits the code from their authenticator app to verify the TOTP setup
+        Request must contain "session" cookie containing the session token to respond to the challenge
+        On success, the user can proceed to sign in again
+      parameters:
+      - in: formData
+        name: code
+        type: string
+      - in: formData
+        name: session
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Verify initial code from authenticator app
       tags:
       - auth
   /health:

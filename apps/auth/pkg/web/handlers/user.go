@@ -5,14 +5,12 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/errors"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/services"
-	"github.com/owjoel/client-factpack/apps/auth/pkg/utils"
 )
 
 // UserHandler represents the handler for user operations.
@@ -38,7 +36,7 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 
 // CreateUser registers user with Cognito user pool via email and password
 //	@Summary		Create Users
-//	@Description	Admin registers user with Cognito user pool via email and password
+//	@Description	Admin registers user with Cognito user pool via email. Cognito sends an email with a temporary password to the user.
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
@@ -46,7 +44,6 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 //	@Param			password	formData	string	true	"User's password"
 //	@Success		200			{object}	models.StatusRes
 //	@Failure		400			{object}	models.StatusRes
-//	@Failure		403			{object}	models.StatusRes
 //	@Failure		500			{object}	models.StatusRes
 //	@Router			/auth/createUser [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
@@ -62,14 +59,8 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Email"})
 		return
 	}
-	// Validate email domain
-	domain := strings.Split(req.Email, "@")[1]
-	if !utils.IsAllowedDomain(domain) {
-		c.JSON(http.StatusForbidden, models.StatusRes{Status: "You cannot access this system."})
-		return
-	}
 
-	if err := h.service.SignUpUser(c.Request.Context(), req); err != nil {
+	if err := h.service.AdminCreateUser(c.Request.Context(), req); err != nil {
 		fmt.Println(err)
 		c.JSON(http.StatusInternalServerError, models.StatusRes{Status: "Failed to sign up user"})
 		return
