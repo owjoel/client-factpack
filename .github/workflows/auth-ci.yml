@@ -11,6 +11,9 @@ on:
       - main
     paths:
       - 'apps/auth/**'
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   # Code Analysis Job
