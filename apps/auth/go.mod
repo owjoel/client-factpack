@@ -5,6 +5,8 @@ go 1.23
 toolchain go1.23.5
 
 require (
+	github.com/MicahParks/keyfunc/v2 v2.1.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/PuerkitoBio/purell v1.2.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect

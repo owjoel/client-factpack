@@ -57,6 +57,7 @@ func NewRouter() *Router {
 		auth.GET("/setupMFA", handler.UserSetupMFA)
 		auth.POST("/verifyMFA", handler.UserVerifyMFA)
 		auth.POST("/loginMFA", handler.UserLoginMFA)
+		auth.GET("/checkUser", handler.Authenticate, handler.HealthCheck)
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

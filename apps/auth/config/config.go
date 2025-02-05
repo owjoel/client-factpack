@@ -18,6 +18,7 @@ var (
 	ClientID          = os.Getenv("COGNITO_USERPOOL_CLIENT_ID")
 	ClientSecret      = os.Getenv("COGNITO_USERPOOL_CLIENT_SECRET")
 	UserPoolID        = os.Getenv("COGNITO_USERPOOL_ID")
+	AwsRegion         = os.Getenv("AWS_REGION")
 	AutoResetPassword = os.Getenv("AUTO_RESET_PASSWORD") // temp flag
 )
 

@@ -101,8 +101,10 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 	return nil
 }
 
+
 // UserLogin authenticates user with Cognito user pool via email and password
 func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error) {
+
 
 	input := &cip.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
