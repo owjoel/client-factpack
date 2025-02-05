@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 )
 
 /*
@@ -15,12 +16,17 @@ Configuration variables sourced from environment variables:
 */
 var (
 	Host              = os.Getenv("HOST")
+	AllowedDoamins	  = GetDomains()
 	ClientID          = os.Getenv("COGNITO_USERPOOL_CLIENT_ID")
 	ClientSecret      = os.Getenv("COGNITO_USERPOOL_CLIENT_SECRET")
 	UserPoolID        = os.Getenv("COGNITO_USERPOOL_ID")
 	AwsRegion         = os.Getenv("AWS_REGION")
 	AutoResetPassword = os.Getenv("AUTO_RESET_PASSWORD") // temp flag
 )
+
+func GetDomains() []string {
+	return strings.Split(os.Getenv("ALLOWED_EMAIL_DOMAINS"), ",")
+}
 
 // GetPort returns the port number from the environment variable PORT.
 func GetPort(defaultPort int) int {

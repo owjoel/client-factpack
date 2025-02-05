@@ -10,6 +10,11 @@ definitions:
         example: SOFTWARE_TOKEN_MFA
         type: string
     type: object
+  models.SetupMFARes:
+    properties:
+      token:
+        type: string
+    type: object
   models.StatusRes:
     properties:
       status:
@@ -129,6 +134,10 @@ paths:
             $ref: '#/definitions/models.StatusRes'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/models.StatusRes'
         "500":
@@ -270,7 +279,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.AuthChallengeRes'
+            $ref: '#/definitions/models.SetupMFARes'
         "401":
           description: Unauthorized
           schema:

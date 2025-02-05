@@ -177,6 +177,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.StatusRes"
                         }
                     },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -377,7 +383,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.AuthChallengeRes"
+                            "$ref": "#/definitions/models.SetupMFARes"
                         }
                     },
                     "401": {
@@ -428,6 +434,14 @@ const docTemplate = `{
                         "SOFTWARE_TOKEN_MFA"
                     ],
                     "example": "SOFTWARE_TOKEN_MFA"
+                }
+            }
+        },
+        "models.SetupMFARes": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
                 }
             }
         },

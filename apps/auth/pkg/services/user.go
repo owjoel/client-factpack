@@ -35,6 +35,8 @@ func (s *UserService) SignUpUser(ctx context.Context, r models.SignUpReq) error 
 		return fmt.Errorf("error create username: %w", err)
 	}
 
+	
+
 	input := &cip.SignUpInput{
 		ClientId:   aws.String(config.ClientID),
 		Username:   aws.String(username),
