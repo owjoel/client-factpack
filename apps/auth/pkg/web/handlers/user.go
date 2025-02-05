@@ -5,12 +5,14 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/errors"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/services"
+	"github.com/owjoel/client-factpack/apps/auth/pkg/utils"
 )
 
 // UserHandler represents the handler for user operations.
@@ -44,6 +46,7 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 //	@Param			password	formData	string	true	"User's password"
 //	@Success		200			{object}	models.StatusRes
 //	@Failure		400			{object}	models.StatusRes
+//	@Failure		403			{object}	models.StatusRes
 //	@Failure		500			{object}	models.StatusRes
 //	@Router			/auth/createUser [post]
 func (h *UserHandler) CreateUser(c *gin.Context) {
@@ -56,6 +59,11 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	// Validate email
 	if _, err := mail.ParseAddress(req.Email); err != nil {
 		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Email"})
+	}
+	// Validate email domain
+	domain := strings.Split(req.Email, "@")[1]
+	if !utils.IsAllowedDomain(domain) {
+		c.JSON(http.StatusForbidden, models.StatusRes{Status: "You cannot access this system."})
 	}
 
 	if err := h.service.SignUpUser(c.Request.Context(), req); err != nil {
@@ -176,7 +184,7 @@ func (h *UserHandler) UserInitialChangePassword(c *gin.Context) {
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
-//	@Success		200	{object}	models.AuthChallengeRes
+//	@Success		200	{object}	models.SetupMFARes
 //	@Failure		401	{object}	models.StatusRes
 //	@Failure		500	{object}	models.StatusRes
 //	@Router			/auth/setupMFA [get]
