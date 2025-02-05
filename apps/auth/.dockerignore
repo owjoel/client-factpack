@@ -5,6 +5,7 @@ Dockerfile
 .dockerignore
 
 *.env
+*.sh
 
 # Binaries and outputs
 dist/
