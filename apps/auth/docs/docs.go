@@ -37,11 +37,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "session",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
                         "example": "joel.ow.2022",
                         "name": "username",
                         "in": "formData"
@@ -305,7 +300,7 @@ const docTemplate = `{
         },
         "/auth/loginMFA": {
             "post": {
-                "description": "Responds to Congito auth challenge after successful credential sign in\nRequest must contain \"session\" cookie containing the session token to respond to the challenge",
+                "description": "Responds to Cognito auth challenge after successful credential sign in\nRequest must contain \"session\" cookie containing the session token to respond to the challenge",
                 "consumes": [
                     "application/x-www-form-urlencoded"
                 ],
@@ -320,11 +315,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "code",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "session",
                         "in": "formData"
                     },
                     {
@@ -413,11 +403,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "code",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "session",
                         "in": "formData"
                     }
                 ],

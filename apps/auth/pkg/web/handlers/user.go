@@ -241,7 +241,7 @@ func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 }
 
 //	@Summary		Submit user TOTP code from authenticator app for all subsequent log ins. 
-//	@Description	Responds to Congito auth challenge after successful credential sign in
+//	@Description	Responds to Cognito auth challenge after successful credential sign in
 //	@Description	Request must contain "session" cookie containing the session token to respond to the challenge
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded

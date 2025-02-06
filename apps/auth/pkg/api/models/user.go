@@ -10,7 +10,7 @@ type User struct {
 
 // SignUpReq represents the request payload for user sign up.
 type SignUpReq struct {
-	Email    string `form:"email" example:"example@gmail.com"`
+	Email string `form:"email" example:"example@gmail.com"`
 	// Password string `form:"password" binding:"required"`
 }
 
@@ -42,7 +42,7 @@ type ConfirmForgetPasswordReq struct {
 type SetNewPasswordReq struct {
 	Username    string `form:"username" example:"joel.ow.2022"`
 	NewPassword string `form:"newPassword" example:"ABCDEF"`
-	Session     string
+	Session     string `json:"-"`
 }
 
 // SetNewPasswordRes represents the response payload for setting a new password.
@@ -54,7 +54,7 @@ type SetNewPasswordRes struct {
 // VerifyMFAReq represents the request payload for verifying MFA.
 type VerifyMFAReq struct {
 	Code    string `form:"code"`
-	Session string
+	Session string `json:"-"`
 }
 
 // AuthenticationRes represents the response payload for user authentication.
@@ -83,7 +83,7 @@ type SetupMFARes struct {
 type SignInMFAReq struct {
 	Username string `form:"username"`
 	Code     string `form:"code"`
-	Session  string
+	Session  string `json:"-"`
 }
 
 // StatusRes represents the response payload for status messages.

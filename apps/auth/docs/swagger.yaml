@@ -41,9 +41,6 @@ paths:
         in: formData
         name: newPassword
         type: string
-      - in: formData
-        name: session
-        type: string
       - example: joel.ow.2022
         in: formData
         name: username
@@ -228,14 +225,11 @@ paths:
       consumes:
       - application/x-www-form-urlencoded
       description: |-
-        Responds to Congito auth challenge after successful credential sign in
+        Responds to Cognito auth challenge after successful credential sign in
         Request must contain "session" cookie containing the session token to respond to the challenge
       parameters:
       - in: formData
         name: code
-        type: string
-      - in: formData
-        name: session
         type: string
       - in: formData
         name: username
@@ -301,9 +295,6 @@ paths:
       parameters:
       - in: formData
         name: code
-        type: string
-      - in: formData
-        name: session
         type: string
       produces:
       - application/json
