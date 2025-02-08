@@ -90,3 +90,7 @@ type SignInMFAReq struct {
 type StatusRes struct {
 	Status string `json:"status"`
 }
+
+type VerifyEmailReq struct {
+	Code string `form:"code"`
+}

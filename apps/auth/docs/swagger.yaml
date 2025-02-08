@@ -197,8 +197,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "202":
+          description: Accepted
           schema:
             $ref: '#/definitions/models.AuthChallengeRes'
         "400":
@@ -257,6 +257,38 @@ paths:
         ins.
       tags:
       - auth
+  /auth/sendVerificationEmail:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Trigger Cognito to send verification email to the user using their
+        access token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Send Verification Email
+      tags:
+      - auth
   /auth/setupMFA:
     get:
       consumes:
@@ -282,6 +314,41 @@ paths:
           schema:
             $ref: '#/definitions/models.StatusRes'
       summary: Get OTP Token for setting up TOTP authenticator
+      tags:
+      - auth
+  /auth/verifyEmail:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Verify user's email using their access token
+      parameters:
+      - in: formData
+        name: code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Veriy Email
       tags:
       - auth
   /auth/verifyMFA:

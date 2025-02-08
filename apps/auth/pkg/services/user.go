@@ -49,9 +49,9 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
-		GroupName: aws.String(auth.AdminGroup),
+		GroupName:  aws.String(auth.AdminGroup),
 		UserPoolId: aws.String(config.UserPoolID),
-		Username: aws.String(username),
+		Username:   aws.String(username),
 	})
 	if err != nil {
 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
@@ -132,10 +132,8 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 	return nil
 }
 
-
 // UserLogin authenticates user with Cognito user pool via email and password
 func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error) {
-
 
 	input := &cip.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
@@ -263,6 +261,13 @@ func (s *UserService) SignInMFA(ctx context.Context, r models.SignInMFAReq) (mod
 	if err != nil {
 		return models.AuthenticationRes{}, fmt.Errorf("failed to sign in with MFA: %w", err)
 	}
+
+	// Email check
+	err = s.CheckEmailVerified(ctx, *res.AuthenticationResult.AccessToken)
+	if err != nil {
+		return models.AuthenticationRes{Result: *res.AuthenticationResult, Challenge: "EMAIL_NOT_VERIFIED"}, nil
+	}
+
 	return models.AuthenticationRes{Result: *res.AuthenticationResult, Challenge: getChallengeName(res.ChallengeName)}, nil
 }
 
@@ -281,6 +286,57 @@ func (s *UserService) ConfirmForgetPassword(ctx context.Context, r models.Confir
 		fmt.Printf("failed to confirm password reset: %s\n", err)
 		return err
 	}
+	return nil
+}
+
+func (s *UserService) CheckEmailVerified(ctx context.Context, accessToken string) error {
+	input := &cip.GetUserInput{
+		AccessToken: &accessToken,
+	}
+
+	res, err := s.CognitoClient.GetUser(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to get user: %w", err)
+	}
+
+	for _, attr := range res.UserAttributes {
+		if attr.Name != nil && *attr.Name == "email_verified" {
+			if attr.Value != nil && *attr.Value == "false" {
+				return fmt.Errorf("email not verified")
+			}
+			return nil
+		}
+	}
+
+	return fmt.Errorf("email_verified attribute not found")
+}
+
+func (s *UserService) SendVerificationEmail(ctx context.Context, accessToken string) error {
+	input := &cip.GetUserAttributeVerificationCodeInput{
+		AccessToken:   &accessToken,
+		AttributeName: aws.String("email"),
+	}
+
+	_, err := s.CognitoClient.GetUserAttributeVerificationCode(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to send verification code: %w", err)
+	}
+
+	return nil
+}
+
+func (s *UserService) VerifyEmail(ctx context.Context, accessToken string, r models.VerifyEmailReq) error {
+	input := &cip.VerifyUserAttributeInput{
+		AccessToken:   &accessToken,
+		AttributeName: aws.String("email"),
+		Code:          aws.String(r.Code),
+	}
+
+	_, err := s.CognitoClient.VerifyUserAttribute(ctx, input)
+	if err != nil {
+		return fmt.Errorf("failed to verify email: %w", err)
+	}
+
 	return nil
 }
 
