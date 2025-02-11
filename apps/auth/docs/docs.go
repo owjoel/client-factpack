@@ -351,6 +351,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/logout": {
+            "post": {
+                "description": "Clears the session by expiring the cookies containing the JWT tokens",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Logout User",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.StatusRes"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/setupMFA": {
             "get": {
                 "description": "Submit GET query to cognito to obtain an OTP token.\nThe user can use this token to set up their authenticator app, either through QR code or by manual keying in of the token.\nRequest must contain \"session\" cookie containing the session token to respond to the challenge\nOn success, the token is returned, and the cookie is updated for the next auth step",

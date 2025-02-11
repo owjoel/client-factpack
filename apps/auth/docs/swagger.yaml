@@ -257,6 +257,19 @@ paths:
         ins.
       tags:
       - auth
+  /auth/logout:
+    post:
+      description: Clears the session by expiring the cookies containing the JWT tokens
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.StatusRes'
+      summary: Logout User
+      tags:
+      - auth
   /auth/setupMFA:
     get:
       consumes:

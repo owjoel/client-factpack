@@ -312,3 +312,18 @@ func (h *UserHandler) ConfirmForgetPassword(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"status": "Successfully reset password"})
 }
+
+// Logout clears the access token and ID token by expiring their cookies
+// @Summary Logout User
+// @Description Clears the session by expiring the cookies containing the JWT tokens
+// @Tags auth
+// @Produce json
+// @Success 200 {object} models.StatusRes
+//	@Router			/auth/logout [post]
+func (h *UserHandler) UserLogout(c *gin.Context) {
+	c.SetCookie("access_token","", -1, "/", config.Host, false, true)
+	c.SetCookie("id_token","", -1, "/", config.Host, false, true)
+	c.SetCookie("session","", -1, "/", config.Host, false, true)
+
+	c.JSON(http.StatusOK, gin.H{"status": "Logout successful"})
+}
