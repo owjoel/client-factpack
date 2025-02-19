@@ -11,20 +11,23 @@ import (
 // Mock Service for Account Management
 type MockAccountService struct{}
 
-// Simulating successful user signup
+// Simulating Non-Existent User Login
+func (m *MockAccountService) Login(req models.LoginReq) (models.LoginRes, error) {
+	if req.Username == "unknownuser" {
+		return models.LoginRes{}, errors.New("user not found")
+	}
+	if req.Username == "testuser" && req.Password == "correctpassword" {
+		return models.LoginRes{Challenge: "", Session: "valid-session"}, nil
+	}
+	return models.LoginRes{}, errors.New("invalid credentials")
+}
+
+// Simulating Weak Password Validation (if needed)
 func (m *MockAccountService) SignUp(user models.SignUpReq) error {
 	if user.Email == "existing@gmail.com" {
 		return errors.New("user already exists")
 	}
 	return nil
-}
-
-// Simulating user login
-func (m *MockAccountService) Login(req models.LoginReq) (models.LoginRes, error) {
-	if req.Username == "testuser" && req.Password == "correctpassword" {
-		return models.LoginRes{Challenge: "", Session: "valid-session"}, nil
-	}
-	return models.LoginRes{}, errors.New("invalid credentials")
 }
 
 // Simulating forgotten password flow
@@ -35,7 +38,7 @@ func (m *MockAccountService) ForgetPassword(req models.ForgetPasswordReq) error 
 	return nil
 }
 
-// Simulating MFA verification
+// Simulating MFA Verification
 func (m *MockAccountService) VerifyMFA(req models.VerifyMFAReq) error {
 	if req.Code == "123456" {
 		return nil
@@ -43,7 +46,7 @@ func (m *MockAccountService) VerifyMFA(req models.VerifyMFAReq) error {
 	return errors.New("invalid MFA code")
 }
 
-// ✅ **Unit Test: Sign Up**
+// **Unit Test: Sign Up**
 func TestSignUp(t *testing.T) {
 	service := &MockAccountService{}
 
@@ -61,7 +64,7 @@ func TestSignUp(t *testing.T) {
 	})
 }
 
-// ✅ **Unit Test: Login**
+// **Unit Test: Login**
 func TestLogin(t *testing.T) {
 	service := &MockAccountService{}
 
@@ -80,7 +83,7 @@ func TestLogin(t *testing.T) {
 	})
 }
 
-// ✅ **Unit Test: Forgot Password**
+// **Unit Test: Forgot Password**
 func TestForgetPassword(t *testing.T) {
 	service := &MockAccountService{}
 
@@ -98,7 +101,7 @@ func TestForgetPassword(t *testing.T) {
 	})
 }
 
-// ✅ **Unit Test: Verify MFA**
+// **Unit Test: Verify MFA**
 func TestVerifyMFA(t *testing.T) {
 	service := &MockAccountService{}
 
@@ -113,5 +116,17 @@ func TestVerifyMFA(t *testing.T) {
 		err := service.VerifyMFA(req)
 		assert.NotNil(t, err)
 		assert.Equal(t, "invalid MFA code", err.Error())
+	})
+}
+
+// **Additional: Non-Existent User Login**
+func TestLoginNonExistentUser(t *testing.T) {
+	service := &MockAccountService{}
+
+	t.Run("Non-Existent User", func(t *testing.T) {
+		req := models.LoginReq{Username: "unknownuser", Password: "randompassword"}
+		_, err := service.Login(req)
+		assert.NotNil(t, err)
+		assert.Equal(t, "user not found", err.Error())
 	})
 }
