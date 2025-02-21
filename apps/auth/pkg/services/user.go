@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	cip "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/owjoel/client-factpack/apps/auth/config"
@@ -25,7 +26,11 @@ type UserService struct {
 
 // NewUserService creates a new user service.
 func NewUserService() *UserService {
-	return &UserService{CognitoClient: auth.Init()}
+	return &UserService{
+		CognitoClient: auth.Init(func(ctx context.Context) (aws.Config, error) {
+			return awsconfig.LoadDefaultConfig(ctx)
+		}),
+	}
 }
 
 func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
@@ -49,9 +54,9 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
-		GroupName: aws.String(auth.AdminGroup),
+		GroupName:  aws.String(auth.AdminGroup),
 		UserPoolId: aws.String(config.UserPoolID),
-		Username: aws.String(username),
+		Username:   aws.String(username),
 	})
 	if err != nil {
 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
@@ -132,10 +137,8 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 	return nil
 }
 
-
 // UserLogin authenticates user with Cognito user pool via email and password
 func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error) {
-
 
 	input := &cip.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,

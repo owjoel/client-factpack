@@ -5,7 +5,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 )
 
@@ -18,9 +18,9 @@ var (
 	AgentGroup = "agent"
 )
 
-// Init initializes the Cognito client
-func Init() *cognitoidentityprovider.Client {
-	cfg, err := config.LoadDefaultConfig(context.Background())
+// Init initializes the Cognito client with a configurable loader function.
+func Init(loadConfig func(context.Context) (aws.Config, error)) *cognitoidentityprovider.Client {
+	cfg, err := loadConfig(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
