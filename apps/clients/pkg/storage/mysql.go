@@ -2,32 +2,44 @@ package storage
 
 import (
 	"fmt"
+	"log"
 	"time"
 
+	"github.com/owjoel/client-factpack/apps/clients/config"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-type Client struct {
-	gorm.Model
-	Name        string `gorm:"name"`
-	Age         uint `gorm:"age"`
-	Nationality string `gorm:"nationality"`
-	Status string `gorm:"status"`
-}
-
-type ClientInterface interface {
-	Create(c *model.Client) error
-	Get(clientID uint) (*model.Client, error)
-	Update(c *model.Client) error
-	// Delete(c *model.Client) error
-}
-
-type ClientStorage struct {
+type SQLStorage struct {
 	*gorm.DB
 }
 
-func (s *ClientStorage) Get(clientID uint) (*model.Client, error) {
+func GetDSN() string {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		config.DBUser,
+		config.DBPassword,
+		config.DBHost,
+		config.DBPort,
+		config.DBName,
+	)
+	return dsn
+}
+
+func InitMySQL() *SQLStorage {
+	_db, err := gorm.Open(mysql.Open(GetDSN()), &gorm.Config{})
+	if err != nil {
+		panic("Failed to connect to database.")
+	}
+	log.Printf("Connected to DB")
+	if err := _db.AutoMigrate(&Client{}); err != nil {
+		panic("Failed to migrate resource model.")
+	}
+
+	return &SQLStorage{_db}
+}
+
+func (s *SQLStorage) Get(clientID uint) (*model.Client, error) {
 	var c Client
 	if res := s.DB.First(&c, clientID); res.Error != nil {
 		return nil, fmt.Errorf("Error retrieving from DB: %w", res.Error)
@@ -42,7 +54,7 @@ func (s *ClientStorage) Get(clientID uint) (*model.Client, error) {
 	}, nil
 }
 
-func (s *ClientStorage) Create(c *model.Client) error {
+func (s *SQLStorage) Create(c *model.Client) error {
 	client := Client{
 		Name: c.Name,
 		Age: c.Age,
@@ -55,7 +67,7 @@ func (s *ClientStorage) Create(c *model.Client) error {
 	return nil
 }
 
-func (s *ClientStorage) Update(c *model.Client) error {
+func (s *SQLStorage) Update(c *model.Client) error {
 	client := &Client{
 		Model: gorm.Model{ID: c.ID},
 		Name: c.Name,
@@ -67,11 +79,3 @@ func (s *ClientStorage) Update(c *model.Client) error {
 	}
 	return nil
 }
-
-// func (s *ClientStorage) Delete(c *model.Client) error {
-// 	client := &Client{Model: gorm.Model{ID: c.ID}}
-// 	if res := s.DB.Model(&client).Update("status", "Inactive"); res.Error != nil {
-// 		return fmt.Errorf("Error deactivating client in DB: %w", res.Error)
-// 	}
-// 	return nil
-// }
