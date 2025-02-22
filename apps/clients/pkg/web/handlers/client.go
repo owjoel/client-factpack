@@ -12,8 +12,8 @@ type ClientHandler struct {
 	service *service.ClientService
 }
 
-func New() *ClientHandler {
-	return &ClientHandler{service: service.NewClientService()}
+func New(service *service.ClientService) *ClientHandler {
+	return &ClientHandler{service: service}
 }
 
 func (h *ClientHandler) HealthCheck(c *gin.Context) {
