@@ -47,7 +47,7 @@ func (suite *ClientStorageTestSuite) TearDownSuite() {
 func (suite *ClientStorageTestSuite) TestCreateClient() {
 	suite.mock.ExpectBegin()
 	suite.mock.ExpectExec(".*").
-		// created_at, updated_at, deleted_at
+
 		WithArgs(sqlmock.AnyArg(), sqlmock.AnyArg(), sqlmock.AnyArg(), "DonaldTrump", 30, "USA", "Active").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	suite.mock.ExpectCommit()
@@ -60,26 +60,29 @@ func (suite *ClientStorageTestSuite) TestCreateClient() {
 	suite.NoError(err, "All expectations should be met")
 }
 
-
 func (suite *ClientStorageTestSuite) TestGetClient() {
+
+	currentTime := time.Now()
 	suite.mock.ExpectQuery(".*").
-		WithArgs(1, sqlmock.AnyArg()). // since it expects id, limit
+		WithArgs(1, sqlmock.AnyArg()).
 		WillReturnRows(sqlmock.NewRows([]string{"name", "age", "nationality", "status", "created_at", "updated_at", "deleted_at"}).
-			AddRow("Donald Trump", 30, "USA", "Active", time.Now(), time.Now(), nil)) // NOTE: will be deleted after every test
+			AddRow("Donald Trump", 30, "USA", "Active", currentTime, currentTime, nil))
 
 	client, err := suite.store.Get(1)
+
 	suite.NoError(err, "Get should not return an error")
 	suite.NotNil(client, "Client should not be nil")
-	suite.Equal("Donald Trump", client.Name)
-	suite.Equal(uint(30), client.Age)
-	suite.Equal("USA", client.Nationality)
-	suite.Equal("Active", client.Status)
+	suite.Equal("Donald Trump", client.Name, "Client name should match")
+	suite.Equal(uint(30), client.Age, "Client age should match")
+	suite.Equal("USA", client.Nationality, "Client nationality should match")
+	suite.Equal("Active", client.Status, "Client status should match")
 
 	err = suite.mock.ExpectationsWereMet()
 	suite.NoError(err, "All expectations should be met")
 }
 
 func (suite *ClientStorageTestSuite) TestUpdateClient() {
+
 	suite.mock.ExpectBegin()
 	suite.mock.ExpectExec(".*").
 		WithArgs(1, sqlmock.AnyArg(), "Elon Musk", 28, "Canada", 1).
@@ -87,7 +90,9 @@ func (suite *ClientStorageTestSuite) TestUpdateClient() {
 	suite.mock.ExpectCommit()
 
 	client := &model.Client{ID: 1, Name: "Elon Musk", Age: 28, Nationality: "Canada"}
+
 	err := suite.store.Update(client)
+
 	suite.NoError(err, "Update should not return an error")
 
 	err = suite.mock.ExpectationsWereMet()
