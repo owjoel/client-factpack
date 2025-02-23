@@ -7,16 +7,30 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/MicahParks/keyfunc/v2"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/lestrrat-go/jwx/v2/jwk"
+	"github.com/lestrrat-go/jwx/v2/jwa"
 )
 
-// Mock Keyfunc for JWKS retrieval
-func MockGetJWKS(awsRegion, cognitoUserPoolId string) (*keyfunc.JWKS, error) {
-	return &keyfunc.JWKS{}, nil
+// // Mock Keyfunc for JWKS retrieval
+// func MockGetJWKS(awsRegion, cognitoUserPoolId string) (*keyfunc.JWKS, error) {
+// 	return &keyfunc.JWKS{}, nil
+// }
+
+// Mock JWKS server
+type MockJWKSServer struct {
+	jwksJSON string
+	err      error
+}
+
+func (m *MockJWKSServer) GetJWKS(awsRegion, cognitoUserPoolId string) (jwk.Set, error) {
+	if m.err != nil {
+		return nil, m.err
+	}
+	return jwk.Parse([]byte(m.jwksJSON))
 }
 
 // Mock Cognito Client
@@ -126,13 +140,50 @@ func TestVerifyMFA_Failure(t *testing.T) {
 
 // Test: GetJWKS (Success Case)
 func TestGetJWKS_Success(t *testing.T) {
-	jwks, err := MockGetJWKS("us-east-1", "mock-userpool-id")
-	assert.Nil(t, err)
+	mockJWKSJSON := `{
+		"keys": [
+			{
+				"kid": "1234example=",
+				"alg": "RS256",
+				"kty": "RSA",
+				"e": "AQAB",
+				"n": "1234567890",
+				"use": "sig"
+			}
+		]
+	}`
+	
+	mockServer := &MockJWKSServer{jwksJSON: mockJWKSJSON}
+	
+	jwks, err := mockServer.GetJWKS("us-east-1", "us-east-1_examplepool")
+	
+	assert.NoError(t, err)
 	assert.NotNil(t, jwks)
+	assert.Equal(t, 1, jwks.Len())
+	
+	key, ok := jwks.LookupKeyID("1234example=")
+	assert.True(t, ok)
+	assert.Equal(t, jwa.RS256.String(), key.Algorithm().String())
 }
 
 // Test: GetJWKS (Failure Case)
 func TestGetJWKS_Failure(t *testing.T) {
-	_, err := MockGetJWKS("", "")
-	assert.Nil(t, err)
+	mockServer := &MockJWKSServer{err: errors.New("failed to fetch JWKS")}
+	
+	jwks, err := mockServer.GetJWKS("us-east-1", "us-east-1_examplepool")
+	
+	assert.Error(t, err)
+	assert.Nil(t, jwks)
+	assert.EqualError(t, err, "failed to fetch JWKS")
 }
+
+// func TestGetJWKS_InvalidJSON(t *testing.T) {
+// 	mockJWKSJSON := `{"invalid": "json"`
+// 	mockServer := &MockJWKSServer{jwksJSON: mockJWKSJSON}
+	
+// 	jwks, err := mockServer.GetJWKS("us-east-1", "us-east-1_examplepool")
+	
+// 	assert.Error(t, err)
+// 	assert.Nil(t, jwks)
+// 	assert.Contains(t, err.Error(), "invalid character")
+// }
