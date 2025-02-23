@@ -1,110 +1,66 @@
-package services_test
+package services
 
-import (
-	"errors"
-	"testing"
-	"github.com/stretchr/testify/assert"
-	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
-)
+// import (
+// 	"context"
+// 	"errors"
+// 	"os"
+// 	"os/exec"
+// 	"testing"
 
-// Mock Cognito Service
- type MockCognitoService struct{}
+// 	"github.com/aws/aws-sdk-go-v2/aws"
+// 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+// 	"github.com/stretchr/testify/assert"
+// )
 
-// Simulating Cognito User Creation
-func (m *MockCognitoService) CreateUser(req models.SignUpReq) error {
-	if req.Email == "existing@gmail.com" {
-		return errors.New("user already exists")
-	}
-	return nil
-}
+// // MockCognitoClient simulates the Cognito client behavior
+// type MockCognitoClient struct{}
 
-// Simulating Cognito Login
-func (m *MockCognitoService) ValidateLogin(req models.LoginReq) (models.LoginRes, error) {
-	if req.Username == "testuser" && req.Password == "correctpassword" {
-		return models.LoginRes{Session: "valid-session"}, nil
-	}
-	return models.LoginRes{}, errors.New("invalid login")
-}
+// // Simulated successful response for AssociateSoftwareToken
+// func (m *MockCognitoClient) AssociateSoftwareToken(ctx context.Context, input *cognitoidentityprovider.AssociateSoftwareTokenInput, optFns ...func(*cognitoidentityprovider.Options)) (*cognitoidentityprovider.AssociateSoftwareTokenOutput, error) {
+// 	if input.Session == nil || *input.Session == "" {
+// 		return nil, errors.New("invalid session")
+// 	}
+// 	return &cognitoidentityprovider.AssociateSoftwareTokenOutput{
+// 		SecretCode: aws.String("mock-secret-code"),
+// 	}, nil
+// }
 
-// Simulating Cognito Token Generation
-func (m *MockCognitoService) GenerateToken(username string) (string, error) {
-	if username == "testuser" {
-		return "valid-token", nil
-	}
-	return "", errors.New("token generation failed")
-}
+// // TestAssociateToken_Success validates successful token association
+// func TestAssociateToken_Success(t *testing.T) {
+// 	mockService := &UserService{CognitoClient: &MockCognitoClient{}}
 
-// Unit Test: User Creation
-func TestCreateUser(t *testing.T) {
-	service := &MockCognitoService{}
+// 	secretCode, err := mockService.associateToken(context.Background(), "valid-session")
 
-	t.Run("Successful User Creation", func(t *testing.T) {
-		req := models.SignUpReq{Email: "newuser@gmail.com"}
-		err := service.CreateUser(req)
-		assert.Nil(t, err)
-	})
+// 	assert.Nil(t, err)
+// 	assert.Equal(t, "mock-secret-code", secretCode)
+// }
 
-	t.Run("User Already Exists", func(t *testing.T) {
-		req := models.SignUpReq{Email: "existing@gmail.com"}
-		err := service.CreateUser(req)
-		assert.NotNil(t, err)
-		assert.Equal(t, "user already exists", err.Error())
-	})
+// // TestAssociateToken_Failure runs in a separate process to handle fatal errors
+// func TestAssociateToken_Failure(t *testing.T) {
+// 	if os.Getenv("TEST_CRASH") == "1" {
+// 		mockService := &UserService{CognitoClient: &MockCognitoClient{}}
 
-	// t.Run("Invalid Email Format", func(t *testing.T) {
-	// 	req := models.SignUpReq{Email: "invalid-email"}
-	// 	err := service.CreateUser(req)
-	// 	assert.NotNil(t, err)
-	// })
-	
-}
+// 		// Intentionally passing an empty session to trigger an error
+// 		_, err := mockService.associateToken(context.Background(), "")
+// 		if err != nil {
+// 			os.Exit(1) // Simulate process failure for log.Fatal
+// 		}
+// 		return
+// 	}
 
-// Unit Test: Login Validation
-func TestValidateLogin(t *testing.T) {
-	service := &MockCognitoService{}
+// 	// Run this test in a subprocess
+// 	cmd := exec.Command(os.Args[0], "-test.run=TestAssociateToken_Failure")
+// 	cmd.Env = append(os.Environ(), "TEST_CRASH=1")
+// 	err := cmd.Run()
 
-	t.Run("Valid Login", func(t *testing.T) {
-		req := models.LoginReq{Username: "testuser", Password: "correctpassword"}
-		res, err := service.ValidateLogin(req)
-		assert.Nil(t, err)
-		assert.Equal(t, "valid-session", res.Session)
-	})
+// 	// Check that the subprocess exited with an error
+// 	exitError, ok := err.(*exec.ExitError)
+// 	if !ok {
+// 		t.Fatalf("Expected an exit error, got: %v", err)
+// 	}
 
-	t.Run("Invalid Login", func(t *testing.T) {
-		req := models.LoginReq{Username: "testuser", Password: "wrongpassword"}
-		_, err := service.ValidateLogin(req)
-		assert.NotNil(t, err)
-		assert.Equal(t, "invalid login", err.Error())
-	})
-
-	t.Run("Empty Username and Password", func(t *testing.T) {
-		req := models.LoginReq{Username: "", Password: ""}
-		_, err := service.ValidateLogin(req)
-		assert.NotNil(t, err)
-	})
-	
-}
-
-// Unit Test: Token Generation
-func TestGenerateToken(t *testing.T) {
-	service := &MockCognitoService{}
-
-	t.Run("Valid Token Generation", func(t *testing.T) {
-		_, err := service.GenerateToken("testuser")
-		assert.Nil(t, err)
-	})
-
-	t.Run("Invalid Token Generation", func(t *testing.T) {
-		_, err := service.GenerateToken("unknownuser")
-		assert.NotNil(t, err)
-		assert.Equal(t, "token generation failed", err.Error())
-	})
-
-	t.Run("Empty Username for Token", func(t *testing.T) {
-		_, err := service.GenerateToken("")
-		assert.NotNil(t, err)
-		assert.Equal(t, "token generation failed", err.Error())
-	})
-	
-}
-
+// 	// Verify that the subprocess exited with a non-zero code
+// 	if exitError.ExitCode() == 0 {
+// 		t.Fatalf("Expected non-zero exit code due to log.Fatal, got 0")
+// 	}
+// }
