@@ -45,24 +45,22 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 //	@Success		200			{object}	models.StatusRes
 //	@Failure		400			{object}	models.StatusRes
 //	@Failure		500			{object}	models.StatusRes
-//	@Router			/auth/createUser [post]
-func (h *UserHandler) CreateUser(c *gin.Context) {
+//	@Router			/auth/createUser [post]func (h *UserHandler) CreateUser(c *gin.Context) {
 	var req models.SignUpReq
 	if err := c.ShouldBind(&req); err != nil {
-		fmt.Printf("%v", fmt.Errorf("error binding request: %w", err))
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Error"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
-	// Validate email
+	// Validate email format
 	if _, err := mail.ParseAddress(req.Email); err != nil {
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Email"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	if err := h.service.AdminCreateUser(c.Request.Context(), req); err != nil {
-		log.Printf("%v", err)
-		c.JSON(http.StatusInternalServerError, models.StatusRes{Status: "Failed to sign up user"})
+		log.Printf("Error creating user: %v", err)
+		errorResponse(c, errors.ErrServerError)
 		return
 	}
 	c.JSON(http.StatusCreated, models.StatusRes{Status: "Success"})
@@ -80,26 +78,22 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 //	@Failure		401		{object}	models.StatusRes
 //	@Failure		403		{object}	models.StatusRes
 //	@Failure		404		{object}	models.StatusRes
-//	@Router			/auth/forgetPassword [post]
-func (h *UserHandler) ForgetPassword(c *gin.Context) {
+//	@Router			/auth/forgetPassword [post]func (h *UserHandler) ForgetPassword(c *gin.Context) {
 	var req models.ForgetPasswordReq
 	if err := c.ShouldBind(&req); err != nil {
-		fmt.Printf("%v", fmt.Errorf("error binding request: %w", err))
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Error"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	if err := h.service.ForgetPassword(c.Request.Context(), req); err != nil {
-		status, message := errors.CognitoErrorHandler(err)
-		fmt.Println(status, message)
-		c.JSON(status, models.StatusRes{Status: message})
+		errorResponse(c, errors.CognitoErrorHandler(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "If you have an account, you will receive an email with instructions on how to reset your password."})
 }
 
-
+// UserLogin handles user login
 //	@Summary		Login
 //	@Description	Cognito SSO login using username and password, returns the next auth challenge, either 
 //	@Tags			auth
@@ -115,16 +109,13 @@ func (h *UserHandler) ForgetPassword(c *gin.Context) {
 func (h *UserHandler) UserLogin(c *gin.Context) {
 	var req models.LoginReq
 	if err := c.ShouldBind(&req); err != nil {
-		fmt.Printf("%v", fmt.Errorf("error binding request: %w", err))
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Form Data"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	res, err := h.service.UserLogin(c.Request.Context(), req)
 	if err != nil {
-		status, message := errors.CognitoErrorHandler(err)
-		log.Printf("Status: %d, Message: %s\n", status, message)
-		c.JSON(status, models.StatusRes{Status: message})
+		errorResponse(c, errors.CognitoErrorHandler(err))
 		return
 	}
 
@@ -133,7 +124,7 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, models.AuthChallengeRes{Challenge: res.Challenge})
 }
 
-
+// UserInitialChangePassword handles first-time login password change
 //	@Summary		Change Password for first-time Login
 //	@Description	Users are required to change password on first time login, using their username and password sent via email.
 //	@Description	Submit The user's username and new password to respond to this auth challenge.
@@ -150,27 +141,28 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 func (h *UserHandler) UserInitialChangePassword(c *gin.Context) {
 	var req models.SetNewPasswordReq
 	if err := c.ShouldBind(&req); err != nil {
-		log.Printf("%v", fmt.Errorf("error binding request: %w", err))
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Form Data"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	session, err := c.Cookie("session")
 	if err != nil {
-		log.Println("Missing session cookie for auth challenge")
-		c.JSON(http.StatusUnauthorized, models.StatusRes{Status: "Session cookie missing"})
+		errorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 	req.Session = session
 
 	res, err := h.service.SetNewPassword(c.Request.Context(), req)
 	if err != nil {
-		log.Printf("%v", fmt.Errorf("error while changing user password: %w", err))
+		errorResponse(c, errors.ErrServerError)
+		return
 	}
+
 	c.SetCookie("session", res.Session, 3600, "/", config.Host, false, true)
 	c.JSON(http.StatusOK, models.AuthChallengeRes{Challenge: res.Challenge})
 }
 
+// UserSetupMFA retrieves an OTP token for MFA setup
 //	@Summary		Get OTP Token for setting up TOTP authenticator
 //	@Description	Submit GET query to cognito to obtain an OTP token. 
 //	@Description	The user can use this token to set up their authenticator app, either through QR code or by manual keying in of the token.
@@ -186,21 +178,21 @@ func (h *UserHandler) UserInitialChangePassword(c *gin.Context) {
 func (h *UserHandler) UserSetupMFA(c *gin.Context) {
 	session, err := c.Cookie("session")
 	if err != nil {
-		log.Println("Missing session cookie for auth challenge")
-		c.JSON(http.StatusUnauthorized, models.StatusRes{Status: "Session cookie missing"})
+		errorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
 	res, err := h.service.SetupMFA(c.Request.Context(), session)
 	if err != nil {
-		log.Printf("%v", fmt.Errorf("error setting up mfa: %w", err))
-		c.JSON(http.StatusInternalServerError, models.StatusRes{Status: "Unable to return token. Please check server logs"})
+		errorResponse(c, errors.ErrServerError)
 		return
 	}
+
 	c.SetCookie("session", res.Session, 3600, "/", config.Host, false, true)
 	c.JSON(http.StatusOK, models.SetupMFARes{Token: res.Token})
 }
 
+// UserVerifyMFA verifies the MFA code
 //	@Summary		Verify initial code from authenticator app
 //	@Description	User submits the code from their authenticator app to verify the TOTP setup
 //	@Description	Request must contain "session" cookie containing the session token to respond to the challenge
@@ -217,29 +209,26 @@ func (h *UserHandler) UserSetupMFA(c *gin.Context) {
 func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 	var req models.VerifyMFAReq
 	if err := c.ShouldBind(&req); err != nil {
-		log.Printf("%v", fmt.Errorf("error binding request: %w", err))
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Form Data"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	session, err := c.Cookie("session")
 	if err != nil {
-		log.Println("Missing session cookie for auth challenge")
-		c.JSON(http.StatusUnauthorized, models.StatusRes{Status: "Session cookie missing"})
+		errorResponse(c, errors.ErrUnauthorized)
 		return
 	}
-
 	req.Session = session
 
 	if err := h.service.VerifyMFA(c.Request.Context(), req); err != nil {
-		log.Printf("%v", fmt.Errorf("error verifying MFA: %w", err))
-		c.JSON(http.StatusInternalServerError, models.StatusRes{Status: "Could not verify"})
+		errorResponse(c, errors.ErrServerError)
 		return
 	}
 
 	c.JSON(http.StatusOK, models.StatusRes{Status: "Success"})
 }
 
+// UserLoginMFA processes MFA login
 //	@Summary		Submit user TOTP code from authenticator app for all subsequent log ins. 
 //	@Description	Responds to Cognito auth challenge after successful credential sign in
 //	@Description	Request must contain "session" cookie containing the session token to respond to the challenge
@@ -255,34 +244,34 @@ func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 func (h *UserHandler) UserLoginMFA(c *gin.Context) {
 	var req models.SignInMFAReq
 	if err := c.ShouldBind(&req); err != nil {
-		log.Printf("%v", fmt.Errorf("error binding request: %w", err))
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Invalid Form Data"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	session, err := c.Cookie("session")
 	if err != nil {
-		log.Println("Missing session cookie for auth challenge")
-		c.JSON(http.StatusUnauthorized, models.StatusRes{Status: "Session cookie missing"})
+		errorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 	req.Session = session
 
 	auth, err := h.service.SignInMFA(c.Request.Context(), req)
 	if err != nil {
-		log.Printf("%v", fmt.Errorf("error verifying totp code: %w", err))
-		c.JSON(http.StatusInternalServerError, models.StatusRes{Status: "Unable to return token. Please check server logs"})
+		errorResponse(c, errors.ErrServerError)
 		return
 	}
 
 	if auth.Challenge != "" {
-		c.JSON(http.StatusUnauthorized, models.StatusRes{Status: "Unexpected challenge"})
+		errorResponse(c, errors.ErrUnauthorized)
+		return
 	}
+
 	c.SetCookie("access_token", *auth.Result.AccessToken, 3600, "/", config.Host, false, true)
 	c.SetCookie("id_token", *auth.Result.IdToken, 3600, "/", config.Host, false, true)
 	c.JSON(http.StatusOK, models.StatusRes{Status: "Login Successful"})
 }
 
+// ConfirmForgetPassword verifies the OTP for password reset
 //	@Summary		Confirm Forget Password
 //	@Description	Submit Cognito OTP sent to user's email to proceed with password reset
 //	@Tags			auth
@@ -298,21 +287,19 @@ func (h *UserHandler) UserLoginMFA(c *gin.Context) {
 func (h *UserHandler) ConfirmForgetPassword(c *gin.Context) {
 	var req models.ConfirmForgetPasswordReq
 	if err := c.ShouldBind(&req); err != nil {
-		fmt.Printf("%v", fmt.Errorf("error binding request: %w", err))
-		c.JSON(http.StatusBadRequest, models.StatusRes{Status: "Error"})
+		errorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	if err := h.service.ConfirmForgetPassword(c.Request.Context(), req); err != nil {
-		status, message := errors.CognitoErrorHandler(err)
-		fmt.Println(status, message)
-		c.JSON(status, models.StatusRes{Status: message})
+		errorResponse(c, errors.CognitoErrorHandler(err))
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "Successfully reset password"})
 }
 
+// UserLogout logs out the user by clearing cookies
 // Logout clears the access token and ID token by expiring their cookies
 // @Summary Logout User
 // @Description Clears the session by expiring the cookies containing the JWT tokens
@@ -321,9 +308,18 @@ func (h *UserHandler) ConfirmForgetPassword(c *gin.Context) {
 // @Success 200 {object} models.StatusRes
 //	@Router			/auth/logout [post]
 func (h *UserHandler) UserLogout(c *gin.Context) {
-	c.SetCookie("access_token","", -1, "/", config.Host, false, true)
-	c.SetCookie("id_token","", -1, "/", config.Host, false, true)
-	c.SetCookie("session","", -1, "/", config.Host, false, true)
+	c.SetCookie("access_token", "", -1, "/", config.Host, false, true)
+	c.SetCookie("id_token", "", -1, "/", config.Host, false, true)
+	c.SetCookie("session", "", -1, "/", config.Host, false, true)
 
 	c.JSON(http.StatusOK, gin.H{"status": "Logout successful"})
+}
+
+// Helper function for standardized error responses
+func errorResponse(c *gin.Context, err errors.CustomError) {
+	c.JSON(err.Status, gin.H{
+		"error_code": err.Code,
+		"message":    err.Message,
+	})
+	c.Abort()
 }

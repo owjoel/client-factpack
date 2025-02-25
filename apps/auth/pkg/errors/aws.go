@@ -2,30 +2,24 @@ package errors
 
 import (
 	"errors"
-	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
-func isErrOfType[T error](err error) bool {
-	var target T
-	return errors.As(err, &target)
-}
-
-// CognitoErrorHandler handles errors from Cognito
-func CognitoErrorHandler(err error) (int, string) {
+// CognitoErrorHandler maps AWS Cognito errors to our CustomError structure
+func CognitoErrorHandler(err error) CustomError {
 	switch {
 	case isErrOfType[*types.UserNotFoundException](err):
-		return http.StatusNotFound, "User not found"
+		return ErrUserNotFound
 	case isErrOfType[*types.PasswordResetRequiredException](err):
-		return http.StatusForbidden, "Password reset required"
+		return CustomError{"AUTH_PASSWORD_RESET_REQUIRED", "Password reset required", 403}
 	case isErrOfType[*types.UserNotConfirmedException](err):
-		return http.StatusForbidden, "User not confirmed"
+		return CustomError{"AUTH_USER_NOT_CONFIRMED", "User not confirmed", 403}
 	case isErrOfType[*types.InvalidParameterException](err):
-		return http.StatusBadRequest, "Invalid parameters"
+		return ErrInvalidInput
 	case isErrOfType[*types.NotAuthorizedException](err):
-		return http.StatusUnauthorized, "Incorrect username or password"
+		return ErrUnauthorized
 	default:
-		return http.StatusInternalServerError, "Internal server error"
+		return ErrServerError
 	}
 }
