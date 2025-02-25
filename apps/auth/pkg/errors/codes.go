@@ -19,6 +19,7 @@ var (
 	ErrInvalidInput = CustomError{"INPUT_INVALID", "Invalid input provided", http.StatusBadRequest}
 	ErrClientNotFound = CustomError{"BUSINESS_CLIENT_NOT_FOUND", "Client profile not found", http.StatusNotFound}
 	ErrServerError = CustomError{"SERVER_ERROR", "Internal server error", http.StatusInternalServerError}
+	ErrWeakPassword = CustomError{"AUTH_WEAK_PASSWORD", "Password does not meet strength requirements", http.StatusBadRequest}
 )
 
 // ErrorMap allows lookup by error message
@@ -29,6 +30,7 @@ var ErrorMap = map[string]CustomError{
 	"InvalidInput":      ErrInvalidInput,
 	"ClientNotFound":    ErrClientNotFound,
 	"InternalError":     ErrServerError,
+	"WeakPassword":      ErrWeakPassword,
 }
 
 // GetError returns an error struct based on a string key
