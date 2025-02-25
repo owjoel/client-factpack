@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/MicahParks/keyfunc/v2"
@@ -12,7 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/owjoel/client-factpack/apps/auth/config"
-	"github.com/owjoel/client-factpack/errors" // Import errors package
+	"github.com/owjoel/client-factpack/apps/auth/pkg/errors"
+	"github.com/owjoel/client-factpack/apps/auth/pkg/utils"
 )
 
 // Authenticate is a middleware that checks if the user is authenticated by validating the "accessToken" cookie.
@@ -26,13 +26,13 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 	jwks, err := GetJWKS(awsDefaultRegion, cognitoUserPoolId)
 	if err != nil {
 		log.Printf("Failed to retrieve Cognito JWKS: %s", err)
-		errorResponse(c, errors.ErrServerError)
+		utils.ErrorResponse(c, errors.ErrServerError)
 		return
 	}
 
 	tokenString, err := c.Cookie("access_token")
 	if err != nil || tokenString == "" {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
@@ -50,39 +50,39 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 		jwt.WithExpirationRequired(),
 		jwt.WithIssuer(fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s", awsDefaultRegion, cognitoUserPoolId)))
 	if err != nil || !token.Valid {
-		errorResponse(c, errors.ErrInvalidToken)
+		utils.ErrorResponse(c, errors.ErrInvalidToken)
 		return
 	}
 
 	// Parse JWT claims
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		errorResponse(c, errors.ErrInvalidToken)
+		utils.ErrorResponse(c, errors.ErrInvalidToken)
 		return
 	}
 
 	// Validate token expiration
 	expClaim, err := claims.GetExpirationTime()
 	if err != nil {
-		errorResponse(c, errors.ErrInvalidToken)
+		utils.ErrorResponse(c, errors.ErrInvalidToken)
 		return
 	}
 	if expClaim.Unix() < time.Now().Unix() {
-		errorResponse(c, errors.ErrInvalidToken)
+		utils.ErrorResponse(c, errors.ErrInvalidToken)
 		return
 	}
 
 	// Validate token use
 	tokenUseClaim, ok := claims["token_use"].(string)
 	if !ok || tokenUseClaim != requiredTokenUse {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
 	// Validate subject claim (user identifier)
 	subClaim, err := claims.GetSubject()
 	if err != nil {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 	c.Set("username", subClaim)
@@ -92,24 +92,24 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 	if tokenUseClaim == "id" {
 		audienceClaims, err := claims.GetAudience()
 		if err != nil || len(audienceClaims) == 0 {
-			errorResponse(c, errors.ErrUnauthorized)
+			utils.ErrorResponse(c, errors.ErrUnauthorized)
 			return
 		}
 		appClientIdClaim = audienceClaims[0]
 	} else if tokenUseClaim == "access" {
 		clientIdClaim, ok := claims["client_id"].(string)
 		if !ok {
-			errorResponse(c, errors.ErrUnauthorized)
+			utils.ErrorResponse(c, errors.ErrUnauthorized)
 			return
 		}
 		appClientIdClaim = clientIdClaim
 	} else {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
 	if appClientIdClaim != cognitoAppClientId {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
@@ -123,7 +123,7 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 				userGroupsClaims = append(userGroupsClaims, e.(string))
 			}
 		default:
-			errorResponse(c, errors.ErrUnauthorized)
+			utils.ErrorResponse(c, errors.ErrUnauthorized)
 			return
 		}
 	}
@@ -138,7 +138,7 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 func (h *UserHandler) VerifyMFA(c *gin.Context) {
 	token, exists := c.Get("accessToken")
 	if !exists {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
@@ -147,15 +147,6 @@ func (h *UserHandler) VerifyMFA(c *gin.Context) {
 		AccessToken: aws.String(tokenString),
 	}
 	log.Println(input)
-}
-
-// Helper function for standardized error response
-func errorResponse(c *gin.Context, err errors.CustomError) {
-	c.JSON(err.Status, gin.H{
-		"error_code": err.Code,
-		"message":    err.Message,
-	})
-	c.Abort()
 }
 
 // GetJWKS retrieves Cognito JSON Web Key Set (JWKS) for verifying JWTs.

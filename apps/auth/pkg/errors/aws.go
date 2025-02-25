@@ -6,6 +6,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
 
+// isErrOfType checks if an error matches a given AWS Cognito error type
+func isErrOfType[T error](err error) bool {
+	var target T
+	return errors.As(err, &target)
+}
+
 // CognitoErrorHandler maps AWS Cognito errors to our CustomError structure
 func CognitoErrorHandler(err error) CustomError {
 	switch {

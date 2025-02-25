@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/mail"
@@ -11,6 +10,7 @@ import (
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/errors"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/services"
+	"github.com/owjoel/client-factpack/apps/auth/pkg/utils"
 )
 
 // UserHandler represents the handler for user operations.
@@ -45,22 +45,23 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 //	@Success		200			{object}	models.StatusRes
 //	@Failure		400			{object}	models.StatusRes
 //	@Failure		500			{object}	models.StatusRes
-//	@Router			/auth/createUser [post]func (h *UserHandler) CreateUser(c *gin.Context) {
+//	@Router			/auth/createUser [post]
+func (h *UserHandler) CreateUser(c *gin.Context) {
 	var req models.SignUpReq
 	if err := c.ShouldBind(&req); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	// Validate email format
 	if _, err := mail.ParseAddress(req.Email); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	if err := h.service.AdminCreateUser(c.Request.Context(), req); err != nil {
 		log.Printf("Error creating user: %v", err)
-		errorResponse(c, errors.ErrServerError)
+		utils.ErrorResponse(c, errors.ErrServerError)
 		return
 	}
 	c.JSON(http.StatusCreated, models.StatusRes{Status: "Success"})
@@ -78,15 +79,16 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 //	@Failure		401		{object}	models.StatusRes
 //	@Failure		403		{object}	models.StatusRes
 //	@Failure		404		{object}	models.StatusRes
-//	@Router			/auth/forgetPassword [post]func (h *UserHandler) ForgetPassword(c *gin.Context) {
+//	@Router			/auth/forgetPassword [post]
+func (h *UserHandler) ForgetPassword(c *gin.Context) {
 	var req models.ForgetPasswordReq
 	if err := c.ShouldBind(&req); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	if err := h.service.ForgetPassword(c.Request.Context(), req); err != nil {
-		errorResponse(c, errors.CognitoErrorHandler(err))
+		utils.ErrorResponse(c, errors.CognitoErrorHandler(err))
 		return
 	}
 
@@ -109,13 +111,13 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 func (h *UserHandler) UserLogin(c *gin.Context) {
 	var req models.LoginReq
 	if err := c.ShouldBind(&req); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	res, err := h.service.UserLogin(c.Request.Context(), req)
 	if err != nil {
-		errorResponse(c, errors.CognitoErrorHandler(err))
+		utils.ErrorResponse(c, errors.CognitoErrorHandler(err))
 		return
 	}
 
@@ -141,20 +143,20 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 func (h *UserHandler) UserInitialChangePassword(c *gin.Context) {
 	var req models.SetNewPasswordReq
 	if err := c.ShouldBind(&req); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	session, err := c.Cookie("session")
 	if err != nil {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 	req.Session = session
 
 	res, err := h.service.SetNewPassword(c.Request.Context(), req)
 	if err != nil {
-		errorResponse(c, errors.ErrServerError)
+		utils.ErrorResponse(c, errors.ErrServerError)
 		return
 	}
 
@@ -178,13 +180,13 @@ func (h *UserHandler) UserInitialChangePassword(c *gin.Context) {
 func (h *UserHandler) UserSetupMFA(c *gin.Context) {
 	session, err := c.Cookie("session")
 	if err != nil {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
 	res, err := h.service.SetupMFA(c.Request.Context(), session)
 	if err != nil {
-		errorResponse(c, errors.ErrServerError)
+		utils.ErrorResponse(c, errors.ErrServerError)
 		return
 	}
 
@@ -209,19 +211,19 @@ func (h *UserHandler) UserSetupMFA(c *gin.Context) {
 func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 	var req models.VerifyMFAReq
 	if err := c.ShouldBind(&req); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	session, err := c.Cookie("session")
 	if err != nil {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 	req.Session = session
 
 	if err := h.service.VerifyMFA(c.Request.Context(), req); err != nil {
-		errorResponse(c, errors.ErrServerError)
+		utils.ErrorResponse(c, errors.ErrServerError)
 		return
 	}
 
@@ -244,25 +246,25 @@ func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 func (h *UserHandler) UserLoginMFA(c *gin.Context) {
 	var req models.SignInMFAReq
 	if err := c.ShouldBind(&req); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	session, err := c.Cookie("session")
 	if err != nil {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 	req.Session = session
 
 	auth, err := h.service.SignInMFA(c.Request.Context(), req)
 	if err != nil {
-		errorResponse(c, errors.ErrServerError)
+		utils.ErrorResponse(c, errors.ErrServerError)
 		return
 	}
 
 	if auth.Challenge != "" {
-		errorResponse(c, errors.ErrUnauthorized)
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
 		return
 	}
 
@@ -287,12 +289,12 @@ func (h *UserHandler) UserLoginMFA(c *gin.Context) {
 func (h *UserHandler) ConfirmForgetPassword(c *gin.Context) {
 	var req models.ConfirmForgetPasswordReq
 	if err := c.ShouldBind(&req); err != nil {
-		errorResponse(c, errors.ErrInvalidInput)
+		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
 
 	if err := h.service.ConfirmForgetPassword(c.Request.Context(), req); err != nil {
-		errorResponse(c, errors.CognitoErrorHandler(err))
+		utils.ErrorResponse(c, errors.CognitoErrorHandler(err))
 		return
 	}
 
@@ -313,13 +315,4 @@ func (h *UserHandler) UserLogout(c *gin.Context) {
 	c.SetCookie("session", "", -1, "/", config.Host, false, true)
 
 	c.JSON(http.StatusOK, gin.H{"status": "Logout successful"})
-}
-
-// Helper function for standardized error responses
-func errorResponse(c *gin.Context, err errors.CustomError) {
-	c.JSON(err.Status, gin.H{
-		"error_code": err.Code,
-		"message":    err.Message,
-	})
-	c.Abort()
 }
