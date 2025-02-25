@@ -25,6 +25,8 @@ func CognitoErrorHandler(err error) CustomError {
 		return ErrInvalidInput
 	case isErrOfType[*types.NotAuthorizedException](err):
 		return ErrUnauthorized
+	case isErrOfType[*types.InvalidPasswordException](err):
+		return ErrWeakPassword
 	default:
 		return ErrServerError
 	}
