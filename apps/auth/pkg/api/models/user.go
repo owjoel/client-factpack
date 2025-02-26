@@ -21,8 +21,8 @@ type ForgetPasswordReq struct {
 
 // LoginReq represents the request payload for user login.
 type LoginReq struct {
-	Username string `form:"username" example:"joel.ow.2022"`
-	Password string `form:"password" example:"12345"`
+	Username string `form:"username" binding:"required" example:"joel.ow.2022"`
+	Password string `form:"password" binding:"required" example:"12345"`
 }
 
 // LoginRes represents the response payload for user login.
@@ -40,8 +40,8 @@ type ConfirmForgetPasswordReq struct {
 
 // SetNewPasswordReq represents the request payload for setting a new password.
 type SetNewPasswordReq struct {
-	Username    string `form:"username" example:"joel.ow.2022"`
-	NewPassword string `form:"newPassword" example:"ABCDEF"`
+	Username    string `form:"username" binding:"required" example:"joel.ow.2022"`
+	NewPassword string `form:"newPassword" binding:"required" example:"ABCDEF"`
 	Session     string `json:"-"`
 }
 
