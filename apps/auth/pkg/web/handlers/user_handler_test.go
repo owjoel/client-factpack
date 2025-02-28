@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"strings"
 
 	"errors"
@@ -11,6 +12,8 @@ import (
 	"testing"
 
 	// "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/services/mocks"
@@ -70,7 +73,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			mockReturnErr:  nil,
 			mockExpected:   false,
 			expectedStatus: http.StatusBadRequest,
-			expectedBody:   `{"status":"Invalid Email"}`,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
 		},
 		{
 			name: "Fail - Cognito Error",
@@ -80,7 +83,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			mockReturnErr:  errors.New("cognito error"),
 			mockExpected:   true,
 			expectedStatus: http.StatusInternalServerError,
-			expectedBody:   `{"status":"Failed to sign up user"}`,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
 		},
 	}
 
@@ -137,10 +140,11 @@ func (suite *UserHandlerTestSuite) TestForgetPassword() {
 			name: "Fail - Cognito Error",
 			requestBody: models.ForgetPasswordReq{
 				Username: "testUsername",
-			}, mockReturnErr: errors.New("cognito error"),
+			},
+			mockReturnErr:  errors.New("cognito error"),
 			mockExpected:   true,
 			expectedStatus: http.StatusInternalServerError,
-			expectedBody:   `{"status":"Internal server error"}`,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
 		},
 	}
 
@@ -184,21 +188,21 @@ func (suite *UserHandlerTestSuite) TestUserLogin() {
 		expectedStatus int
 		expectedBody   string
 	}{
-		// {
-		// 	name: "Success - Valid request body",
-		// 	requestBody: models.LoginReq{
-		// 		Username: "testUsername",
-		// 		Password: "testPassword",
-		// 	},
-		// 	mockReturn: &models.LoginRes{
-		// 		Challenge: "SOFTWARE_TOKEN_MFA",
-		// 		Session:   "test-session",
-		// 	},
-		// 	mockReturnErr:  nil,
-		// 	mockExpected:   true,
-		// 	expectedStatus: http.StatusOK,
-		// 	expectedBody:   `{"challenge":"SOFTWARE_TOKEN_MFA"}`,
-		// },
+		{
+			name: "Success - Valid request body",
+			requestBody: models.LoginReq{
+				Username: "testUsername",
+				Password: "testPassword",
+			},
+			mockReturn: &models.LoginRes{
+				Challenge: "SOFTWARE_TOKEN_MFA",
+				Session:   "test-session",
+			},
+			mockReturnErr:  nil,
+			mockExpected:   true,
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"challenge":"SOFTWARE_TOKEN_MFA"}`,
+		},
 		{
 			name:           "Fail - Invalid request body",
 			requestBody:    nil,
@@ -206,20 +210,20 @@ func (suite *UserHandlerTestSuite) TestUserLogin() {
 			mockReturnErr:  nil,
 			mockExpected:   false,
 			expectedStatus: http.StatusBadRequest,
-			expectedBody:   `{"status":"Invalid Form Data"}`,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
 		},
-		// {
-		// 	name: "Fail - Cognito Error",
-		// 	requestBody: models.LoginReq{
-		// 		Username: "testUsername",
-		// 		Password: "testPassword",
-		// 	},
-		// 	mockReturn:     nil,
-		// 	mockReturnErr:  errors.New("cognito error"),
-		// 	mockExpected:   true,
-		// 	expectedStatus: http.StatusInternalServerError,
-		// 	expectedBody:   `{"status":"Internal server error"}`,
-		// },
+		{
+			name: "Fail - Cognito Error",
+			requestBody: models.LoginReq{
+				Username: "testUsername",
+				Password: "testPassword",
+			},
+			mockReturn:     nil,
+			mockReturnErr:  errors.New("cognito error"),
+			mockExpected:   true,
+			expectedStatus: http.StatusInternalServerError,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
+		},
 	}
 
 	for _, tc := range tests {
@@ -284,14 +288,14 @@ func (suite *UserHandlerTestSuite) TestUserInitialChangePassword() {
 			expectedBody:   `{"challenge":"SOFTWARE_TOKEN_MFA"}`,
 		},
 		{
-			name: "Fail - Invalid request body",
-			requestBody: nil,
+			name:           "Fail - Invalid request body",
+			requestBody:    nil,
 			sessionCookie:  true,
 			mockReturn:     nil,
 			mockReturnErr:  nil,
 			mockExpected:   false,
 			expectedStatus: http.StatusBadRequest,
-			expectedBody:   `{"status":"Invalid Form Data"}`,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
 		},
 		{
 			name: "Fail - Cognito Error",
@@ -305,7 +309,7 @@ func (suite *UserHandlerTestSuite) TestUserInitialChangePassword() {
 			mockReturnErr:  errors.New("cognito error"),
 			mockExpected:   true,
 			expectedStatus: http.StatusInternalServerError,
-			expectedBody:   `{"status":"Internal server error"}`,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
 		},
 		{
 			name: "Fail - Missing session cookie",
@@ -314,12 +318,12 @@ func (suite *UserHandlerTestSuite) TestUserInitialChangePassword() {
 				NewPassword: "testPassword",
 				Session:     "test-session",
 			},
-			sessionCookie: false,
-			mockReturn:    nil,
-			mockReturnErr: nil,
-			mockExpected:  false,
-			expectedStatus: http.StatusUnauthorized,
-			expectedBody:   `{"status":"Session cookie missing"}`,
+			sessionCookie:  false,
+			mockReturn:     nil,
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusForbidden,
+			expectedBody:   `{"error_code":"AUTH_UNAUTHORIZED","message":"Unauthorized access"}`,
 		},
 	}
 
@@ -363,6 +367,421 @@ func (suite *UserHandlerTestSuite) TestUserInitialChangePassword() {
 		})
 	}
 }
+
+func (suite *UserHandlerTestSuite) TestUserSetupMFA() {
+	tests := []struct {
+		name           string
+		mockReturn     *models.AssociateTokenRes
+		sessionCookie  bool
+		mockReturnErr  error
+		mockExpected   bool
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success - Valid request body",
+			mockReturn: &models.AssociateTokenRes{
+				Token:   "test-token",
+				Session: "test-session",
+			},
+			sessionCookie:  true,
+			mockReturnErr:  nil,
+			mockExpected:   true,
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"token":"test-token"}`,
+		},
+		{
+			name:           "Fail - Cognito Error",
+			mockReturn:     nil,
+			sessionCookie:  true,
+			mockReturnErr:  errors.New("cognito error"),
+			mockExpected:   true,
+			expectedStatus: http.StatusInternalServerError,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
+		},
+		{
+			name:           "Fail - Missing session cookie",
+			mockReturn:     nil,
+			sessionCookie:  false,
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusForbidden,
+			expectedBody:   `{"error_code":"AUTH_UNAUTHORIZED","message":"Unauthorized access"}`,
+		},
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			suite.mockService.ExpectedCalls = nil
+
+			req := httptest.NewRequest(http.MethodGet, "/auth/setupMFA", nil)
+
+			if tc.sessionCookie {
+				req.AddCookie(&http.Cookie{
+					Name:  "session",
+					Value: "test-session",
+				})
+			}
+
+			if tc.mockExpected {
+				suite.mockService.On("SetupMFA", mock.Anything, mock.Anything).Return(tc.mockReturn, tc.mockReturnErr)
+			}
+
+			w := httptest.NewRecorder()
+			r := gin.Default()
+			r.GET("/auth/setupMFA", suite.handler.UserSetupMFA)
+
+			r.ServeHTTP(w, req)
+
+			suite.Equal(tc.expectedStatus, w.Code)
+			suite.JSONEq(tc.expectedBody, w.Body.String())
+			suite.mockService.AssertExpectations(suite.T())
+		})
+	}
+}
+
+func (suite *UserHandlerTestSuite) TestUserVerifyMFA() {
+	tests := []struct {
+		name           string
+		requestBody    any
+		sessionCookie  bool
+		mockReturnErr  error
+		mockExpected   bool
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success - Valid request body",
+			requestBody: models.VerifyMFAReq{
+				Code:    "test-code",
+				Session: "test-session",
+			},
+			sessionCookie:  true,
+			mockReturnErr:  nil,
+			mockExpected:   true,
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"status":"Success"}`,
+		},
+		{
+			name:           "Fail - Cognito Error",
+			requestBody:    models.VerifyMFAReq{
+				Code:    "test-code",
+				Session: "test-session",
+			},
+			sessionCookie:  true,
+			mockReturnErr:  errors.New("cognito error"),
+			mockExpected:   true,
+			expectedStatus: http.StatusInternalServerError,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
+		},
+		{
+			name:           "Fail - Missing session cookie",
+			requestBody:    models.VerifyMFAReq{
+				Code:    "test-code",
+				Session: "test-session",
+			},
+			sessionCookie:  false,
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusForbidden,
+			expectedBody:   `{"error_code":"AUTH_UNAUTHORIZED","message":"Unauthorized access"}`,
+		},
+		{
+			name:           "Fail - Invalid request body",
+			requestBody:    nil,
+			sessionCookie:  true,
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
+		},
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			suite.mockService.ExpectedCalls = nil
+
+			var requestBody string
+			if verifyMFAReq, ok := tc.requestBody.(models.VerifyMFAReq); ok {
+				if tc.mockExpected {
+					suite.mockService.On("VerifyMFA", mock.Anything, verifyMFAReq).Return(tc.mockReturnErr)
+				}
+				form := url.Values{}
+				form.Add("code", verifyMFAReq.Code)
+				requestBody = form.Encode()
+			}
+
+			fmt.Println("requestBody", requestBody)
+
+			req := httptest.NewRequest(http.MethodPost, "/auth/verifyMFA", strings.NewReader(requestBody))
+
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+			if tc.sessionCookie {
+				req.AddCookie(&http.Cookie{
+					Name:  "session",
+					Value: "test-session",
+				})
+			}
+
+
+			w := httptest.NewRecorder()
+			r := gin.Default()
+			r.POST("/auth/verifyMFA", suite.handler.UserVerifyMFA)
+
+			r.ServeHTTP(w, req)
+
+			suite.Equal(tc.expectedStatus, w.Code)
+			suite.JSONEq(tc.expectedBody, w.Body.String())
+			suite.mockService.AssertExpectations(suite.T())
+		})
+	}
+}
+
+func (suite *UserHandlerTestSuite) TestUserLoginMFA() {
+	mockReturn := &models.AuthenticationRes{
+				Result: types.AuthenticationResultType{
+					AccessToken: aws.String("test-access-token"),
+					IdToken: aws.String("test-id-token"),
+					RefreshToken: aws.String("test-refresh-token"),
+					TokenType: aws.String("Bearer"),
+					ExpiresIn: 3600,
+					NewDeviceMetadata: &types.NewDeviceMetadataType{
+						DeviceGroupKey: aws.String("test-device-group-key"),
+						DeviceKey: aws.String("test-device-key"),
+					},
+				},
+				Challenge: "",
+			}
+	tests := []struct {
+		name           string
+		requestBody    any
+		mockReturn     *models.AuthenticationRes;
+		sessionCookie  bool
+		mockReturnErr  error
+		mockExpected   bool
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success - Valid request body",
+			requestBody: models.SignInMFAReq{
+				Username: "testUsername",
+				Code:     "test-code",
+				Session:  "test-session",
+			},
+			mockReturn: mockReturn,
+			sessionCookie:  true,
+			mockReturnErr:  nil,
+			mockExpected:   true,
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"status":"Login Successful"}`,
+		},
+		{
+			name:           "Fail - Cognito Error",
+			requestBody:    models.SignInMFAReq{
+				Username: "testUsername",
+				Code:     "test-code",
+				Session:  "test-session",
+			},
+			mockReturn: mockReturn,
+			sessionCookie:  true,
+			mockReturnErr:  errors.New("cognito error"),
+			mockExpected:   true,
+			expectedStatus: http.StatusInternalServerError,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
+		},
+		{
+			name:           "Fail - Missing session cookie",
+			requestBody:    models.SignInMFAReq{
+				Username: "testUsername",
+				Code:     "test-code",
+				Session:  "test-session",
+			},
+			mockReturn: mockReturn,
+			sessionCookie:  false,
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusForbidden,
+			expectedBody:   `{"error_code":"AUTH_UNAUTHORIZED","message":"Unauthorized access"}`,
+		},
+		{
+			name:           "Fail - Invalid request body",
+			requestBody:    nil,
+			sessionCookie:  true,
+			mockReturn: mockReturn,
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
+		},
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			suite.mockService.ExpectedCalls = nil
+
+			var requestBody string
+			if signInMFAReq, ok := tc.requestBody.(models.SignInMFAReq); ok {
+				if tc.mockExpected {
+					suite.mockService.On("SignInMFA", mock.Anything, signInMFAReq).Return(*tc.mockReturn, tc.mockReturnErr)
+				}
+				form := url.Values{}
+				form.Add("username", signInMFAReq.Username)
+				form.Add("code", signInMFAReq.Code)
+				requestBody = form.Encode()
+			}
+
+			req := httptest.NewRequest(http.MethodPost, "/auth/loginMFA", strings.NewReader(requestBody))
+
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+			if tc.sessionCookie {
+				req.AddCookie(&http.Cookie{
+					Name:  "session",
+					Value: "test-session",
+				})
+			}
+
+			w := httptest.NewRecorder()
+			r := gin.Default()
+			r.POST("/auth/loginMFA", suite.handler.UserLoginMFA)
+
+			r.ServeHTTP(w, req)
+
+			suite.Equal(tc.expectedStatus, w.Code)
+			suite.JSONEq(tc.expectedBody, w.Body.String())
+			suite.mockService.AssertExpectations(suite.T())
+		})
+	}
+}
+
+func (suite *UserHandlerTestSuite) TestConfirmForgetPassword() {
+	tests := []struct {
+		name           string
+		requestBody    any
+		sessionCookie  bool
+		mockReturnErr  error
+		mockExpected   bool
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success - Valid request body",
+			requestBody: models.ConfirmForgetPasswordReq{
+				Username: "testUsername",
+				Code:     "test-code",
+				NewPassword:  "test-new-password",
+			},
+			sessionCookie:  true,
+			mockReturnErr:  nil,
+			mockExpected:   true,
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"status":"Successfully reset password"}`,
+		},
+		{
+			name:           "Fail - Cognito Error",
+			requestBody:    models.ConfirmForgetPasswordReq{
+				Username: "testUsername",
+				Code:     "test-code",
+				NewPassword:  "test-new-password",
+			},
+			sessionCookie:  true,
+			mockReturnErr:  errors.New("cognito error"),
+			mockExpected:   true,
+			expectedStatus: http.StatusInternalServerError,
+			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
+		},
+		{
+			name:           "Fail - Invalid request body",
+			requestBody:    nil,
+			sessionCookie:  true,
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
+		},
+	}
+
+	for _, tc := range tests {	
+		suite.Run(tc.name, func() {
+			suite.mockService.ExpectedCalls = nil
+
+			var requestBody string
+			if confirmForgetPasswordReq, ok := tc.requestBody.(models.ConfirmForgetPasswordReq); ok {
+				if tc.mockExpected {
+					suite.mockService.On("ConfirmForgetPassword", mock.Anything, confirmForgetPasswordReq).Return(tc.mockReturnErr)
+				}
+				form := url.Values{}
+				form.Add("username", confirmForgetPasswordReq.Username)
+				form.Add("code", confirmForgetPasswordReq.Code)
+				form.Add("newPassword", confirmForgetPasswordReq.NewPassword)
+				requestBody = form.Encode()	
+			}
+
+			req := httptest.NewRequest(http.MethodPost, "/auth/confirmForgetPassword", strings.NewReader(requestBody))
+
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")	
+
+			if tc.sessionCookie {
+				req.AddCookie(&http.Cookie{
+					Name:  "session",
+					Value: "test-session",
+				})
+			}
+
+			w := httptest.NewRecorder()
+			r := gin.Default()
+			r.POST("/auth/confirmForgetPassword", suite.handler.ConfirmForgetPassword)
+
+			r.ServeHTTP(w, req)
+
+			suite.Equal(tc.expectedStatus, w.Code)
+			suite.JSONEq(tc.expectedBody, w.Body.String())
+			suite.mockService.AssertExpectations(suite.T())
+		})
+	}
+}
+
+func (suite *UserHandlerTestSuite) TestUserLogout() {
+	tests := []struct {
+		name           string
+		mockReturnErr  error
+		mockExpected   bool
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name: "Success - Valid request body",
+			mockReturnErr:  nil,
+			mockExpected:   true,
+			expectedStatus: http.StatusOK,
+			expectedBody:   `{"status":"Logout successful"}`,
+		},
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			suite.mockService.ExpectedCalls = nil
+
+			req := httptest.NewRequest(http.MethodPost, "/auth/logout", nil)
+
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+			w := httptest.NewRecorder()
+			r := gin.Default()
+			r.POST("/auth/logout", suite.handler.UserLogout)
+
+			r.ServeHTTP(w, req)
+
+			suite.Equal(tc.expectedStatus, w.Code)
+			suite.JSONEq(tc.expectedBody, w.Body.String())
+			suite.mockService.AssertExpectations(suite.T())
+		})
+	}
+}
+
+
 
 func TestUserHandlerTestSuite(t *testing.T) {
 	suite.Run(t, new(UserHandlerTestSuite))
