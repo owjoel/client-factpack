@@ -33,8 +33,10 @@ func NewRouter() *Router {
 	handler := handlers.New()
 
 	// Use RPC styling rather than REST
-	v1API := router.Group("/api/v1")
+	v1API := router.Group("/api/v1/clients")
 	v1API.GET("/health", handler.HealthCheck)
+	v1API.GET("/retrieveProfile/:id", handler.GetClient)
+	v1API.GET("/retrieveAllProfiles", handler.GetAllClients)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
@@ -49,6 +51,7 @@ func (r *Router) Run() {
 	}
 
 	go func() {
+		log.Printf("started on port: %v\n", port)
 		err := srv.ListenAndServe()
 		if err == http.ErrServerClosed {
 			log.Fatalf("Server closed: %v\n", err)

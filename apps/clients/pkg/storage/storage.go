@@ -1,9 +1,10 @@
 package storage
 
 import (
+	"context"
 
 	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
-	"gorm.io/gorm"
+	// "gorm.io/gorm"
 )
 
 type storage struct {
@@ -15,22 +16,15 @@ var (
 )
 
 func Init() {
-	clientStorage := InitMySQL()
+	clientStorage := InitMongo()
 	db = &storage{Client: clientStorage}
 }
 
-type Client struct {
-	gorm.Model
-	Name        string `gorm:"name"`
-	Age         uint `gorm:"age"`
-	Nationality string `gorm:"nationality"`
-	Status string `gorm:"status"`
-}
-
 type ClientInterface interface {
-	Create(c *model.Client) error
-	Get(clientID uint) (*model.Client, error)
-	Update(c *model.Client) error
+	Create(ctx context.Context, c *model.Client) error
+	Get(ctx context.Context, clientID string) (*model.Client, error)
+	GetAll(ctx context.Context) ([]model.Client, error)
+	Update(ctx context.Context, c *model.Client) error
 }
 
 // username:password@protocol(address)/dbname?param=value

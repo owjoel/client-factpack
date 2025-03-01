@@ -11,6 +11,7 @@ var (
 	DBHost     = os.Getenv("DB_HOST")
 	DBPort     = os.Getenv("DB_PORT")
 	DBName     = os.Getenv("DB_NAME")
+	MongoURI   = os.Getenv("MONGO_URI")
 )
 
 func GetPort(defaultPort int) int {
@@ -23,4 +24,12 @@ func GetPort(defaultPort int) int {
 		return defaultPort
 	}
 	return port
+}
+
+func GetVersion() string {
+	version, exist := os.LookupEnv("VERSION")
+	if !exist {
+		return "0.0.1"
+	}
+	return version
 }
