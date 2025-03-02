@@ -13,6 +13,7 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/clients/config"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/service"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/storage"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/web/handlers"
 	swaggerfiles "github.com/swaggo/files"
@@ -30,7 +31,9 @@ func NewRouter() *Router {
 	pprof.Register(router)
 
 	storage.Init()
-	handler := handlers.New()
+	clientStorage := storage.GetInstance().Client
+	clientService := service.NewClientService(clientStorage)
+	handler := handlers.New(clientService)
 
 	// Use RPC styling rather than REST
 	v1API := router.Group("/api/v1/clients")

@@ -9,7 +9,7 @@ import (
 // Client contains all information for a particular client
 type Client struct {
 	// gorm.Model
-	ID          bson.ObjectID `bson:"_id,omitempty"`
+	ID          bson.ObjectID `bson:"_id,omitempty" swaggerignore:"true"`
 	Profile     Profile       `json:"profile"`
 	Investments []Investment  `json:"investments"`
 	Associates  []Associate   `json:"associates"`
@@ -20,9 +20,9 @@ type Client struct {
 
 // Profile contains basic personal information about the client
 type Profile struct {
-	Name             string        `json:"name"`
-	Age              uint          `json:"age"`
-	Nationality      string        `json:"nationality"`
+	Name             string        `json:"name" example:"john doe"`
+	Age              uint          `json:"age" example:"55"`
+	Nationality      string        `json:"nationality" example:"chinese"`
 	CurrentResidence Residence     `bson:"currentResidence" json:"currentResidence"`
 	NetWorth         NetWorth      `json:"netWorth"`
 	Industries       []string      `json:"industries"`

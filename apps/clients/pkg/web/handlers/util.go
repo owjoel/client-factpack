@@ -7,7 +7,7 @@ import (
 	"github.com/owjoel/client-factpack/apps/clients/config"
 )
 
-type response struct {
+type Response struct {
 	ApiVersion string      `json:"version"`
 	Timestamp  time.Time   `json:"timestamp"`
 	Status     int         `json:"status"`
@@ -15,7 +15,7 @@ type response struct {
 }
 
 func resp(c *gin.Context, code int, obj interface{}) {
-	c.JSON(code, response{
+	c.JSON(code, Response{
 		ApiVersion: config.GetVersion(),
 		Timestamp:  time.Now(),
 		Status:     code,

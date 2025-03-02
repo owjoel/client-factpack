@@ -1,6 +1,7 @@
 package main
 
 import "github.com/owjoel/client-factpack/apps/clients/pkg/web"
+import _ "github.com/owjoel/client-factpack/apps/clients/docs"
 
 // 	Swagger
 //	@title			client-factpack/clients

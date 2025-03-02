@@ -9,24 +9,12 @@ import (
 )
 
 type ClientService struct {
+	storage storage.ClientInterface
 }
 
-func NewClientService() *ClientService {
-	return &ClientService{}
+func NewClientService(storage storage.ClientInterface) *ClientService {
+	return &ClientService{storage: storage}
 }
-
-// func (s *ClientService) CreateClient(ctx context.Context, r *model.CreateClientReq) (*model.StatusRes, error) {
-// 	client := &model.Client{
-// 		Name:        r.Name,
-// 		Age:         r.Age,
-// 		Nationality: r.Nationality,
-// 	}
-
-// 	if err := storage.GetInstance().Client.Create(ctx, client); err != nil {
-// 		return &model.StatusRes{}, fmt.Errorf("Error creating client profile: %w", err)
-// 	}
-// 	return &model.StatusRes{Status: "Success"}, nil
-// }
 
 func (s *ClientService) GetClient(ctx context.Context, clientID string) (*model.Client, error) {
 	c, err := storage.GetInstance().Client.Get(ctx, clientID)
