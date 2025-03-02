@@ -22,7 +22,19 @@ func (h *ClientHandler) HealthCheck(c *gin.Context) {
 }
 
 func (h *ClientHandler) CreateClient(c *gin.Context) {
-
+	client := &model.Client{}
+	if err := c.ShouldBindJSON(&client); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
+		return
+	}
+	err :=h.service.CreateClient(c.Request.Context(), client)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
+		return
+	}
+	resp(c, http.StatusCreated, "Success")
 }
 
 // GetClient retrieves the profile of the client by id

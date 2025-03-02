@@ -37,6 +37,7 @@ func NewRouter() *Router {
 	v1API.GET("/health", handler.HealthCheck)
 	v1API.GET("/retrieveProfile/:id", handler.GetClient)
 	v1API.GET("/retrieveAllProfiles", handler.GetAllClients)
+	v1API.POST("/createProfile", handler.CreateClient)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 

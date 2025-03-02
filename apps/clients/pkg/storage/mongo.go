@@ -7,7 +7,7 @@ import (
 
 	"github.com/owjoel/client-factpack/apps/clients/config"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -20,7 +20,7 @@ const (
 
 type MongoStorage struct {
 	*mongo.Database
-	userCollection *mongo.Collection
+	clientCollection *mongo.Collection
 }
 
 func InitMongo() *MongoStorage {
@@ -40,7 +40,7 @@ func InitMongo() *MongoStorage {
 
 func (s *MongoStorage) GetAll(ctx context.Context) ([]model.Client, error) {
 	var clients []model.Client
-	c, err := s.userCollection.Find(ctx, bson.M{})
+	c, err := s.clientCollection.Find(ctx, bson.M{})
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return []model.Client{}, fmt.Errorf("no documents found: %w", err)
@@ -55,21 +55,17 @@ func (s *MongoStorage) GetAll(ctx context.Context) ([]model.Client, error) {
 }
 
 func (s *MongoStorage) Get(ctx context.Context, clientID string) (*model.Client, error) {
-	objID, err := primitive.ObjectIDFromHex(clientID)
+	objID, err := bson.ObjectIDFromHex(clientID)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing object id: %w", err)
 	}
 	log.Println(objID)
-	// filterID := bson.M{"_id": objID}
 
-	filter := bson.M{"_id": objID}
-	// log.Println(objID.Hex())
-	// log.Println(filterID)
+	filter := bson.D{{Key: "_id", Value: objID}}
 
 	var client model.Client
-	res := s.userCollection.FindOne(ctx, filter)
-	log.Println("Hello")
-	log.Println()
+	res := s.clientCollection.FindOne(ctx, filter)
+	log.Println(res.Raw())
 	err = res.Decode(&client)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -82,10 +78,15 @@ func (s *MongoStorage) Get(ctx context.Context, clientID string) (*model.Client,
 }
 
 func (s *MongoStorage) Create(ctx context.Context, c *model.Client) error {
+	res, err := s.clientCollection.InsertOne(ctx, c)
+	if err != nil {
+		return fmt.Errorf("Failed to insert client: %w", err)
+	}
+	log.Println(res)
 	return nil
 }
 
 func (s *MongoStorage) Update(ctx context.Context, c *model.Client) error {
-	// coll := s.userCollection
+	// coll := s.clientCollection
 	return nil
 }

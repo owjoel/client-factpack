@@ -9,7 +9,7 @@ import (
 // Client contains all information for a particular client
 type Client struct {
 	// gorm.Model
-	ID          bson.ObjectID `bson:"_id"`
+	ID          bson.ObjectID `bson:"_id,omitempty"`
 	Profile     Profile       `json:"profile"`
 	Investments []Investment  `json:"investments"`
 	Associates  []Associate   `json:"associates"`

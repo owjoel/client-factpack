@@ -44,6 +44,14 @@ func (s *ClientService) GetAllClients(ctx context.Context) ([]model.Client, erro
 	return clients, nil
 }
 
+func (s *ClientService) CreateClient(ctx context.Context, client *model.Client) error {
+	err := storage.GetInstance().Client.Create(ctx, client)
+	if err != nil {
+		return fmt.Errorf("error creating client: %w", err)
+	}
+	return nil
+}
+
 // func (s *ClientService) UpdateClient(ctx context.Context, r model.UpdateClientReq) (*model.StatusRes, error) {
 // 	client := &model.Client{
 // 		Name:        r.Name,
