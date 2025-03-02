@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -143,8 +142,6 @@ func CalculateSecretHash(username string) string {
 
 // ForgetPassword sends a password reset code to the user's email
 func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswordReq) error {
-	fmt.Println("############## Initiating password reset...")
-
 	username := r.Username
 
 	input := &cip.ForgotPasswordInput{
@@ -159,7 +156,6 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 		return err
 	}
 
-	fmt.Println("Password reset code sent successfully")
 	return nil
 }
 
@@ -214,14 +210,6 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models
 
 // SetNewPassword is used to set a new password for the user and check for next auth challenge
 func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswordReq) (*models.SetNewPasswordRes, error) {
-	autoResetEnabled, err := strconv.ParseBool(config.AutoResetPassword)
-	if err != nil {
-		return nil, fmt.Errorf("invalid AUTO_RESET_PASSWORD value: %w", err)
-	}
-
-	if !autoResetEnabled {
-		return nil, fmt.Errorf("auto-reset password is disabled")
-	}
 
 	challengeInput := &cip.RespondToAuthChallengeInput{
 		ClientId:      aws.String(config.ClientID),

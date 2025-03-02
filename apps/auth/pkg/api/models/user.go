@@ -10,7 +10,7 @@ type User struct {
 
 // SignUpReq represents the request payload for user sign up.
 type SignUpReq struct {
-	Email string `form:"email" example:"example@gmail.com"`
+	Email string `form:"email" binding:"required" example:"example@gmail.com"`
 	// Password string `form:"password" binding:"required"`
 }
 
