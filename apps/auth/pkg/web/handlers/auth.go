@@ -87,6 +87,15 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 	}
 	c.Set("username", subClaim)
 
+	// Extract the username from claims
+	usernameClaim, ok := claims["username"].(string)
+	if !ok {
+		usernameClaim = subClaim // fallback to subject if username is missing
+	}
+
+	c.Set("username", usernameClaim) // Store non-hashed username
+
+
 	// Validate client ID
 	var appClientIdClaim string
 	if tokenUseClaim == "id" {
@@ -158,4 +167,16 @@ func GetJWKS(awsRegion string, cognitoUserPoolId string) (*keyfunc.JWKS, error) 
 		return nil, err
 	}
 	return jwks, nil
+}
+
+func (h *UserHandler) GetUsername(c *gin.Context) {
+    username, exists := c.Get("username")
+    if !exists {
+        utils.ErrorResponse(c, errors.ErrUnauthorized)
+        return
+    }
+
+    c.JSON(200, gin.H{
+        "username": username, // Return actual username
+    })
 }
