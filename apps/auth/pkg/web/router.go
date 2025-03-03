@@ -46,7 +46,7 @@ func NewRouter() *Router {
 	ctx := context.Background()
 	cfg, err := awsconfig.LoadDefaultConfig(ctx)
 	if err != nil {
-		log.Fatal("failed to load AWS config: %v", err)
+		log.Fatalf("failed to load AWS config: %v", err)
 	}
 	cognitoClient := cip.NewFromConfig(cfg)
 	service := services.NewUserService(cognitoClient)
