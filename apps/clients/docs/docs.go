@@ -224,11 +224,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/model.Associate"
                     }
                 },
-                "id": {
-                    "description": "gorm.Model",
-                    "type": "string",
-                    "example": "6e9938xhdfv27bhspbf73jks"
-                },
                 "investments": {
                     "type": "array",
                     "items": {
@@ -314,7 +309,7 @@ const docTemplate = `{
                 "currency": {
                     "type": "string"
                 },
-                "estiamtedValue": {
+                "estimatedValue": {
                     "type": "integer"
                 },
                 "source": {

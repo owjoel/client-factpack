@@ -27,10 +27,6 @@ definitions:
         items:
           $ref: '#/definitions/model.Associate'
         type: array
-      id:
-        description: gorm.Model
-        example: 6e9938xhdfv27bhspbf73jks
-        type: string
       investments:
         items:
           $ref: '#/definitions/model.Investment'
@@ -86,7 +82,7 @@ definitions:
     properties:
       currency:
         type: string
-      estiamtedValue:
+      estimatedValue:
         type: integer
       source:
         type: string
