@@ -6,11 +6,13 @@ import "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 type User struct {
 	Username string
 	Password string
+	Role string
 }
 
 // SignUpReq represents the request payload for user sign up.
 type SignUpReq struct {
 	Email string `form:"email" example:"example@gmail.com"`
+    Role  string `form:"role" json:"role" binding:"required"`
 	// Password string `form:"password" binding:"required"`
 }
 

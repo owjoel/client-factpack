@@ -120,11 +120,6 @@ paths:
         name: email
         required: true
         type: string
-      - description: User's password
-        in: formData
-        name: password
-        required: true
-        type: string
       produces:
       - application/json
       responses:

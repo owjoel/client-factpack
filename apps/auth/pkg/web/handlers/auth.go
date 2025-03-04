@@ -180,3 +180,23 @@ func (h *UserHandler) GetUsername(c *gin.Context) {
         "username": username, // Return actual username
     })
 }
+
+// GetUserRole extracts the user's role from the JWT token
+func (h *UserHandler) GetUserRole(c *gin.Context) {
+	tokenString, err := c.Cookie("access_token")
+
+	if err != nil || tokenString == "" {
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
+		return
+	}
+
+	// Call the service layer to get the user's role
+	role, err := h.service.GetUserRoleFromToken(tokenString)
+	if err != nil {
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
+		return
+	}
+
+	// Return user role in JSON response
+	c.JSON(200, gin.H{"user_role": role})
+}
