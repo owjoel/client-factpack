@@ -14,9 +14,12 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/auth/config"
+	"github.com/owjoel/client-factpack/apps/auth/pkg/services"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/web/handlers"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	cip "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 )
 
 // Router represents the router for the web service.
@@ -40,8 +43,14 @@ func NewRouter() *Router {
 	)
 
 	pprof.Register(router)
-
-	handler := handlers.New()
+	ctx := context.Background()
+	cfg, err := awsconfig.LoadDefaultConfig(ctx)
+	if err != nil {
+		log.Fatalf("failed to load AWS config: %v", err)
+	}
+	cognitoClient := cip.NewFromConfig(cfg)
+	service := services.NewUserService(cognitoClient)
+	handler := handlers.New(service)
 
 	// Use RPC styling rather than REST
 	v1API := router.Group("/api/v1")

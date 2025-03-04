@@ -7,10 +7,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	// awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	cip "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/golang-jwt/jwt/v5"
@@ -19,15 +19,44 @@ import (
 	"github.com/owjoel/client-factpack/apps/auth/pkg/auth"
 )
 
+type UserInterface interface {
+	AdminCreateUser(ctx context.Context, r models.SignUpReq) error
+	ForgetPassword(ctx context.Context, r models.ForgetPasswordReq) error
+	UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error)
+	SetNewPassword(ctx context.Context, r models.SetNewPasswordReq) (*models.SetNewPasswordRes, error)
+	SetupMFA(ctx context.Context, session string) (*models.AssociateTokenRes, error)
+	SignInMFA(ctx context.Context, r models.SignInMFAReq) (models.AuthenticationRes, error)
+	VerifyMFA(ctx context.Context, r models.VerifyMFAReq) error
+	ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordReq) error
+}
+
+type CognitoClientInterface interface {
+	AdminCreateUser(ctx context.Context, params *cip.AdminCreateUserInput, optFns ...func(*cip.Options)) (*cip.AdminCreateUserOutput, error)
+	AdminAddUserToGroup(ctx context.Context, params *cip.AdminAddUserToGroupInput, optFns ...func(*cip.Options)) (*cip.AdminAddUserToGroupOutput, error)
+	AdminRemoveUserFromGroup(ctx context.Context, params *cip.AdminRemoveUserFromGroupInput, optFns ...func(*cip.Options)) (*cip.AdminRemoveUserFromGroupOutput, error)
+	AdminListGroupsForUser(ctx context.Context, params *cip.AdminListGroupsForUserInput, optFns ...func(*cip.Options)) (*cip.AdminListGroupsForUserOutput, error)
+	AdminInitiateAuth(ctx context.Context, params *cip.AdminInitiateAuthInput, optFns ...func(*cip.Options)) (*cip.AdminInitiateAuthOutput, error)
+	AdminRespondToAuthChallenge(ctx context.Context, params *cip.AdminRespondToAuthChallengeInput, optFns ...func(*cip.Options)) (*cip.AdminRespondToAuthChallengeOutput, error)
+	VerifySoftwareToken(ctx context.Context, params *cip.VerifySoftwareTokenInput, optFns ...func(*cip.Options)) (*cip.VerifySoftwareTokenOutput, error)
+	RespondToAuthChallenge(ctx context.Context, params *cip.RespondToAuthChallengeInput, optFns ...func(*cip.Options)) (*cip.RespondToAuthChallengeOutput, error)
+	ConfirmForgotPassword(ctx context.Context, params *cip.ConfirmForgotPasswordInput, optFns ...func(*cip.Options)) (*cip.ConfirmForgotPasswordOutput, error)
+	AssociateSoftwareToken(ctx context.Context, params *cip.AssociateSoftwareTokenInput, optFns ...func(*cip.Options)) (*cip.AssociateSoftwareTokenOutput, error)
+	InitiateAuth(ctx context.Context, params *cip.InitiateAuthInput, optFns ...func(*cip.Options)) (*cip.InitiateAuthOutput, error)
+	ForgotPassword(ctx context.Context, params *cip.ForgotPasswordInput, optFns ...func(*cip.Options)) (*cip.ForgotPasswordOutput, error)
+}
+
 // UserService represents the service for user operations.
 type UserService struct {
-	CognitoClient *cip.Client
+	CognitoClient CognitoClientInterface
 }
 
 // NewUserService creates a new user service.
-func NewUserService() *UserService {
-	return &UserService{CognitoClient: auth.Init()}
+func NewUserService(client CognitoClientInterface) *UserService {
+	return &UserService{
+		CognitoClient: client,
+	}
 }
+
 
 func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
 	username, err := createUsername(r.Email)
@@ -55,7 +84,7 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
 		GroupName: aws.String(r.Role),
 		UserPoolId: aws.String(config.UserPoolID),
-		Username: aws.String(username),
+		Username:   aws.String(username),
 	})
 	if err != nil {
 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
@@ -117,7 +146,6 @@ func CalculateSecretHash(username string) string {
 
 // ForgetPassword sends a password reset code to the user's email
 func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswordReq) error {
-
 	username := r.Username
 
 	input := &cip.ForgotPasswordInput{
@@ -132,14 +160,11 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 		return err
 	}
 
-	fmt.Println("Password reset code sent successfully")
 	return nil
 }
 
-
 // UserLogin authenticates user with Cognito user pool via email and password
 func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error) {
-
 
 	input := &cip.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
@@ -189,14 +214,6 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models
 
 // SetNewPassword is used to set a new password for the user and check for next auth challenge
 func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswordReq) (*models.SetNewPasswordRes, error) {
-	autoResetEnabled, err := strconv.ParseBool(config.AutoResetPassword)
-	if err != nil {
-		return nil, fmt.Errorf("invalid AUTO_RESET_PASSWORD value: %w", err)
-	}
-
-	if !autoResetEnabled {
-		return nil, fmt.Errorf("auto-reset password is disabled")
-	}
 
 	challengeInput := &cip.RespondToAuthChallengeInput{
 		ClientId:      aws.String(config.ClientID),

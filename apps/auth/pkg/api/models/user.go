@@ -23,8 +23,8 @@ type ForgetPasswordReq struct {
 
 // LoginReq represents the request payload for user login.
 type LoginReq struct {
-	Username string `form:"username" example:"joel.ow.2022"`
-	Password string `form:"password" example:"12345"`
+	Username string `form:"username" binding:"required" example:"joel.ow.2022"`
+	Password string `form:"password" binding:"required" example:"12345"`
 }
 
 // LoginRes represents the response payload for user login.
@@ -35,15 +35,15 @@ type LoginRes struct {
 
 // ConfirmForgetPasswordReq represents the request payload for confirming a forgotten password.
 type ConfirmForgetPasswordReq struct {
-	Username    string `form:"username" example:"joel.ow.2022"`
-	Code        string `form:"code" example:"ABCDEF"`
-	NewPassword string `form:"newPassword" example:"67890"`
+	Username    string `form:"username" binding:"required" example:"joel.ow.2022"`
+	Code        string `form:"code" binding:"required" example:"ABCDEF"`
+	NewPassword string `form:"newPassword" binding:"required" example:"67890"`
 }
 
 // SetNewPasswordReq represents the request payload for setting a new password.
 type SetNewPasswordReq struct {
-	Username    string `form:"username" example:"joel.ow.2022"`
-	NewPassword string `form:"newPassword" example:"ABCDEF"`
+	Username    string `form:"username" binding:"required" example:"joel.ow.2022"`
+	NewPassword string `form:"newPassword" binding:"required" example:"ABCDEF"`
 	Session     string `json:"-"`
 }
 
@@ -55,7 +55,7 @@ type SetNewPasswordRes struct {
 
 // VerifyMFAReq represents the request payload for verifying MFA.
 type VerifyMFAReq struct {
-	Code    string `form:"code"`
+	Code    string `form:"code" binding:"required"`
 	Session string `json:"-"`
 }
 
@@ -83,8 +83,8 @@ type SetupMFARes struct {
 
 // SignInMFAReq represents the request payload for signing in with MFA.
 type SignInMFAReq struct {
-	Username string `form:"username"`
-	Code     string `form:"code"`
+	Username string `form:"username" binding:"required"`
+	Code     string `form:"code" binding:"required"`
 	Session  string `json:"-"`
 }
 
