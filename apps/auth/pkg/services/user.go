@@ -13,6 +13,7 @@ import (
 	// awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	cip "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/auth"
@@ -62,6 +63,9 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 	if err != nil {
 		return fmt.Errorf("error creating username: %w", err)
 	}
+	if r.Role == "" {
+		return fmt.Errorf("user role is required")
+	}
 
 	output, err := s.CognitoClient.AdminCreateUser(ctx, &cip.AdminCreateUserInput{
 		UserPoolId: aws.String(config.UserPoolID),
@@ -75,10 +79,10 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 		return fmt.Errorf("error during sign up: %w", err)
 	}
 	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
-
+	
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
-		GroupName:  aws.String(auth.AdminGroup),
+		GroupName: aws.String(r.Role),
 		UserPoolId: aws.String(config.UserPoolID),
 		Username:   aws.String(username),
 	})
@@ -342,4 +346,67 @@ func getChallengeName(challenge types.ChallengeNameType) string {
 		return "SOFTWARE_TOKEN_MFA"
 	}
 	return ""
+}
+
+// Extract user role from JWT token
+func (s *UserService) GetUserRoleFromToken(tokenString string) (string, error) {
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	// Parse JWT token (without verification)
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	if err != nil {
+		return "", fmt.Errorf("error parsing JWT token: %v", err)
+	}
+
+	// Check if role exists in JWT
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if role, exists := claims["cognito:groups"]; exists {
+			groupList := role.([]interface{}) // Cognito stores groups as an array
+			if len(groupList) > 0 {
+				return groupList[0].(string), nil // Return first group
+			}
+		}
+	}
+
+	// If no role in JWT, fallback to Cognito API
+	return s.GetUserRoleFromCognito(tokenString)
+}
+
+// GetUserRoleFromCognito fetches the user's group membership from AWS Cognito
+func (s *UserService) GetUserRoleFromCognito(token string) (string, error) {
+	// Retrieve username from Cognito token
+	resp, err := s.CognitoClient.GetUser(context.TODO(), &cip.GetUserInput{
+		AccessToken: aws.String(token),
+	})
+	if err != nil {
+		return "", fmt.Errorf("error retrieving user from Cognito: %v", err)
+	}
+
+	var username string
+	for _, attr := range resp.UserAttributes {
+		if *attr.Name == "sub" { // Cognito uses "sub" as the unique user ID
+			username = *attr.Value
+			break
+		}
+	}
+	if username == "" {
+		return "", fmt.Errorf("username not found in Cognito attributes")
+	}
+
+	// Call ListGroupsForUser to get Cognito group memberships
+	groupResp, err := s.CognitoClient.AdminListGroupsForUser(context.TODO(), &cip.AdminListGroupsForUserInput{
+		UserPoolId: aws.String(config.UserPoolID),
+		Username:   aws.String(username),
+	})
+	if err != nil {
+		return "", fmt.Errorf("error retrieving user groups from Cognito: %v", err)
+	}
+
+	//  Extract the first group name as the user's role
+	log.Println(groupResp.Groups)
+	if len(groupResp.Groups) > 0 {
+		return *groupResp.Groups[0].GroupName, nil
+	}
+
+	return "", fmt.Errorf("user is not in any Cognito group")
 }

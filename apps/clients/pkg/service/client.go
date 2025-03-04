@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
@@ -15,50 +16,38 @@ func NewClientService(storage storage.ClientInterface) *ClientService {
 	return &ClientService{storage: storage}
 }
 
-func (s *ClientService) CreateClient(r *model.CreateClientReq) (*model.StatusRes, error) {
-	client := &model.Client{
-		Name:        r.Name,
-		Age:         r.Age,
-		Nationality: r.Nationality,
-	}
-
-	if err := s.storage.Create(client); err != nil {
-		return &model.StatusRes{}, fmt.Errorf("Error creating client profile: %w", err)
-	}
-	return &model.StatusRes{Status: "Success"}, nil
-}
-
-func (s *ClientService) GetClient(clientID uint) (*model.GetClientRes, error) {
-	c, err := s.storage.Get(clientID)
+func (s *ClientService) GetClient(ctx context.Context, clientID string) (*model.Client, error) {
+	c, err := storage.GetInstance().Client.Get(ctx, clientID)
 	if err != nil {
-		return &model.GetClientRes{}, fmt.Errorf("Error retrieving client profile: %w", err)
+		return &model.Client{}, fmt.Errorf("Error retrieving client profile: %w", err)
 	}
-	return &model.GetClientRes{
-		Name:        c.Name,
-		Age:         c.Age,
-		Nationality: c.Nationality,
-	}, nil
+	return c, nil
 }
 
-func (s *ClientService) UpdateClient(r model.UpdateClientReq) (*model.StatusRes, error) {
-	client := &model.Client{
-		Name:        r.Name,
-		Age:         r.Age,
-		Nationality: r.Nationality,
+func (s *ClientService) GetAllClients(ctx context.Context) ([]model.Client, error) {
+	clients, err := storage.GetInstance().Client.GetAll(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("Error retrieving all client records: %w", err)
 	}
-	if err := s.storage.Update(client); err != nil {
-		return nil, fmt.Errorf("Error updating client profile: %w", err)
-	}
-	return &model.StatusRes{Status: "Success"}, nil
+	return clients, nil
 }
 
-// func (s *ClientService) DeleteClient(r model.DeleteClientReq) (*model.StatusRes, error) {
+func (s *ClientService) CreateClient(ctx context.Context, client *model.Client) error {
+	err := storage.GetInstance().Client.Create(ctx, client)
+	if err != nil {
+		return fmt.Errorf("error creating client: %w", err)
+	}
+	return nil
+}
+
+// func (s *ClientService) UpdateClient(ctx context.Context, r model.UpdateClientReq) (*model.StatusRes, error) {
 // 	client := &model.Client{
-// 		ID: r.ID,
+// 		Name:        r.Name,
+// 		Age:         r.Age,
+// 		Nationality: r.Nationality,
 // 	}
-
-// 	if err := s.storage.Delete(client); err != nil {
-// 		return nil, fmt.Errorf("Error deactivating client profile: %w", err)
+// 	if err := storage.GetInstance().Client.Update(ctx, client); err != nil {
+// 		return nil, fmt.Errorf("Error updating client profile: %w", err)
 // 	}
 // 	return &model.StatusRes{Status: "Success"}, nil
 // }

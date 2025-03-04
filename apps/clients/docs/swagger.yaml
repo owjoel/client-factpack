@@ -1,4 +1,138 @@
 basePath: /api/v1
+definitions:
+  handlers.Response:
+    properties:
+      data: {}
+      status:
+        type: integer
+      timestamp:
+        type: string
+      version:
+        type: string
+    type: object
+  model.Associate:
+    properties:
+      associatedCompanies:
+        items:
+          type: string
+        type: array
+      name:
+        type: string
+      relationship:
+        type: string
+    type: object
+  model.Client:
+    properties:
+      associates:
+        items:
+          $ref: '#/definitions/model.Associate'
+        type: array
+      investments:
+        items:
+          $ref: '#/definitions/model.Investment'
+        type: array
+      metadata:
+        $ref: '#/definitions/model.Metadata'
+      profile:
+        $ref: '#/definitions/model.Profile'
+      status:
+        type: string
+    type: object
+  model.Contact:
+    properties:
+      phone:
+        type: string
+      workAddress:
+        type: string
+    type: object
+  model.Investment:
+    properties:
+      date:
+        type: string
+      industry:
+        type: string
+      name:
+        type: string
+      source:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
+      value:
+        $ref: '#/definitions/model.InvestmentValue'
+    type: object
+  model.InvestmentValue:
+    properties:
+      currency:
+        type: string
+      value:
+        type: integer
+    type: object
+  model.Metadata:
+    properties:
+      sources:
+        items:
+          type: string
+        type: array
+      updatedAt:
+        type: string
+    type: object
+  model.NetWorth:
+    properties:
+      currency:
+        type: string
+      estimatedValue:
+        type: integer
+      source:
+        type: string
+      timestamp:
+        type: string
+    type: object
+  model.Profile:
+    properties:
+      age:
+        example: 55
+        type: integer
+      contact:
+        $ref: '#/definitions/model.Contact'
+      currentResidence:
+        $ref: '#/definitions/model.Residence'
+      industries:
+        items:
+          type: string
+        type: array
+      name:
+        example: john doe
+        type: string
+      nationality:
+        example: chinese
+        type: string
+      netWorth:
+        $ref: '#/definitions/model.NetWorth'
+      occupations:
+        items:
+          type: string
+        type: array
+      socials:
+        items:
+          $ref: '#/definitions/model.SocialMedia'
+        type: array
+    type: object
+  model.Residence:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+    type: object
+  model.SocialMedia:
+    properties:
+      platform:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -6,5 +140,108 @@ info:
     data of prospective clients
   title: client-factpack/clients
   version: "1.0"
-paths: {}
+paths:
+  /createProfile:
+    post:
+      consumes:
+      - application/json
+      description: Create new client profile, given the populated json
+      parameters:
+      - description: Client data
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/model.Client'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Create Clients
+      tags:
+      - clients
+  /health:
+    get:
+      description: Basic health check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Connection status
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: ping
+      tags:
+      - health
+  /retrieveAllProfiles:
+    get:
+      description: Retrieve all client data
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Client'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Get All Clients
+      tags:
+      - clients
+  /retrieveProfile:
+    get:
+      description: Retrieve client data by profile id
+      parameters:
+      - description: Hex id used to identify client
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handlers.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Client'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Response'
+      summary: Get Client By ID
+      tags:
+      - clients
 swagger: "2.0"

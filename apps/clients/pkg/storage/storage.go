@@ -1,12 +1,10 @@
 package storage
 
 import (
-	"fmt"
-	"log"
+	"context"
 
-	"github.com/owjoel/client-factpack/apps/clients/config"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
+	// "gorm.io/gorm"
 )
 
 type storage struct {
@@ -18,28 +16,18 @@ var (
 )
 
 func Init() {
-	_db, err := gorm.Open(mysql.Open(GetDSN()), &gorm.Config{})
-	if err != nil {
-		panic("Failed to connect to database.")
-	}
-	log.Printf("Connected to DB")
-	if err := _db.AutoMigrate(&Client{}); err != nil {
-		panic("Failed to migrate resource model.")
-	}
-	db = &storage{Client: &ClientStorage{_db}}
+	clientStorage := InitMongo()
+	db = &storage{Client: clientStorage}
+}
+
+type ClientInterface interface {
+	Create(ctx context.Context, c *model.Client) error
+	Get(ctx context.Context, clientID string) (*model.Client, error)
+	GetAll(ctx context.Context) ([]model.Client, error)
+	Update(ctx context.Context, c *model.Client) error
 }
 
 // username:password@protocol(address)/dbname?param=value
-func GetDSN() string {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
-		config.DBUser,
-		config.DBPassword,
-		config.DBHost,
-		config.DBPort,
-		config.DBName,
-	)
-	return dsn
-}
 
 func GetInstance() *storage {
 	return db

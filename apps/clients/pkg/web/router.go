@@ -10,11 +10,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/clients/config"
-	"github.com/owjoel/client-factpack/apps/clients/pkg/storage"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/service"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/storage"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/web/handlers"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -28,6 +29,16 @@ func NewRouter() *Router {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
+	// enable CORS
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:5173"}, // Allow frontend origin
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+		ExposeHeaders: []string{"Content-Length"},
+	}))
+	
+
 	pprof.Register(router)
 
 	storage.Init()
@@ -36,8 +47,11 @@ func NewRouter() *Router {
 	handler := handlers.New(clientService)
 
 	// Use RPC styling rather than REST
-	v1API := router.Group("/api/v1")
+	v1API := router.Group("/api/v1/clients")
 	v1API.GET("/health", handler.HealthCheck)
+	v1API.GET("/retrieveProfile/:id", handler.GetClient)
+	v1API.GET("/retrieveAllProfiles", handler.GetAllClients)
+	v1API.POST("/createProfile", handler.CreateClient)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
@@ -52,6 +66,7 @@ func (r *Router) Run() {
 	}
 
 	go func() {
+		log.Printf("started on port: %v\n", port)
 		err := srv.ListenAndServe()
 		if err == http.ErrServerClosed {
 			log.Fatalf("Server closed: %v\n", err)

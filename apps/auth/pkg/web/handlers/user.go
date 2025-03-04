@@ -44,7 +44,6 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
 //	@Param			email		formData	string	true	"User's email address"
-//	@Param			password	formData	string	true	"User's password"
 //	@Success		200			{object}	models.StatusRes
 //	@Failure		400			{object}	models.StatusRes
 //	@Failure		500			{object}	models.StatusRes

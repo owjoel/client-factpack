@@ -1,14 +1,90 @@
 package model
 
-type Client struct {
-	ID          uint
-	Name        string
-	Age         uint
-	Nationality string
-	Status      string
+import (
+	"time"
 
-	CreatedAt string
-	UpdatedAt string
+	"go.mongodb.org/mongo-driver/v2/bson"
+)
+
+// Client contains all information for a particular client
+type Client struct {
+	// gorm.Model
+	ID          bson.ObjectID `bson:"_id,omitempty" swaggerignore:"true"`
+	Profile     Profile       `json:"profile"`
+	Investments []Investment  `json:"investments"`
+	Associates  []Associate   `json:"associates"`
+	Metadata    Metadata      `json:"metadata"`
+
+	Status string `gorm:"status"`
+}
+
+// Profile contains basic personal information about the client
+type Profile struct {
+	Name             string        `json:"name" example:"john doe"`
+	Age              uint          `json:"age" example:"55"`
+	Nationality      string        `json:"nationality" example:"chinese"`
+	CurrentResidence Residence     `bson:"currentResidence" json:"currentResidence"`
+	NetWorth         NetWorth      `json:"netWorth"`
+	Industries       []string      `json:"industries"`
+	Occupations      []string      `json:"occupations"`
+	Socials          []SocialMedia `json:"socials"`
+	Contact          Contact       `json:"contact"`
+}
+
+// Residence contains the details of a client's residence
+type Residence struct {
+	City    string `json:"city"`
+	Country string `json:"country"`
+}
+
+// NetWorth contains information about the client's current net worth
+type NetWorth struct {
+	EstimatedValue uint      `bson:"estimatedValue" json:"estimatedValue"`
+	Currency       string    `json:"currency"`
+	Source         string    `json:"source"`
+	Timestamp      time.Time `bson:"timestamp" json:"timestamp"`
+}
+
+// SocialMedia contains information about a client's current
+type SocialMedia struct {
+	Platform string `json:"platform"`
+	Username string `json:"username"`
+}
+
+// Contact contains a client's contact information
+type Contact struct {
+	WorkAddress string `bson:"workAddress" json:"workAddress"`
+	Phone       string `json:"phone"`
+}
+
+// Investment contains information about a client's investment
+type Investment struct {
+	Name     string          `json:"name"`
+	Type     string          `json:"type"`
+	Value    InvestmentValue `json:"value"`
+	Date     time.Time       `json:"date"`
+	Industry string          `json:"industry"`
+	Status   string          `json:"status"`
+	Source   string          `json:"source"`
+}
+
+// InvestmentValue contains the value and currency for a particular investment
+type InvestmentValue struct {
+	Value    uint   `json:"value"`
+	Currency string `json:"currency"`
+}
+
+// Associate contains information about a client's known associate
+type Associate struct {
+	Name                string   `json:"name"`
+	Relationship        string   `json:"relationship"`
+	AssociatedCompanies []string `bson:"associatedCompanies" json:"associatedCompanies"`
+}
+
+// Metadata contains general information about the client's profile in the app.
+type Metadata struct {
+	UpdatedAt time.Time `bson:"updatedAt" json:"updatedAt"`
+	Sources   []string  `json:"sources"`
 }
 
 type StatusRes struct {
