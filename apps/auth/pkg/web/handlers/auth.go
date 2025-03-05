@@ -87,6 +87,15 @@ func (h *UserHandler) Authenticate(c *gin.Context) {
 	}
 	c.Set("username", subClaim)
 
+	// Extract the username from claims
+	usernameClaim, ok := claims["username"].(string)
+	if !ok {
+		usernameClaim = subClaim // fallback to subject if username is missing
+	}
+
+	c.Set("username", usernameClaim) // Store non-hashed username
+
+
 	// Validate client ID
 	var appClientIdClaim string
 	if tokenUseClaim == "id" {
@@ -158,4 +167,36 @@ func GetJWKS(awsRegion string, cognitoUserPoolId string) (*keyfunc.JWKS, error) 
 		return nil, err
 	}
 	return jwks, nil
+}
+
+func (h *UserHandler) GetUsername(c *gin.Context) {
+    username, exists := c.Get("username")
+    if !exists {
+        utils.ErrorResponse(c, errors.ErrUnauthorized)
+        return
+    }
+
+    c.JSON(200, gin.H{
+        "username": username, // Return actual username
+    })
+}
+
+// GetUserRole extracts the user's role from the JWT token
+func (h *UserHandler) GetUserRole(c *gin.Context) {
+	tokenString, err := c.Cookie("access_token")
+
+	if err != nil || tokenString == "" {
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
+		return
+	}
+
+	// Call the service layer to get the user's role
+	role, err := h.service.GetUserRoleFromToken(tokenString)
+	if err != nil {
+		utils.ErrorResponse(c, errors.ErrUnauthorized)
+		return
+	}
+
+	// Return user role in JSON response
+	c.JSON(200, gin.H{"user_role": role})
 }

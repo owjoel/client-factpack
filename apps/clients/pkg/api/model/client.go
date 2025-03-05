@@ -39,7 +39,7 @@ type Residence struct {
 
 // NetWorth contains information about the client's current net worth
 type NetWorth struct {
-	EstimatedValue uint      `bson:"estimatedValue" json:"estiamtedValue"`
+	EstimatedValue uint      `bson:"estimatedValue" json:"estimatedValue"`
 	Currency       string    `json:"currency"`
 	Source         string    `json:"source"`
 	Timestamp      time.Time `bson:"timestamp" json:"timestamp"`

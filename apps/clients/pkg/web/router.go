@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/clients/config"
@@ -27,6 +28,16 @@ type Router struct {
 func NewRouter() *Router {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+
+	// enable CORS
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:5173"}, // Allow frontend origin
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+		ExposeHeaders: []string{"Content-Length"},
+	}))
+	
 
 	pprof.Register(router)
 

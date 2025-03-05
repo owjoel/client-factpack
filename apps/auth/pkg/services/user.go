@@ -7,31 +7,64 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	// awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	cip "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/auth"
 )
 
+type UserInterface interface {
+	AdminCreateUser(ctx context.Context, r models.SignUpReq) error
+	ForgetPassword(ctx context.Context, r models.ForgetPasswordReq) error
+	UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error)
+	SetNewPassword(ctx context.Context, r models.SetNewPasswordReq) (*models.SetNewPasswordRes, error)
+	SetupMFA(ctx context.Context, session string) (*models.AssociateTokenRes, error)
+	SignInMFA(ctx context.Context, r models.SignInMFAReq) (models.AuthenticationRes, error)
+	VerifyMFA(ctx context.Context, r models.VerifyMFAReq) error
+	ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordReq) error
+}
+
+type CognitoClientInterface interface {
+	AdminCreateUser(ctx context.Context, params *cip.AdminCreateUserInput, optFns ...func(*cip.Options)) (*cip.AdminCreateUserOutput, error)
+	AdminAddUserToGroup(ctx context.Context, params *cip.AdminAddUserToGroupInput, optFns ...func(*cip.Options)) (*cip.AdminAddUserToGroupOutput, error)
+	AdminRemoveUserFromGroup(ctx context.Context, params *cip.AdminRemoveUserFromGroupInput, optFns ...func(*cip.Options)) (*cip.AdminRemoveUserFromGroupOutput, error)
+	AdminListGroupsForUser(ctx context.Context, params *cip.AdminListGroupsForUserInput, optFns ...func(*cip.Options)) (*cip.AdminListGroupsForUserOutput, error)
+	AdminInitiateAuth(ctx context.Context, params *cip.AdminInitiateAuthInput, optFns ...func(*cip.Options)) (*cip.AdminInitiateAuthOutput, error)
+	AdminRespondToAuthChallenge(ctx context.Context, params *cip.AdminRespondToAuthChallengeInput, optFns ...func(*cip.Options)) (*cip.AdminRespondToAuthChallengeOutput, error)
+	VerifySoftwareToken(ctx context.Context, params *cip.VerifySoftwareTokenInput, optFns ...func(*cip.Options)) (*cip.VerifySoftwareTokenOutput, error)
+	RespondToAuthChallenge(ctx context.Context, params *cip.RespondToAuthChallengeInput, optFns ...func(*cip.Options)) (*cip.RespondToAuthChallengeOutput, error)
+	ConfirmForgotPassword(ctx context.Context, params *cip.ConfirmForgotPasswordInput, optFns ...func(*cip.Options)) (*cip.ConfirmForgotPasswordOutput, error)
+	AssociateSoftwareToken(ctx context.Context, params *cip.AssociateSoftwareTokenInput, optFns ...func(*cip.Options)) (*cip.AssociateSoftwareTokenOutput, error)
+	InitiateAuth(ctx context.Context, params *cip.InitiateAuthInput, optFns ...func(*cip.Options)) (*cip.InitiateAuthOutput, error)
+	ForgotPassword(ctx context.Context, params *cip.ForgotPasswordInput, optFns ...func(*cip.Options)) (*cip.ForgotPasswordOutput, error)
+}
+
 // UserService represents the service for user operations.
 type UserService struct {
-	CognitoClient *cip.Client
+	CognitoClient CognitoClientInterface
 }
 
 // NewUserService creates a new user service.
-func NewUserService() *UserService {
-	return &UserService{CognitoClient: auth.Init()}
+func NewUserService(client CognitoClientInterface) *UserService {
+	return &UserService{
+		CognitoClient: client,
+	}
 }
+
 
 func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
 	username, err := createUsername(r.Email)
 	if err != nil {
 		return fmt.Errorf("error creating username: %w", err)
+	}
+	if r.Role == "" {
+		return fmt.Errorf("user role is required")
 	}
 
 	output, err := s.CognitoClient.AdminCreateUser(ctx, &cip.AdminCreateUserInput{
@@ -46,12 +79,12 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 		return fmt.Errorf("error during sign up: %w", err)
 	}
 	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
-
+	
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
-		GroupName: aws.String(auth.AdminGroup),
+		GroupName: aws.String(r.Role),
 		UserPoolId: aws.String(config.UserPoolID),
-		Username: aws.String(username),
+		Username:   aws.String(username),
 	})
 	if err != nil {
 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
@@ -113,7 +146,6 @@ func CalculateSecretHash(username string) string {
 
 // ForgetPassword sends a password reset code to the user's email
 func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswordReq) error {
-
 	username := r.Username
 
 	input := &cip.ForgotPasswordInput{
@@ -128,14 +160,11 @@ func (s *UserService) ForgetPassword(ctx context.Context, r models.ForgetPasswor
 		return err
 	}
 
-	fmt.Println("Password reset code sent successfully")
 	return nil
 }
 
-
 // UserLogin authenticates user with Cognito user pool via email and password
 func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models.LoginRes, error) {
-
 
 	input := &cip.InitiateAuthInput{
 		AuthFlow: types.AuthFlowTypeUserPasswordAuth,
@@ -185,14 +214,6 @@ func (s *UserService) UserLogin(ctx context.Context, r models.LoginReq) (*models
 
 // SetNewPassword is used to set a new password for the user and check for next auth challenge
 func (s *UserService) SetNewPassword(ctx context.Context, r models.SetNewPasswordReq) (*models.SetNewPasswordRes, error) {
-	autoResetEnabled, err := strconv.ParseBool(config.AutoResetPassword)
-	if err != nil {
-		return nil, fmt.Errorf("invalid AUTO_RESET_PASSWORD value: %w", err)
-	}
-
-	if !autoResetEnabled {
-		return nil, fmt.Errorf("auto-reset password is disabled")
-	}
 
 	challengeInput := &cip.RespondToAuthChallengeInput{
 		ClientId:      aws.String(config.ClientID),
@@ -325,4 +346,67 @@ func getChallengeName(challenge types.ChallengeNameType) string {
 		return "SOFTWARE_TOKEN_MFA"
 	}
 	return ""
+}
+
+// Extract user role from JWT token
+func (s *UserService) GetUserRoleFromToken(tokenString string) (string, error) {
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	// Parse JWT token (without verification)
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
+	if err != nil {
+		return "", fmt.Errorf("error parsing JWT token: %v", err)
+	}
+
+	// Check if role exists in JWT
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		if role, exists := claims["cognito:groups"]; exists {
+			groupList := role.([]interface{}) // Cognito stores groups as an array
+			if len(groupList) > 0 {
+				return groupList[0].(string), nil // Return first group
+			}
+		}
+	}
+
+	// If no role in JWT, fallback to Cognito API
+	return s.GetUserRoleFromCognito(tokenString)
+}
+
+// GetUserRoleFromCognito fetches the user's group membership from AWS Cognito
+func (s *UserService) GetUserRoleFromCognito(token string) (string, error) {
+	// Retrieve username from Cognito token
+	resp, err := s.CognitoClient.GetUser(context.TODO(), &cip.GetUserInput{
+		AccessToken: aws.String(token),
+	})
+	if err != nil {
+		return "", fmt.Errorf("error retrieving user from Cognito: %v", err)
+	}
+
+	var username string
+	for _, attr := range resp.UserAttributes {
+		if *attr.Name == "sub" { // Cognito uses "sub" as the unique user ID
+			username = *attr.Value
+			break
+		}
+	}
+	if username == "" {
+		return "", fmt.Errorf("username not found in Cognito attributes")
+	}
+
+	// Call ListGroupsForUser to get Cognito group memberships
+	groupResp, err := s.CognitoClient.AdminListGroupsForUser(context.TODO(), &cip.AdminListGroupsForUserInput{
+		UserPoolId: aws.String(config.UserPoolID),
+		Username:   aws.String(username),
+	})
+	if err != nil {
+		return "", fmt.Errorf("error retrieving user groups from Cognito: %v", err)
+	}
+
+	//  Extract the first group name as the user's role
+	log.Println(groupResp.Groups)
+	if len(groupResp.Groups) > 0 {
+		return *groupResp.Groups[0].GroupName, nil
+	}
+
+	return "", fmt.Errorf("user is not in any Cognito group")
 }

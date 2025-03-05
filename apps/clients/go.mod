@@ -13,7 +13,10 @@ require (
 	go.mongodb.org/mongo-driver/v2 v2.0.1
 )
 
-require github.com/stretchr/objx v0.5.2 // indirect
+require (
+	github.com/gin-contrib/cors v1.7.3 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
+)
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect

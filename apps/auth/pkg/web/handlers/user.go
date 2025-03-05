@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/mail"
@@ -15,15 +16,16 @@ import (
 
 // UserHandler represents the handler for user operations.
 type UserHandler struct {
-	service *services.UserService
+	service services.UserInterface
 }
 
 // New creates a new user handler.
-func New() *UserHandler {
-	return &UserHandler{service: services.NewUserService()}
+func New(service services.UserInterface) *UserHandler {
+	return &UserHandler{service: service}
 }
 
 // HealthCheck is a basic health check
+//
 //	@Summary		ping
 //	@Description	Basic health check
 //	@Tags			health
@@ -35,13 +37,13 @@ func (h *UserHandler) HealthCheck(c *gin.Context) {
 }
 
 // CreateUser registers user with Cognito user pool via email and password
+//
 //	@Summary		Create Users
 //	@Description	Admin registers user with Cognito user pool via email. Cognito sends an email with a temporary password to the user.
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
 //	@Param			email		formData	string	true	"User's email address"
-//	@Param			password	formData	string	true	"User's password"
 //	@Success		200			{object}	models.StatusRes
 //	@Failure		400			{object}	models.StatusRes
 //	@Failure		500			{object}	models.StatusRes
@@ -68,6 +70,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 }
 
 // ForgetPassword sends a reset password email to the user
+//
 //	@Summary		Forget Password
 //	@Description	Forget password
 //	@Tags			auth
@@ -96,8 +99,9 @@ func (h *UserHandler) ForgetPassword(c *gin.Context) {
 }
 
 // UserLogin handles user login
+//
 //	@Summary		Login
-//	@Description	Cognito SSO login using username and password, returns the next auth challenge, either 
+//	@Description	Cognito SSO login using username and password, returns the next auth challenge, either
 //	@Tags			auth
 //	@Accept			application/x-www-form-urlencoded
 //	@Produce		json
@@ -110,6 +114,7 @@ func (h *UserHandler) ForgetPassword(c *gin.Context) {
 //	@Router			/auth/login [post]
 func (h *UserHandler) UserLogin(c *gin.Context) {
 	var req models.LoginReq
+
 	if err := c.ShouldBind(&req); err != nil {
 		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
@@ -127,6 +132,7 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 }
 
 // UserInitialChangePassword handles first-time login password change
+//
 //	@Summary		Change Password for first-time Login
 //	@Description	Users are required to change password on first time login, using their username and password sent via email.
 //	@Description	Submit The user's username and new password to respond to this auth challenge.
@@ -165,8 +171,9 @@ func (h *UserHandler) UserInitialChangePassword(c *gin.Context) {
 }
 
 // UserSetupMFA retrieves an OTP token for MFA setup
+//
 //	@Summary		Get OTP Token for setting up TOTP authenticator
-//	@Description	Submit GET query to cognito to obtain an OTP token. 
+//	@Description	Submit GET query to cognito to obtain an OTP token.
 //	@Description	The user can use this token to set up their authenticator app, either through QR code or by manual keying in of the token.
 //	@Description	Request must contain "session" cookie containing the session token to respond to the challenge
 //	@Description	On success, the token is returned, and the cookie is updated for the next auth step
@@ -195,6 +202,7 @@ func (h *UserHandler) UserSetupMFA(c *gin.Context) {
 }
 
 // UserVerifyMFA verifies the MFA code
+//
 //	@Summary		Verify initial code from authenticator app
 //	@Description	User submits the code from their authenticator app to verify the TOTP setup
 //	@Description	Request must contain "session" cookie containing the session token to respond to the challenge
@@ -210,7 +218,9 @@ func (h *UserHandler) UserSetupMFA(c *gin.Context) {
 //	@Router			/auth/verifyMFA [post]
 func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 	var req models.VerifyMFAReq
+
 	if err := c.ShouldBind(&req); err != nil {
+		fmt.Println("@@@@@binding error:", err)
 		utils.ErrorResponse(c, errors.ErrInvalidInput)
 		return
 	}
@@ -231,7 +241,8 @@ func (h *UserHandler) UserVerifyMFA(c *gin.Context) {
 }
 
 // UserLoginMFA processes MFA login
-//	@Summary		Submit user TOTP code from authenticator app for all subsequent log ins. 
+//
+//	@Summary		Submit user TOTP code from authenticator app for all subsequent log ins.
 //	@Description	Responds to Cognito auth challenge after successful credential sign in
 //	@Description	Request must contain "session" cookie containing the session token to respond to the challenge
 //	@Tags			auth
@@ -274,6 +285,7 @@ func (h *UserHandler) UserLoginMFA(c *gin.Context) {
 }
 
 // ConfirmForgetPassword verifies the OTP for password reset
+//
 //	@Summary		Confirm Forget Password
 //	@Description	Submit Cognito OTP sent to user's email to proceed with password reset
 //	@Tags			auth
@@ -308,6 +320,7 @@ func (h *UserHandler) ConfirmForgetPassword(c *gin.Context) {
 // @Tags auth
 // @Produce json
 // @Success 200 {object} models.StatusRes
+//
 //	@Router			/auth/logout [post]
 func (h *UserHandler) UserLogout(c *gin.Context) {
 	c.SetCookie("access_token", "", -1, "/", config.Host, false, true)

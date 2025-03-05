@@ -151,13 +151,6 @@ const docTemplate = `{
                         "name": "email",
                         "in": "formData",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "User's password",
-                        "name": "password",
-                        "in": "formData",
-                        "required": true
                     }
                 ],
                 "responses": {

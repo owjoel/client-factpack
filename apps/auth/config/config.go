@@ -16,7 +16,7 @@ Configuration variables sourced from environment variables:
 */
 var (
 	Host              = os.Getenv("HOST")
-	AllowedDoamins	  = GetDomains()
+	AllowedDomains	  = GetDomains()
 	ClientID          = os.Getenv("COGNITO_USERPOOL_CLIENT_ID")
 	ClientSecret      = os.Getenv("COGNITO_USERPOOL_CLIENT_SECRET")
 	UserPoolID        = os.Getenv("COGNITO_USERPOOL_ID")
