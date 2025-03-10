@@ -33,13 +33,15 @@ const docTemplate = `{
                         "type": "string",
                         "example": "ABCDEF",
                         "name": "newPassword",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "example": "joel.ow.2022",
                         "name": "username",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -82,19 +84,22 @@ const docTemplate = `{
                         "type": "string",
                         "example": "ABCDEF",
                         "name": "code",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "example": "67890",
                         "name": "newPassword",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "example": "joel.ow.2022",
                         "name": "username",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -248,13 +253,15 @@ const docTemplate = `{
                         "type": "string",
                         "example": "12345",
                         "name": "password",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "example": "joel.ow.2022",
                         "name": "username",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -308,12 +315,14 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "code",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     },
                     {
                         "type": "string",
                         "name": "username",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -416,7 +425,8 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "code",
-                        "in": "formData"
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {

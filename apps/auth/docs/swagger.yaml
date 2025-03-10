@@ -40,10 +40,12 @@ paths:
       - example: ABCDEF
         in: formData
         name: newPassword
+        required: true
         type: string
       - example: joel.ow.2022
         in: formData
         name: username
+        required: true
         type: string
       produces:
       - application/json
@@ -73,14 +75,17 @@ paths:
       - example: ABCDEF
         in: formData
         name: code
+        required: true
         type: string
       - example: "67890"
         in: formData
         name: newPassword
+        required: true
         type: string
       - example: joel.ow.2022
         in: formData
         name: username
+        required: true
         type: string
       produces:
       - application/json
@@ -184,10 +189,12 @@ paths:
       - example: "12345"
         in: formData
         name: password
+        required: true
         type: string
       - example: joel.ow.2022
         in: formData
         name: username
+        required: true
         type: string
       produces:
       - application/json
@@ -225,9 +232,11 @@ paths:
       parameters:
       - in: formData
         name: code
+        required: true
         type: string
       - in: formData
         name: username
+        required: true
         type: string
       produces:
       - application/json
@@ -303,6 +312,7 @@ paths:
       parameters:
       - in: formData
         name: code
+        required: true
         type: string
       produces:
       - application/json

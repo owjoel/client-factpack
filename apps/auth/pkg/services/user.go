@@ -28,6 +28,7 @@ type UserInterface interface {
 	SignInMFA(ctx context.Context, r models.SignInMFAReq) (models.AuthenticationRes, error)
 	VerifyMFA(ctx context.Context, r models.VerifyMFAReq) error
 	ConfirmForgetPassword(ctx context.Context, r models.ConfirmForgetPasswordReq) error
+	GetUserRoleFromToken(token string) (string, error)
 }
 
 type CognitoClientInterface interface {
@@ -43,6 +44,7 @@ type CognitoClientInterface interface {
 	AssociateSoftwareToken(ctx context.Context, params *cip.AssociateSoftwareTokenInput, optFns ...func(*cip.Options)) (*cip.AssociateSoftwareTokenOutput, error)
 	InitiateAuth(ctx context.Context, params *cip.InitiateAuthInput, optFns ...func(*cip.Options)) (*cip.InitiateAuthOutput, error)
 	ForgotPassword(ctx context.Context, params *cip.ForgotPasswordInput, optFns ...func(*cip.Options)) (*cip.ForgotPasswordOutput, error)
+    GetUser(ctx context.Context, input *cip.GetUserInput, opts ...func(*cip.Options)) (*cip.GetUserOutput, error)
 }
 
 // UserService represents the service for user operations.
