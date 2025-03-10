@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	model "github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -12,17 +14,17 @@ type ClientInterface struct {
 	mock.Mock
 }
 
-// Create provides a mock function with given fields: c
-func (_m *ClientInterface) Create(c *model.Client) error {
-	ret := _m.Called(c)
+// Create provides a mock function with given fields: ctx, c
+func (_m *ClientInterface) Create(ctx context.Context, c *model.Client) error {
+	ret := _m.Called(ctx, c)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*model.Client) error); ok {
-		r0 = rf(c)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Client) error); ok {
+		r0 = rf(ctx, c)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -30,9 +32,9 @@ func (_m *ClientInterface) Create(c *model.Client) error {
 	return r0
 }
 
-// Get provides a mock function with given fields: clientID
-func (_m *ClientInterface) Get(clientID uint) (*model.Client, error) {
-	ret := _m.Called(clientID)
+// Get provides a mock function with given fields: ctx, clientID
+func (_m *ClientInterface) Get(ctx context.Context, clientID string) (*model.Client, error) {
+	ret := _m.Called(ctx, clientID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
@@ -40,19 +42,19 @@ func (_m *ClientInterface) Get(clientID uint) (*model.Client, error) {
 
 	var r0 *model.Client
 	var r1 error
-	if rf, ok := ret.Get(0).(func(uint) (*model.Client, error)); ok {
-		return rf(clientID)
+	if rf, ok := ret.Get(0).(func(context.Context, string) (*model.Client, error)); ok {
+		return rf(ctx, clientID)
 	}
-	if rf, ok := ret.Get(0).(func(uint) *model.Client); ok {
-		r0 = rf(clientID)
+	if rf, ok := ret.Get(0).(func(context.Context, string) *model.Client); ok {
+		r0 = rf(ctx, clientID)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Client)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(uint) error); ok {
-		r1 = rf(clientID)
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, clientID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -60,17 +62,47 @@ func (_m *ClientInterface) Get(clientID uint) (*model.Client, error) {
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: c
-func (_m *ClientInterface) Update(c *model.Client) error {
-	ret := _m.Called(c)
+// GetAll provides a mock function with given fields: ctx
+func (_m *ClientInterface) GetAll(ctx context.Context) ([]model.Client, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAll")
+	}
+
+	var r0 []model.Client
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) ([]model.Client, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) []model.Client); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]model.Client)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Update provides a mock function with given fields: ctx, c
+func (_m *ClientInterface) Update(ctx context.Context, c *model.Client) error {
+	ret := _m.Called(ctx, c)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*model.Client) error); ok {
-		r0 = rf(c)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Client) error); ok {
+		r0 = rf(ctx, c)
 	} else {
 		r0 = ret.Error(0)
 	}

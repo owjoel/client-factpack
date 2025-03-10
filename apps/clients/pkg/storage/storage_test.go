@@ -1,96 +1,78 @@
 package storage
 
-// import (
-// 	"database/sql"
-// 	"fmt"
-// 	"testing"
+import (
+	"context"
+	"encoding/json"
+	"log"
+	"testing"
 
-// 	"github.com/DATA-DOG/go-sqlmock"
-// 	"github.com/owjoel/client-factpack/apps/clients/config"
-// 	"github.com/stretchr/testify/assert"
-// 	"github.com/stretchr/testify/suite"
-// 	"gorm.io/driver/mysql"
-// 	"gorm.io/gorm"
-// )
+	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/storage/mocks"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/suite"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+)
 
-// type DatabaseTestSuite struct {
-// 	suite.Suite
-// 	mockDB *sql.DB
-// 	mock   sqlmock.Sqlmock
-// 	db     *gorm.DB
-// }
+type DatabaseTestSuite struct {
+	suite.Suite
+	mockStorage *mocks.ClientInterface
+	mockClient  *model.Client
+}
 
-// // set up a database mock for the test suite
-// func (suite *DatabaseTestSuite) SetupSuite() {
-// 	mockDB, mock, err := sqlmock.New()
-// 	assert.NoError(suite.T(), err, "Should create a mock database successfully")
+func (suite *DatabaseTestSuite) SetupSuite() {
+	suite.mockStorage = new(mocks.ClientInterface) 
+	db = &storage{Client: suite.mockStorage}       
 
-// 	mock.ExpectQuery("^SELECT VERSION()").WillReturnRows(
-// 		sqlmock.NewRows([]string{"VERSION()"}).AddRow("test-version"),
-// 	)
+	if err := json.Unmarshal([]byte(mocks.MockClientJSON), &suite.mockClient); err != nil {
+		log.Fatalf("Failed to unmarshal mock client: %v", err)
+	}
+}
 
-// 	suite.mockDB = mockDB
-// 	suite.mock = mock
+func (suite *DatabaseTestSuite) TestGetInstance() {
+	instance := GetInstance()
+	suite.Equal(db, instance, "GetInstance should return the same storage instance")
+}
 
-// 	suite.db, err = gorm.Open(mysql.New(mysql.Config{
-// 		Conn: mockDB,
-// 	}), &gorm.Config{})
-// 	assert.NoError(suite.T(), err, "Should open a mock GORM database")
-// }
+func (suite *DatabaseTestSuite) TestCreateClient() {
+	suite.mockStorage.On("Create", mock.Anything, suite.mockClient).Return(nil)
 
-// func (suite *DatabaseTestSuite) TearDownSuite() {
-// 	suite.mockDB.Close() // close mock database after all tests have completed
-// }
+	err := db.Client.Create(context.Background(), suite.mockClient)
+	assert.NoError(suite.T(), err, "Should create a client successfully")
+	suite.mockStorage.AssertExpectations(suite.T())
+}
 
-// func (suite *DatabaseTestSuite) TestGetDSN() {
-// 	config.DBUser = "testuser"
-// 	config.DBPassword = "testpass"
-// 	config.DBHost = "127.0.0.1"
-// 	config.DBPort = "3306"
-// 	config.DBName = "testdb"
+func (suite *DatabaseTestSuite) TestGetClient() {
+	suite.mockStorage.On("Get", mock.Anything, "12345").Return(suite.mockClient, nil)
 
-// 	expectedDSN := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
-// 		"testuser",
-// 		"testpass",
-// 		"127.0.0.1",
-// 		"3306",
-// 		"testdb",
-// 	)
+	res, err := db.Client.Get(context.Background(), "12345")
+	assert.NoError(suite.T(), err, "Should retrieve the client successfully")
+	assert.Equal(suite.T(), suite.mockClient, res, "Retrieved client should match expected client")
+	suite.mockStorage.AssertExpectations(suite.T())
+}
 
-// 	suite.Equal(expectedDSN, GetDSN(), "DSN should be formatted correctly")
-// }
+func (suite *DatabaseTestSuite) TestGetAllClients() {
+	clients := []model.Client{
+		*suite.mockClient,
+		*suite.mockClient,
+	}
+	suite.mockStorage.On("GetAll", mock.Anything).Return(clients, nil)
 
-// func (suite *DatabaseTestSuite) TestGetInstance() {
-// 	db = &storage{Client: &ClientStorage{suite.db}}
-// 	instance := GetInstance()
+	res, err := db.Client.GetAll(context.Background())
+	assert.NoError(suite.T(), err, "Should retrieve all clients successfully")
+	assert.Equal(suite.T(), clients, res, "Retrieved clients should match expected clients")
+	suite.mockStorage.AssertExpectations(suite.T())
+}
 
-// 	suite.Equal(db, instance, "GetInstance should return the same storage instance")
-// }
+func (suite *DatabaseTestSuite) TestGetClient_NotFound() {
+	suite.mockStorage.On("Get", mock.Anything, "99999").Return(nil, mongo.ErrNoDocuments)
 
-// func (suite *DatabaseTestSuite) TestInit() {
-// 	mockDB, mock, err := sqlmock.New()
-// 	assert.NoError(suite.T(), err, "Should create a mock database successfully")
+	res, err := db.Client.Get(context.Background(), "99999")
+	assert.Error(suite.T(), err, "Should return an error if the client is not found")
+	assert.Nil(suite.T(), res, "Returned client should be nil if not found")
+	suite.mockStorage.AssertExpectations(suite.T())
+}
 
-// 	mock.ExpectQuery("^SELECT VERSION()").WillReturnRows(
-// 		sqlmock.NewRows([]string{"VERSION()"}).AddRow("test-version"),
-// 	)
-
-// 	defer mockDB.Close()
-
-// 	_db, err := gorm.Open(mysql.New(mysql.Config{
-// 		Conn: mockDB,
-// 	}), &gorm.Config{})
-
-// 	assert.NoError(suite.T(), err, "Should open a mock GORM database")
-
-// 	mock.ExpectExec("CREATE TABLE").WillReturnResult(sqlmock.NewResult(1, 1))
-
-// 	db = &storage{Client: &ClientStorage{_db}}
-
-// 	suite.NotNil(db, "Storage instance should be initialized")
-// 	suite.NotNil(db.Client, "Client interface should not be nil")
-// }
-
-// func TestDatabaseSuite(t *testing.T) {
-// 	suite.Run(t, new(DatabaseTestSuite))
-// }
+func TestDatabaseSuite(t *testing.T) {
+	suite.Run(t, new(DatabaseTestSuite))
+}
