@@ -54,6 +54,7 @@ func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 			name: "Success - Valid request",
 			request: models.SignUpReq{
 				Email: "test@example.com",
+				Role:  "agent",
 			},
 			mockCreateReturn: &cognitoidentityprovider.AdminCreateUserOutput{
 				User: &types.UserType{
@@ -70,6 +71,7 @@ func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 			name: "Fail - User creation error",
 			request: models.SignUpReq{
 				Email: "test@example.com",
+				Role:  "agent",
 			},
 			mockCreateReturn: nil,
 			mockCreateErr:    errors.New("user creation failed"),
@@ -81,6 +83,7 @@ func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 			name: "Success - With group add failure (logs error but continues)",
 			request: models.SignUpReq{
 				Email: "test@example.com",
+				Role:  "agent",
 			},
 			mockCreateReturn: &cognitoidentityprovider.AdminCreateUserOutput{
 				User: &types.UserType{
@@ -399,12 +402,12 @@ func (suite *UserServiceTestSuite) TestVerifyMFA() {
 
 func (suite *UserServiceTestSuite) TestSignInMFA() {
 	tests := []struct {
-		name            string
-		request         models.SignInMFAReq
-		mockSignInReturn *cognitoidentityprovider.RespondToAuthChallengeOutput
-		mockSignInErr    error
+		name                string
+		request             models.SignInMFAReq
+		mockSignInReturn    *cognitoidentityprovider.RespondToAuthChallengeOutput
+		mockSignInErr       error
 		mockSignInMFAReturn *models.AuthenticationRes
-		expectedError error
+		expectedError       error
 	}{
 		{
 			name: "Success - Valid request",
@@ -423,7 +426,7 @@ func (suite *UserServiceTestSuite) TestSignInMFA() {
 			},
 			mockSignInErr: nil,
 			mockSignInMFAReturn: &models.AuthenticationRes{
-				Result:    types.AuthenticationResultType{
+				Result: types.AuthenticationResultType{
 					AccessToken:  aws.String("test-access-token"),
 					RefreshToken: aws.String("test-refresh-token"),
 				},
@@ -432,7 +435,7 @@ func (suite *UserServiceTestSuite) TestSignInMFA() {
 			expectedError: nil,
 		},
 
-				{
+		{
 			name: "Success - Valid request, new password required",
 			request: models.SignInMFAReq{
 				Username: "test",
@@ -449,7 +452,7 @@ func (suite *UserServiceTestSuite) TestSignInMFA() {
 			},
 			mockSignInErr: nil,
 			mockSignInMFAReturn: &models.AuthenticationRes{
-				Result:    types.AuthenticationResultType{
+				Result: types.AuthenticationResultType{
 					AccessToken:  aws.String("test-access-token"),
 					RefreshToken: aws.String("test-refresh-token"),
 				},
@@ -497,28 +500,28 @@ func (suite *UserServiceTestSuite) TestSignInMFA() {
 
 func (suite *UserServiceTestSuite) TestConfirmForgetPassword() {
 	tests := []struct {
-		name             string
-		request          models.ConfirmForgetPasswordReq
+		name              string
+		request           models.ConfirmForgetPasswordReq
 		mockConfirmReturn *cognitoidentityprovider.ConfirmForgotPasswordOutput
-		mockConfirmErr    error	
-		expectedError error
+		mockConfirmErr    error
+		expectedError     error
 	}{
 		{
 			name: "Success - Valid request",
 			request: models.ConfirmForgetPasswordReq{
-				Username: "test",
-				Code:     "test-code",
+				Username:    "test",
+				Code:        "test-code",
 				NewPassword: "test-new-password",
 			},
 			mockConfirmReturn: nil,
-			mockConfirmErr: nil,
-			expectedError: nil,
+			mockConfirmErr:    nil,
+			expectedError:     nil,
 		},
 		{
 			name: "Fail - Confirm forget password error",
 			request: models.ConfirmForgetPasswordReq{
-				Username: "test",
-				Code:     "test-code",
+				Username:    "test",
+				Code:        "test-code",
 				NewPassword: "test-new-password",
 			},
 			mockConfirmReturn: nil,
@@ -533,14 +536,14 @@ func (suite *UserServiceTestSuite) TestConfirmForgetPassword() {
 			suite.mockCognitoClient.On("ConfirmForgotPassword", mock.Anything, mock.Anything).Return(tc.mockConfirmReturn, tc.mockConfirmErr)
 
 			err := suite.mockUserService.ConfirmForgetPassword(context.Background(), tc.request)
-			
+
 			if tc.expectedError != nil {
 				suite.Error(err)
 				suite.Equal(tc.expectedError.Error(), err.Error())
 			} else {
 				suite.NoError(err)
 			}
-			
+
 			suite.mockCognitoClient.AssertExpectations(suite.T())
 		})
 	}
