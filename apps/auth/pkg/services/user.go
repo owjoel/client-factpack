@@ -81,7 +81,7 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 		return fmt.Errorf("error during sign up: %w", err)
 	}
 	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
-	
+
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
 		GroupName: aws.String(r.Role),
@@ -91,6 +91,7 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 	if err != nil {
 		log.Printf("Unable to add user %s into group \"%s\"\n", username, auth.AgentGroup)
 	}
+
 	return nil
 }
 
@@ -130,11 +131,14 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 // }
 
 func createUsername(email string) (string, error) {
-	username := strings.Split(email, "@")[0]
-	if len(username) == 0 {
-		return "", nil
+	parts := strings.Split(email, "@")
+	if len(parts) != 2 {
+		return "", fmt.Errorf("invalid email format")
 	}
-	return username, nil
+	if parts[0] == "" {
+		return "", fmt.Errorf("username cannot be empty")
+	}
+	return parts[0], nil
 }
 
 // CalculateSecretHash calculates the secret hash for Cognito
