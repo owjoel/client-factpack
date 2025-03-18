@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"fmt"
+	"bytes"
+	"encoding/json"
 	"strings"
 
 	"errors"
@@ -58,6 +59,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			name: "Success - Valid User",
 			requestBody: models.SignUpReq{
 				Email: "test@example.com",
+				Role:  "agent",
 			},
 			mockReturnErr:  nil,
 			mockExpected:   true,
@@ -68,6 +70,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			name: "Fail - Invalid Email",
 			requestBody: models.SignUpReq{
 				Email: "invalid-email",
+				Role:  "agent",
 			},
 			mockReturnErr:  nil,
 			mockExpected:   false,
@@ -78,6 +81,7 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 			name: "Fail - Cognito Error",
 			requestBody: models.SignUpReq{
 				Email: "error@example.com",
+				Role:  "agent",
 			},
 			mockReturnErr:  errors.New("cognito error"),
 			mockExpected:   true,
@@ -94,12 +98,11 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 				suite.mockService.On("AdminCreateUser", mock.Anything, tc.requestBody).Return(tc.mockReturnErr)
 			}
 
-			formData := url.Values{}
-			formData.Set("email", tc.requestBody.Email)
-			requestBody := formData.Encode()
+			// Marshal request body into JSON
+			requestBody, _ := json.Marshal(tc.requestBody)
 
-			req, _ := http.NewRequest(http.MethodPost, "/auth/createUser", strings.NewReader(requestBody))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			req, _ := http.NewRequest(http.MethodPost, "/auth/createUser", bytes.NewBuffer(requestBody))
+			req.Header.Set("Content-Type", "application/json")
 
 			w := httptest.NewRecorder()
 			r := gin.Default()
@@ -107,10 +110,13 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 
 			r.ServeHTTP(w, req)
 
+			// Check status code
 			assert.Equal(suite.T(), tc.expectedStatus, w.Code)
 
+			// Check response body
 			assert.JSONEq(suite.T(), tc.expectedBody, w.Body.String())
 
+			// Check if mock expectations were met
 			suite.mockService.AssertExpectations(suite.T())
 		})
 	}
@@ -462,8 +468,8 @@ func (suite *UserHandlerTestSuite) TestUserVerifyMFA() {
 			expectedBody:   `{"status":"Success"}`,
 		},
 		{
-			name:           "Fail - Cognito Error",
-			requestBody:    models.VerifyMFAReq{
+			name: "Fail - Cognito Error",
+			requestBody: models.VerifyMFAReq{
 				Code:    "test-code",
 				Session: "test-session",
 			},
@@ -474,8 +480,8 @@ func (suite *UserHandlerTestSuite) TestUserVerifyMFA() {
 			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
 		},
 		{
-			name:           "Fail - Missing session cookie",
-			requestBody:    models.VerifyMFAReq{
+			name: "Fail - Missing session cookie",
+			requestBody: models.VerifyMFAReq{
 				Code:    "test-code",
 				Session: "test-session",
 			},
@@ -500,21 +506,16 @@ func (suite *UserHandlerTestSuite) TestUserVerifyMFA() {
 		suite.Run(tc.name, func() {
 			suite.mockService.ExpectedCalls = nil
 
-			var requestBody string
+			var requestBody []byte
 			if verifyMFAReq, ok := tc.requestBody.(models.VerifyMFAReq); ok {
 				if tc.mockExpected {
 					suite.mockService.On("VerifyMFA", mock.Anything, verifyMFAReq).Return(tc.mockReturnErr)
 				}
-				form := url.Values{}
-				form.Add("code", verifyMFAReq.Code)
-				requestBody = form.Encode()
+				requestBody, _ = json.Marshal(verifyMFAReq)
 			}
 
-			fmt.Println("requestBody", requestBody)
-
-			req := httptest.NewRequest(http.MethodPost, "/auth/verifyMFA", strings.NewReader(requestBody))
-
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			req := httptest.NewRequest(http.MethodPost, "/auth/verifyMFA", bytes.NewBuffer(requestBody))
+			req.Header.Set("Content-Type", "application/json")
 
 			if tc.sessionCookie {
 				req.AddCookie(&http.Cookie{
@@ -522,7 +523,6 @@ func (suite *UserHandlerTestSuite) TestUserVerifyMFA() {
 					Value: "test-session",
 				})
 			}
-
 
 			w := httptest.NewRecorder()
 			r := gin.Default()
@@ -539,23 +539,23 @@ func (suite *UserHandlerTestSuite) TestUserVerifyMFA() {
 
 func (suite *UserHandlerTestSuite) TestUserLoginMFA() {
 	mockReturn := &models.AuthenticationRes{
-				Result: types.AuthenticationResultType{
-					AccessToken: aws.String("test-access-token"),
-					IdToken: aws.String("test-id-token"),
-					RefreshToken: aws.String("test-refresh-token"),
-					TokenType: aws.String("Bearer"),
-					ExpiresIn: 3600,
-					NewDeviceMetadata: &types.NewDeviceMetadataType{
-						DeviceGroupKey: aws.String("test-device-group-key"),
-						DeviceKey: aws.String("test-device-key"),
-					},
-				},
-				Challenge: "",
-			}
+		Result: types.AuthenticationResultType{
+			AccessToken:  aws.String("test-access-token"),
+			IdToken:      aws.String("test-id-token"),
+			RefreshToken: aws.String("test-refresh-token"),
+			TokenType:    aws.String("Bearer"),
+			ExpiresIn:    3600,
+			NewDeviceMetadata: &types.NewDeviceMetadataType{
+				DeviceGroupKey: aws.String("test-device-group-key"),
+				DeviceKey:      aws.String("test-device-key"),
+			},
+		},
+		Challenge: "",
+	}
 	tests := []struct {
 		name           string
 		requestBody    any
-		mockReturn     *models.AuthenticationRes;
+		mockReturn     *models.AuthenticationRes
 		sessionCookie  bool
 		mockReturnErr  error
 		mockExpected   bool
@@ -569,7 +569,7 @@ func (suite *UserHandlerTestSuite) TestUserLoginMFA() {
 				Code:     "test-code",
 				Session:  "test-session",
 			},
-			mockReturn: mockReturn,
+			mockReturn:     mockReturn,
 			sessionCookie:  true,
 			mockReturnErr:  nil,
 			mockExpected:   true,
@@ -577,13 +577,13 @@ func (suite *UserHandlerTestSuite) TestUserLoginMFA() {
 			expectedBody:   `{"status":"Login Successful"}`,
 		},
 		{
-			name:           "Fail - Cognito Error",
-			requestBody:    models.SignInMFAReq{
+			name: "Fail - Cognito Error",
+			requestBody: models.SignInMFAReq{
 				Username: "testUsername",
 				Code:     "test-code",
 				Session:  "test-session",
 			},
-			mockReturn: mockReturn,
+			mockReturn:     mockReturn,
 			sessionCookie:  true,
 			mockReturnErr:  errors.New("cognito error"),
 			mockExpected:   true,
@@ -591,13 +591,13 @@ func (suite *UserHandlerTestSuite) TestUserLoginMFA() {
 			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
 		},
 		{
-			name:           "Fail - Missing session cookie",
-			requestBody:    models.SignInMFAReq{
+			name: "Fail - Missing session cookie",
+			requestBody: models.SignInMFAReq{
 				Username: "testUsername",
 				Code:     "test-code",
 				Session:  "test-session",
 			},
-			mockReturn: mockReturn,
+			mockReturn:     mockReturn,
 			sessionCookie:  false,
 			mockReturnErr:  nil,
 			mockExpected:   false,
@@ -608,7 +608,7 @@ func (suite *UserHandlerTestSuite) TestUserLoginMFA() {
 			name:           "Fail - Invalid request body",
 			requestBody:    nil,
 			sessionCookie:  true,
-			mockReturn: mockReturn,
+			mockReturn:     mockReturn,
 			mockReturnErr:  nil,
 			mockExpected:   false,
 			expectedStatus: http.StatusBadRequest,
@@ -668,9 +668,9 @@ func (suite *UserHandlerTestSuite) TestConfirmForgetPassword() {
 		{
 			name: "Success - Valid request body",
 			requestBody: models.ConfirmForgetPasswordReq{
-				Username: "testUsername",
-				Code:     "test-code",
-				NewPassword:  "test-new-password",
+				Username:    "testUsername",
+				Code:        "test-code",
+				NewPassword: "test-new-password",
 			},
 			sessionCookie:  true,
 			mockReturnErr:  nil,
@@ -679,11 +679,11 @@ func (suite *UserHandlerTestSuite) TestConfirmForgetPassword() {
 			expectedBody:   `{"status":"Successfully reset password"}`,
 		},
 		{
-			name:           "Fail - Cognito Error",
-			requestBody:    models.ConfirmForgetPasswordReq{
-				Username: "testUsername",
-				Code:     "test-code",
-				NewPassword:  "test-new-password",
+			name: "Fail - Cognito Error",
+			requestBody: models.ConfirmForgetPasswordReq{
+				Username:    "testUsername",
+				Code:        "test-code",
+				NewPassword: "test-new-password",
 			},
 			sessionCookie:  true,
 			mockReturnErr:  errors.New("cognito error"),
@@ -702,7 +702,7 @@ func (suite *UserHandlerTestSuite) TestConfirmForgetPassword() {
 		},
 	}
 
-	for _, tc := range tests {	
+	for _, tc := range tests {
 		suite.Run(tc.name, func() {
 			suite.mockService.ExpectedCalls = nil
 
@@ -715,12 +715,12 @@ func (suite *UserHandlerTestSuite) TestConfirmForgetPassword() {
 				form.Add("username", confirmForgetPasswordReq.Username)
 				form.Add("code", confirmForgetPasswordReq.Code)
 				form.Add("newPassword", confirmForgetPasswordReq.NewPassword)
-				requestBody = form.Encode()	
+				requestBody = form.Encode()
 			}
 
 			req := httptest.NewRequest(http.MethodPost, "/auth/confirmForgetPassword", strings.NewReader(requestBody))
 
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")	
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 			if tc.sessionCookie {
 				req.AddCookie(&http.Cookie{
@@ -751,7 +751,7 @@ func (suite *UserHandlerTestSuite) TestUserLogout() {
 		expectedBody   string
 	}{
 		{
-			name: "Success - Valid request body",
+			name:           "Success - Valid request body",
 			mockReturnErr:  nil,
 			mockExpected:   true,
 			expectedStatus: http.StatusOK,
@@ -779,8 +779,6 @@ func (suite *UserHandlerTestSuite) TestUserLogout() {
 		})
 	}
 }
-
-
 
 func TestUserHandlerTestSuite(t *testing.T) {
 	suite.Run(t, new(UserHandlerTestSuite))
