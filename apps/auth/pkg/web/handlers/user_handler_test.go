@@ -11,15 +11,18 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+	// "time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/gin-gonic/gin"
+	// "github.com/golang-jwt/jwt/v5"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/services/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	// "github.com/stretchr/testify/require"
 )
 
 type UserHandlerTestSuite struct {
@@ -32,6 +35,42 @@ func (suite *UserHandlerTestSuite) SetupTest() {
 	suite.mockService = new(mocks.UserInterface)
 	suite.handler = New(suite.mockService)
 }
+
+// func TestParseJWT(t *testing.T) {
+// 	// Generate a token for testing
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+// 		"username": "testuser",
+// 		"exp":      time.Now().Add(time.Hour * 1).Unix(),
+// 	})
+
+// 	// Sign it with a known secret
+// 	secret := []byte("my-secret")
+// 	tokenString, err := token.SignedString(secret)
+// 	require.NoError(t, err)
+
+// 	// Test: Valid token with correct keyFunc
+// 	validKeyFunc := func(token *jwt.Token) (interface{}, error) {
+// 		return secret, nil
+// 	}
+
+// 	parsedToken, err := ParseJWT(tokenString, validKeyFunc)
+// 	assert.NoError(t, err)
+// 	assert.NotNil(t, parsedToken)
+// 	assert.True(t, parsedToken.Valid)
+
+// 	// Test: Invalid token (malformed string)
+// 	badTokenString := "this.is.not.valid"
+// 	_, err = ParseJWT(badTokenString, validKeyFunc)
+// 	assert.Error(t, err)
+
+// 	// Test: Valid token but wrong keyFunc (signature verification fails)
+// 	invalidKeyFunc := func(token *jwt.Token) (interface{}, error) {
+// 		return []byte("wrong-secret"), nil
+// 	}
+
+// 	_, err = ParseJWT(tokenString, invalidKeyFunc)
+// 	assert.Error(t, err)
+// }
 
 func (suite *UserHandlerTestSuite) TestHealthCheck() {
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)
@@ -55,6 +94,14 @@ func (suite *UserHandlerTestSuite) TestCreateUser() {
 		expectedStatus int
 		expectedBody   string
 	}{
+		{
+			name:           "Fail - Invalid JSON Binding",
+			requestBody:    models.SignUpReq{}, // Doesn't matter, raw body will be broken
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
+		},
 		{
 			name: "Success - Valid User",
 			requestBody: models.SignUpReq{
@@ -151,6 +198,14 @@ func (suite *UserHandlerTestSuite) TestForgetPassword() {
 			expectedStatus: http.StatusInternalServerError,
 			expectedBody:   `{"error_code":"SERVER_ERROR","message":"Internal server error"}`,
 		},
+		{
+			name:           "Fail - Invalid Request Binding", // NEW CASE
+			requestBody:    models.ForgetPasswordReq{},       // doesn't matter here
+			mockReturnErr:  nil,
+			mockExpected:   false,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
+		},
 	}
 
 	for _, tc := range tests {
@@ -161,12 +216,19 @@ func (suite *UserHandlerTestSuite) TestForgetPassword() {
 				suite.mockService.On("ForgetPassword", mock.Anything, mock.Anything).Return(tc.mockReturnErr)
 			}
 
-			formData := url.Values{}
-			formData.Set("username", tc.requestBody.Username)
-			requestBody := formData.Encode()
-
-			req, _ := http.NewRequest(http.MethodPost, "/auth/forgetPassword", strings.NewReader(requestBody))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			var req *http.Request
+			if tc.name == "Fail - Invalid Request Binding" {
+				// Send broken JSON to trigger ShouldBind error
+				req, _ = http.NewRequest(http.MethodPost, "/auth/forgetPassword", strings.NewReader(`bad-json`))
+				req.Header.Set("Content-Type", "application/json")
+			} else {
+				formData := url.Values{}
+				formData.Set("username", tc.requestBody.Username)
+				requestBody := formData.Encode()
+			
+				req, _ = http.NewRequest(http.MethodPost, "/auth/forgetPassword", strings.NewReader(requestBody))
+				req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			}			
 
 			w := httptest.NewRecorder()
 			r := gin.Default()
@@ -175,6 +237,9 @@ func (suite *UserHandlerTestSuite) TestForgetPassword() {
 			r.ServeHTTP(w, req)
 
 			assert.Equal(suite.T(), tc.expectedStatus, w.Code)
+
+			// Optional: Debug output
+			// fmt.Println("Response Body:", w.Body.String())
 
 			assert.JSONEq(suite.T(), tc.expectedBody, w.Body.String())
 
@@ -614,6 +679,22 @@ func (suite *UserHandlerTestSuite) TestUserLoginMFA() {
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   `{"error_code":"INPUT_INVALID","message":"Invalid input provided"}`,
 		},
+		{
+			name: "Fail - Challenge not empty",
+			requestBody: models.SignInMFAReq{
+				Username: "testUsername",
+				Code:     "test-code",
+				Session:  "test-session",
+			},
+			mockReturn: &models.AuthenticationRes{
+				Challenge: "SMS_MFA", // Challenge triggers the red block
+			},
+			sessionCookie:  true,
+			mockReturnErr:  nil,
+			mockExpected:   true,
+			expectedStatus: http.StatusForbidden, // Assuming errors.ErrUnauthorized returns 403
+			expectedBody:   `{"error_code":"AUTH_UNAUTHORIZED","message":"Unauthorized access"}`,
+		},		
 	}
 
 	for _, tc := range tests {

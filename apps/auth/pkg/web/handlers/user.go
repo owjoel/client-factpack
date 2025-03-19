@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"net/mail"
 
+	// "github.com/MicahParks/keyfunc/v2"
 	"github.com/gin-gonic/gin"
+	// "github.com/golang-jwt/jwt/v5"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/errors"
@@ -16,13 +18,24 @@ import (
 
 // UserHandler represents the handler for user operations.
 type UserHandler struct {
-	service services.UserInterface
+	service      services.UserInterface
+	// GetJWKSFunc  func(awsRegion, cognitoUserPoolId string) (*keyfunc.JWKS, error)
+	// ParseJWTFunc func(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error)
 }
 
 // New creates a new user handler.
 func New(service services.UserInterface) *UserHandler {
-	return &UserHandler{service: service}
+	return &UserHandler{
+		service: service,
+		// These functions can be overridden in tests.
+		// GetJWKSFunc:  GetJWKS,  // If you want default behavior here
+		// ParseJWTFunc: ParseJWT, // You can define a helper if needed
+	}
 }
+
+// func ParseJWT(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error) {
+// 	return jwt.Parse(tokenString, keyFunc)
+// }
 
 // HealthCheck is a basic health check
 //
