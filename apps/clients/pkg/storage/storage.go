@@ -32,3 +32,11 @@ type ClientInterface interface {
 func GetInstance() *storage {
 	return db
 }
+
+// Adding this function to allow injection for testing. 
+func SetInstanceClient(client ClientInterface) {
+	if db == nil {
+		db = &storage{}
+	}
+	db.Client = client
+}
