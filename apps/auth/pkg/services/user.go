@@ -130,11 +130,14 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 // }
 
 func createUsername(email string) (string, error) {
-	username := strings.Split(email, "@")[0]
-	if len(username) == 0 {
-		return "", nil
+	parts := strings.Split(email, "@")
+	if len(parts) != 2 {
+		return "", fmt.Errorf("invalid email format")
 	}
-	return username, nil
+	if parts[0] == "" {
+		return "", fmt.Errorf("username cannot be empty")
+	}
+	return parts[0], nil
 }
 
 // CalculateSecretHash calculates the secret hash for Cognito
