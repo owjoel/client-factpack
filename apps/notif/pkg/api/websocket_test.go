@@ -87,6 +87,24 @@ func TestSendNotification_UserNotConnected(t *testing.T) {
 	api.SendNotification("ghostUser", "No one is here!")
 }
 
+func TestHandleWebSocketConnections_UpgradeError(t *testing.T) {
+	// Create a test HTTP server with a handler that triggers the upgrade error.
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Intentionally call the handler with a bad HTTP method (non-GET), which WebSocket upgrader rejects.
+		r.Method = http.MethodPost // WebSocket upgrader requires GET
+		api.HandleWebSocketConnections(w, r)
+	}))
+	defer server.Close()
+
+	// Perform a POST request instead of WebSocket dial (simulate a client not upgrading)
+	resp, err := http.Post(server.URL+"?userId=testUser", "application/json", nil)
+	assert.NoError(t, err)
+	defer resp.Body.Close()
+
+	// Check that we get an error, and the status is 400/500 depending on the server setup.
+	assert.NotEqual(t, http.StatusSwitchingProtocols, resp.StatusCode)
+}
+
 func TestSendNotification_MultipleUsers(t *testing.T) {
 	server := setupTestServer()
 	defer server.Close()
@@ -155,4 +173,43 @@ func TestSendNotification_DisconnectedUser(t *testing.T) {
 
 	// Try sending a notification to the disconnected user
 	api.SendNotification("testUser", "This should not be received")
+}
+
+func TestSendNotification_ErrorSendingMessage(t *testing.T) {
+    // Set up the test WebSocket server
+    server := setupTestServer()
+    defer server.Close()
+
+    // Create a WebSocket connection
+    u := url.URL{Scheme: "ws", Host: server.Listener.Addr().String(), Path: "/ws"}
+    q := u.Query()
+    q.Set("userId", "testUser")
+    u.RawQuery = q.Encode()
+
+    ws, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
+    assert.NoError(t, err)
+
+    // Close the WebSocket connection to simulate a broken pipe
+    ws.Close()
+    time.Sleep(100 * time.Millisecond) // Ensure the connection is fully closed
+
+    // Send a notification to the disconnected user
+    api.SendNotification("testUser", "This will fail to send")
+
+    // The logger should log an error when `WriteMessage` fails
+    // You can verify this manually by checking the logs or mock the logger if needed.
+}
+
+func TestStartWebSocketServer(t *testing.T) {
+	// This calls StartWebSocketServer, which registers the handler and logs the startup message.
+	api.StartWebSocketServer()
+
+	// Optionally, make a test request to confirm handler registration
+	req := httptest.NewRequest(http.MethodGet, "/ws?userId=testUser", nil)
+	w := httptest.NewRecorder()
+
+	api.HandleWebSocketConnections(w, req)
+
+	resp := w.Result()
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode) // Because no proper upgrade attempt, it returns error
 }
