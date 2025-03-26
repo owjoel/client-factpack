@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/services/mocks"
@@ -22,6 +23,11 @@ type UserServiceTestSuite struct {
 	suite.Suite
 	mockCognitoClient *mocks.CognitoClientInterface
 	mockUserService   *UserService
+}
+
+func generateTestJWT(claims jwt.MapClaims) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte("test-secret"))
 }
 
 func (suite *UserServiceTestSuite) SetupTest() {
@@ -670,8 +676,11 @@ func (suite *UserServiceTestSuite) TestConfirmForgetPassword() {
 }
 
 func (suite *UserServiceTestSuite) TestGetUserRoleFromToken_HasGroups() {
-	// JWT token with `cognito:groups`: ["agent"]
-	tokenWithGroups := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2duaXRvOmdyb3VwcyI6WyJhZ2VudCJdfQ.somerandomsig"
+	claims := jwt.MapClaims{
+		"cognito:groups": []string{"agent"},
+	}
+	tokenWithGroups, err := generateTestJWT(claims)
+	suite.NoError(err)
 
 	role, err := suite.mockUserService.GetUserRoleFromToken(tokenWithGroups)
 
@@ -680,10 +689,13 @@ func (suite *UserServiceTestSuite) TestGetUserRoleFromToken_HasGroups() {
 }
 
 func (suite *UserServiceTestSuite) TestGetUserRoleFromToken_NoGroups_FallbackToCognito() {
-	// JWT token with no `cognito:groups`
-	tokenWithoutGroups := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiZm9vIn0.somesig"
+	claims := jwt.MapClaims{
+		"user": "foo",
+	}
+	tokenWithoutGroups, err := generateTestJWT(claims)
+	suite.NoError(err)
 
-	// Mock the fallback call to Cognito
+	// Mock fallback to Cognito
 	suite.mockCognitoClient.On("GetUser", mock.Anything, mock.Anything).Return(&cognitoidentityprovider.GetUserOutput{
 		UserAttributes: []types.AttributeType{
 			{
