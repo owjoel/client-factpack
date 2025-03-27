@@ -19,23 +19,14 @@ import (
 // UserHandler represents the handler for user operations.
 type UserHandler struct {
 	service      services.UserInterface
-	// GetJWKSFunc  func(awsRegion, cognitoUserPoolId string) (*keyfunc.JWKS, error)
-	// ParseJWTFunc func(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error)
 }
 
 // New creates a new user handler.
 func New(service services.UserInterface) *UserHandler {
 	return &UserHandler{
 		service: service,
-		// These functions can be overridden in tests.
-		// GetJWKSFunc:  GetJWKS,  // If you want default behavior here
-		// ParseJWTFunc: ParseJWT, // You can define a helper if needed
 	}
 }
-
-// func ParseJWT(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error) {
-// 	return jwt.Parse(tokenString, keyFunc)
-// }
 
 // HealthCheck is a basic health check
 //
