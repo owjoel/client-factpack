@@ -6,9 +6,7 @@ import (
 	"net/http"
 	"net/mail"
 
-	// "github.com/MicahParks/keyfunc/v2"
 	"github.com/gin-gonic/gin"
-	// "github.com/golang-jwt/jwt/v5"
 	"github.com/owjoel/client-factpack/apps/auth/config"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/errors"
