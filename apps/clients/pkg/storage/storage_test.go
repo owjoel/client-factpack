@@ -20,6 +20,14 @@ type DatabaseTestSuite struct {
 	mockClient  *model.Client
 }
 
+
+func (suite *DatabaseTestSuite) TestSetInstanceClient() {
+	mockClient := new(mocks.ClientInterface)
+	SetInstanceClient(mockClient)
+	assert.Equal(suite.T(), mockClient, GetInstance().Client, "SetInstanceClient should set the ClientInterface correctly")
+}
+
+
 func (suite *DatabaseTestSuite) SetupSuite() {
 	suite.mockStorage = new(mocks.ClientInterface) 
 	db = &storage{Client: suite.mockStorage}       
