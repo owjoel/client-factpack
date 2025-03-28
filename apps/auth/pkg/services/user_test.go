@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/owjoel/client-factpack/apps/auth/pkg/api/models"
 	"github.com/owjoel/client-factpack/apps/auth/pkg/services/mocks"
@@ -22,6 +23,11 @@ type UserServiceTestSuite struct {
 	suite.Suite
 	mockCognitoClient *mocks.CognitoClientInterface
 	mockUserService   *UserService
+}
+
+func generateTestJWT(claims jwt.MapClaims) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte("test-secret"))
 }
 
 func (suite *UserServiceTestSuite) SetupTest() {
@@ -40,15 +46,64 @@ func TestUserService(t *testing.T) {
 	suite.Run(t, new(UserServiceTestSuite))
 }
 
+func (suite *UserServiceTestSuite) TestNewUserService() {
+
+	userService := NewUserService(suite.mockCognitoClient)
+
+	suite.NotNil(userService, "Expected userService to be non-nil")
+	suite.Equal(suite.mockCognitoClient, userService.CognitoClient, "Expected CognitoClient to be assigned correctly")
+}
+
+func (suite *UserServiceTestSuite) TestCreateUsername() {
+	tests := []struct {
+		name          string
+		email         string
+		expectedValue string
+		expectError   bool
+	}{
+		{
+			name:          "Valid email returns username",
+			email:         "john.doe@example.com",
+			expectedValue: "john.doe",
+			expectError:   false,
+		},
+		{
+			name:          "Invalid email returns error - empty username",
+			email:         "@example.com",
+			expectedValue: "",
+			expectError:   true,
+		},
+		{
+			name:          "Invalid email returns error - missing @",
+			email:         "invalidemail",
+			expectedValue: "",
+			expectError:   true,
+		},
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			username, err := createUsername(tc.email)
+
+			if tc.expectError {
+				suite.Error(err)
+			} else {
+				suite.NoError(err)
+				suite.Equal(tc.expectedValue, username)
+			}
+		})
+	}
+}
+
 func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 	tests := []struct {
-		name             string
-		request          models.SignUpReq
-		mockCreateReturn *cognitoidentityprovider.AdminCreateUserOutput
-		mockCreateErr    error
-		mockAddReturn    *cognitoidentityprovider.AdminAddUserToGroupOutput
-		mockAddErr       error
-		expectedError    error
+		name              string
+		request           models.SignUpReq
+		mockCreateReturn  *cognitoidentityprovider.AdminCreateUserOutput
+		mockCreateErr     error
+		mockAddReturn     *cognitoidentityprovider.AdminAddUserToGroupOutput
+		mockAddErr        error
+		expectedErrorText string
 	}{
 		{
 			name: "Success - Valid request",
@@ -62,10 +117,10 @@ func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 					UserCreateDate: aws.Time(time.Now()),
 				},
 			},
-			mockCreateErr: nil,
-			mockAddReturn: &cognitoidentityprovider.AdminAddUserToGroupOutput{},
-			mockAddErr:    nil,
-			expectedError: nil,
+			mockCreateErr:     nil,
+			mockAddReturn:     &cognitoidentityprovider.AdminAddUserToGroupOutput{},
+			mockAddErr:        nil,
+			expectedErrorText: "",
 		},
 		{
 			name: "Fail - User creation error",
@@ -73,11 +128,11 @@ func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 				Email: "test@example.com",
 				Role:  "agent",
 			},
-			mockCreateReturn: nil,
-			mockCreateErr:    errors.New("user creation failed"),
-			mockAddReturn:    nil,
-			mockAddErr:       nil,
-			expectedError:    fmt.Errorf("error during sign up: %w", errors.New("user creation failed")),
+			mockCreateReturn:  nil,
+			mockCreateErr:     fmt.Errorf("user creation failed"),
+			mockAddReturn:     nil,
+			mockAddErr:        nil,
+			expectedErrorText: "error during sign up: user creation failed",
 		},
 		{
 			name: "Success - With group add failure (logs error but continues)",
@@ -91,26 +146,61 @@ func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 					UserCreateDate: aws.Time(time.Now()),
 				},
 			},
-			mockCreateErr: nil,
-			mockAddReturn: nil,
-			mockAddErr:    errors.New("group add failed"),
-			expectedError: nil,
+			mockCreateErr:     nil,
+			mockAddReturn:     nil,
+			mockAddErr:        fmt.Errorf("group add failed"),
+			expectedErrorText: "",
 		},
+		{
+			name: "Fail - CreateUsername returns empty username",
+			request: models.SignUpReq{
+				Email: "@example.com", // will produce empty username
+				Role:  "agent",
+			},
+			expectedErrorText: "error creating username: username cannot be empty",
+		},
+		{
+			name: "Fail - Missing user role",
+			request: models.SignUpReq{
+				Email: "test@example.com",
+				Role:  "", // triggers "user role is required"
+			},
+			expectedErrorText: "user role is required",
+		},
+		{
+			name: "Fail - CreateUsername returns error",
+			request: models.SignUpReq{
+				Email: "invalid-email", // Simulate an email that causes createUsername to fail
+				Role:  "agent",
+			},
+			mockCreateReturn:  nil,
+			mockCreateErr:     nil,
+			mockAddReturn:     nil,
+			mockAddErr:        nil,
+			expectedErrorText: "error creating username: invalid email format",
+		},		
 	}
 
 	for _, tc := range tests {
 		suite.Run(tc.name, func() {
 			suite.mockCognitoClient.ExpectedCalls = nil
 
-			suite.mockCognitoClient.On("AdminCreateUser", mock.Anything, mock.Anything).Return(tc.mockCreateReturn, tc.mockCreateErr)
+			// Set up mocks for all cases
+			if tc.mockCreateReturn != nil || tc.mockCreateErr != nil {
+				suite.mockCognitoClient.On("AdminCreateUser", mock.Anything, mock.Anything).
+					Return(tc.mockCreateReturn, tc.mockCreateErr)
+			}
 
-			suite.mockCognitoClient.On("AdminAddUserToGroup", mock.Anything, mock.Anything).Return(tc.mockAddReturn, tc.mockAddErr)
+			if tc.mockAddReturn != nil || tc.mockAddErr != nil {
+				suite.mockCognitoClient.On("AdminAddUserToGroup", mock.Anything, mock.Anything).
+					Return(tc.mockAddReturn, tc.mockAddErr)
+			}
 
 			err := suite.mockUserService.AdminCreateUser(context.Background(), tc.request)
 
-			if tc.expectedError != nil {
+			if tc.expectedErrorText != "" {
 				suite.Error(err)
-				suite.Equal(tc.expectedError.Error(), err.Error())
+				suite.Contains(err.Error(), tc.expectedErrorText)
 			} else {
 				suite.NoError(err)
 			}
@@ -338,6 +428,42 @@ func (suite *UserServiceTestSuite) TestSetupMFA() {
 	}
 }
 
+func (suite *UserServiceTestSuite) TestGetChallengeName() {
+	tests := []struct {
+		name          string
+		challenge     types.ChallengeNameType
+		expectedValue string
+	}{
+		{
+			name:          "NewPasswordRequired challenge",
+			challenge:     types.ChallengeNameTypeNewPasswordRequired,
+			expectedValue: "NEW_PASSWORD_REQUIRED",
+		},
+		{
+			name:          "MFASetup challenge",
+			challenge:     types.ChallengeNameTypeMfaSetup,
+			expectedValue: "MFA_SETUP",
+		},
+		{
+			name:          "SoftwareTokenMFA challenge",
+			challenge:     types.ChallengeNameTypeSoftwareTokenMfa,
+			expectedValue: "SOFTWARE_TOKEN_MFA",
+		},
+		{
+			name:          "Unknown challenge returns empty string",
+			challenge:     "UNKNOWN_CHALLENGE",
+			expectedValue: "",
+		},
+	}
+
+	for _, tc := range tests {
+		suite.Run(tc.name, func() {
+			result := getChallengeName(tc.challenge)
+			suite.Equal(tc.expectedValue, result)
+		})
+	}
+}
+
 func (suite *UserServiceTestSuite) TestVerifyMFA() {
 	tests := []struct {
 		name                          string
@@ -547,4 +673,177 @@ func (suite *UserServiceTestSuite) TestConfirmForgetPassword() {
 			suite.mockCognitoClient.AssertExpectations(suite.T())
 		})
 	}
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromToken_HasGroups() {
+	claims := jwt.MapClaims{
+		"cognito:groups": []string{"agent"},
+	}
+	tokenWithGroups, err := generateTestJWT(claims)
+	suite.NoError(err)
+
+	role, err := suite.mockUserService.GetUserRoleFromToken(tokenWithGroups)
+
+	suite.NoError(err)
+	suite.Equal("agent", role)
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromToken_NoGroups_FallbackToCognito() {
+	claims := jwt.MapClaims{
+		"user": "foo",
+	}
+	tokenWithoutGroups, err := generateTestJWT(claims)
+	suite.NoError(err)
+
+	// Mock fallback to Cognito
+	suite.mockCognitoClient.On("GetUser", mock.Anything, mock.Anything).Return(&cognitoidentityprovider.GetUserOutput{
+		UserAttributes: []types.AttributeType{
+			{
+				Name:  aws.String("sub"),
+				Value: aws.String("mock-username"),
+			},
+		},
+	}, nil)
+
+	suite.mockCognitoClient.On("AdminListGroupsForUser", mock.Anything, mock.Anything).Return(&cognitoidentityprovider.AdminListGroupsForUserOutput{
+		Groups: []types.GroupType{
+			{GroupName: aws.String("mock-group")},
+		},
+	}, nil)
+
+	role, err := suite.mockUserService.GetUserRoleFromToken(tokenWithoutGroups)
+
+	suite.NoError(err)
+	suite.Equal("mock-group", role)
+	suite.mockCognitoClient.AssertExpectations(suite.T())
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromToken_InvalidJWT() {
+	invalidToken := "not.a.valid.jwt"
+
+	role, err := suite.mockUserService.GetUserRoleFromToken(invalidToken)
+
+	suite.Error(err)
+	suite.Equal("", role)
+	suite.Contains(err.Error(), "error parsing JWT token")
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromCognito_GetUserFails() {
+	token := "valid-token"
+
+	suite.mockCognitoClient.On("GetUser", mock.Anything, mock.Anything).
+		Return(nil, fmt.Errorf("failed to get user")).
+		Once()
+
+	role, err := suite.mockUserService.GetUserRoleFromCognito(token)
+
+	suite.Equal("", role)
+	suite.Error(err)
+	suite.Contains(err.Error(), "error retrieving user from Cognito")
+
+	suite.mockCognitoClient.AssertExpectations(suite.T())
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromCognito_NoSubAttribute() {
+	token := "valid-token"
+
+	// GetUser returns no "sub" attribute
+	suite.mockCognitoClient.On("GetUser", mock.Anything, mock.Anything).
+		Return(&cognitoidentityprovider.GetUserOutput{
+			UserAttributes: []types.AttributeType{
+				{Name: aws.String("email"), Value: aws.String("test@example.com")},
+			},
+		}, nil).
+		Once()
+
+	role, err := suite.mockUserService.GetUserRoleFromCognito(token)
+
+	suite.Equal("", role)
+	suite.Error(err)
+	suite.Contains(err.Error(), "username not found in Cognito attributes")
+
+	suite.mockCognitoClient.AssertExpectations(suite.T())
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromCognito_AdminListGroupsFails() {
+	token := "valid-token"
+
+	// Mock GetUser with "sub"
+	suite.mockCognitoClient.On("GetUser", mock.Anything, mock.Anything).
+		Return(&cognitoidentityprovider.GetUserOutput{
+			UserAttributes: []types.AttributeType{
+				{Name: aws.String("sub"), Value: aws.String("mock-username")},
+			},
+		}, nil).
+		Once()
+
+	// AdminListGroupsForUser returns error
+	suite.mockCognitoClient.On("AdminListGroupsForUser", mock.Anything, mock.Anything).
+		Return(nil, fmt.Errorf("failed to list groups")).
+		Once()
+
+	role, err := suite.mockUserService.GetUserRoleFromCognito(token)
+
+	suite.Equal("", role)
+	suite.Error(err)
+	suite.Contains(err.Error(), "error retrieving user groups from Cognito")
+
+	suite.mockCognitoClient.AssertExpectations(suite.T())
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromCognito_NoGroups() {
+	token := "valid-token"
+
+	// Mock GetUser with "sub"
+	suite.mockCognitoClient.On("GetUser", mock.Anything, mock.Anything).
+		Return(&cognitoidentityprovider.GetUserOutput{
+			UserAttributes: []types.AttributeType{
+				{Name: aws.String("sub"), Value: aws.String("mock-username")},
+			},
+		}, nil).
+		Once()
+
+	// AdminListGroupsForUser returns empty groups
+	suite.mockCognitoClient.On("AdminListGroupsForUser", mock.Anything, mock.Anything).
+		Return(&cognitoidentityprovider.AdminListGroupsForUserOutput{
+			Groups: []types.GroupType{},
+		}, nil).
+		Once()
+
+	role, err := suite.mockUserService.GetUserRoleFromCognito(token)
+
+	suite.Equal("", role)
+	suite.Error(err)
+	suite.Contains(err.Error(), "user is not in any Cognito group")
+
+	suite.mockCognitoClient.AssertExpectations(suite.T())
+}
+
+func (suite *UserServiceTestSuite) TestGetUserRoleFromCognito_Success() {
+	token := "valid-token"
+
+	// Mock GetUser with "sub"
+	suite.mockCognitoClient.On("GetUser", mock.Anything, mock.Anything).
+		Return(&cognitoidentityprovider.GetUserOutput{
+			UserAttributes: []types.AttributeType{
+				{Name: aws.String("sub"), Value: aws.String("mock-username")},
+			},
+		}, nil).
+		Once()
+
+	// AdminListGroupsForUser returns one group
+	suite.mockCognitoClient.On("AdminListGroupsForUser", mock.Anything, mock.Anything).
+		Return(&cognitoidentityprovider.AdminListGroupsForUserOutput{
+			Groups: []types.GroupType{
+				{GroupName: aws.String("mock-group")},
+			},
+		}, nil).
+		Once()
+
+	role, err := suite.mockUserService.GetUserRoleFromCognito(token)
+
+	suite.NoError(err)
+	suite.Equal("mock-group", role)
+
+	suite.mockCognitoClient.AssertExpectations(suite.T())
 }

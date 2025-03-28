@@ -16,12 +16,14 @@ import (
 
 // UserHandler represents the handler for user operations.
 type UserHandler struct {
-	service services.UserInterface
+	service      services.UserInterface
 }
 
 // New creates a new user handler.
 func New(service services.UserInterface) *UserHandler {
-	return &UserHandler{service: service}
+	return &UserHandler{
+		service: service,
+	}
 }
 
 // HealthCheck is a basic health check
