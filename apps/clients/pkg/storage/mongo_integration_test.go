@@ -10,7 +10,7 @@ import (
 )
 
 func TestClientMongoIntegration(t *testing.T) {
-	// Initialize Mongo directly
+	
 	db := InitMongo()
 	ctx := context.TODO()
 
