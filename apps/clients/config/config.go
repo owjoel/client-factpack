@@ -12,6 +12,8 @@ var (
 	DBPort     = os.Getenv("DB_PORT")
 	DBName     = os.Getenv("DB_NAME")
 	MongoURI   = os.Getenv("MONGO_URI")
+	PrefectAPIURL = os.Getenv("PREFECT_API_URL")
+	PrefectAPIKey = os.Getenv("PREFECT_API_KEY")
 )
 
 func GetPort(defaultPort int) int {

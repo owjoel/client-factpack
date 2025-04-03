@@ -41,21 +41,21 @@ func (h *ClientHandler) HealthCheck(c *gin.Context) {
 //	@Failure		400		{object}	handlers.Response
 //	@Failure		500		{object}	handlers.Response
 //	@Router			/createProfile [post]
-func (h *ClientHandler) CreateClient(c *gin.Context) {
-	client := &model.Client{}
-	if err := c.ShouldBindJSON(&client); err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
-		return
-	}
-	err := h.service.CreateClient(c.Request.Context(), client)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
-		return
-	}
-	resp(c, http.StatusCreated, "Success")
-}
+// func (h *ClientHandler) CreateClient(c *gin.Context) {
+// 	client := &model.Client{}
+// 	if err := c.ShouldBindJSON(&client); err != nil {
+// 		log.Println(err)
+// 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
+// 		return
+// 	}
+// 	err := h.service.CreateClient(c.Request.Context(), client)
+// 	if err != nil {
+// 		log.Println(err)
+// 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
+// 		return
+// 	}
+// 	resp(c, http.StatusCreated, "Success")
+// }
 
 // GetClient retrieves the profile of the client by id
 //
@@ -77,12 +77,14 @@ func (h *ClientHandler) GetClient(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Missing id"})
 		return
 	}
+
 	client, err := h.service.GetClient(c.Request.Context(), id)
 	if err != nil {
-		log.Println(err)
+		log.Printf("Failed to retrieve client (ID: %s): %v", id, err)
 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
 		return
 	}
+
 	resp(c, http.StatusOK, client)
 }
 
@@ -97,16 +99,73 @@ func (h *ClientHandler) GetClient(c *gin.Context) {
 //	@Failure		500	{object}	handlers.Response
 //	@Router			/retrieveAllProfiles [get]
 func (h *ClientHandler) GetAllClients(c *gin.Context) {
-	clients, err := h.service.GetAllClients(c.Request.Context())
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve clients"})
+	query := &model.GetClientsQuery{}
+
+	if err := c.ShouldBindQuery(query); err != nil {
+		log.Printf("Failed to bind query: %v", err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Invalid request parameters"})
+		return
 	}
-	resp(c, http.StatusOK, clients)
+
+	total, clients, err := h.service.GetAllClients(c.Request.Context(), query)
+	if err != nil {
+		log.Printf("Failed to retrieve clients: %v", err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve clients"})
+		return
+	}
+
+	resp(c, http.StatusOK, model.GetClientsResponse{
+		Total: total,
+		Data:  clients,
+	})
+}
+
+func (h *ClientHandler) CreateClientByName(c *gin.Context) {
+	req := &model.CreateClientByNameReq{}
+
+	if err := c.ShouldBindJSON(req); err != nil {
+		log.Printf("Failed to bind request: %v", err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Invalid request"})
+		return
+	}
+
+	if req.Name == "" {
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Missing name"})
+		return
+	}
+
+	err := h.service.CreateClientByName(c.Request.Context(), req)
+	if err != nil {
+		log.Printf("Failed to create client: %v", err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not create client"})
+		return
+	}
+
+	resp(c, http.StatusOK, model.StatusRes{Status: "Client created"})
 }
 
 func (h *ClientHandler) UpdateClient(c *gin.Context) {
+	clientID := c.Param("id")
+	req := &model.UpdateClientReq{}
+	if clientID == "" {
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Missing id"})
+		return
+	}
 
+	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Printf("Failed to bind request: %v", err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Invalid request"})
+		return
+	}
+
+	err := h.service.UpdateClient(c.Request.Context(), clientID, req.Data)
+	if err != nil {
+		log.Printf("Failed to update client: %v", err)
+		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not update client"})
+		return
+	}
+
+	resp(c, http.StatusOK, model.StatusRes{Status: "Client updated"})
 }
 
 func (h *ClientHandler) DeleteClient(c *gin.Context) {

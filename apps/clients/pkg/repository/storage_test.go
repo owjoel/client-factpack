@@ -1,4 +1,4 @@
-package storage
+package repository
 
 import (
 	"context"
@@ -16,21 +16,19 @@ import (
 
 type DatabaseTestSuite struct {
 	suite.Suite
-	mockStorage *mocks.ClientInterface
+	mockStorage *mocks.ClientRepository
 	mockClient  *model.Client
 }
 
-
 func (suite *DatabaseTestSuite) TestSetInstanceClient() {
-	mockClient := new(mocks.ClientInterface)
+	mockClient := new(mocks.ClientRepository)
 	SetInstanceClient(mockClient)
-	assert.Equal(suite.T(), mockClient, GetInstance().Client, "SetInstanceClient should set the ClientInterface correctly")
+	assert.Equal(suite.T(), mockClient, GetInstance().Client, "SetInstanceClient should set the ClientRepository correctly")
 }
 
-
 func (suite *DatabaseTestSuite) SetupSuite() {
-	suite.mockStorage = new(mocks.ClientInterface) 
-	db = &storage{Client: suite.mockStorage}       
+	suite.mockStorage = new(mocks.ClientRepository)
+	db = &storage{Client: suite.mockStorage}
 
 	if err := json.Unmarshal([]byte(mocks.MockClientJSON), &suite.mockClient); err != nil {
 		log.Fatalf("Failed to unmarshal mock client: %v", err)

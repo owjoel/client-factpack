@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/clients/config"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/service"
-	"github.com/owjoel/client-factpack/apps/clients/pkg/storage"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/repository"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/web/handlers"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -26,7 +26,7 @@ type Router struct {
 }
 
 func NewRouter() *Router {
-	gin.SetMode(gin.ReleaseMode)
+	// gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
 	// enable CORS
@@ -41,17 +41,21 @@ func NewRouter() *Router {
 
 	pprof.Register(router)
 
-	storage.Init()
-	clientStorage := storage.GetInstance().Client
-	clientService := service.NewClientService(clientStorage)
+	mongoDb := repository.InitMongo()
+	clientRepository := repository.NewMongoClientRepository(mongoDb)
+	jobRepository := repository.NewMongoJobRepository(mongoDb)
+	clientService := service.NewClientService(clientRepository, jobRepository)
 	handler := handlers.New(clientService)
 
 	// Use RPC styling rather than REST
 	v1API := router.Group("/api/v1/clients")
 	v1API.GET("/health", handler.HealthCheck)
-	v1API.GET("/retrieveProfile/:id", handler.GetClient)
-	v1API.GET("/retrieveAllProfiles", handler.GetAllClients)
-	v1API.POST("/createProfile", handler.CreateClient)
+	v1API.GET("/:id", handler.GetClient)
+	v1API.GET("/", handler.GetAllClients)
+	// v1API.POST("/", handler.CreateClient)
+	v1API.PUT("/:id", handler.UpdateClient)
+	v1API.POST("/scrape", handler.CreateClientByName)
+
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
