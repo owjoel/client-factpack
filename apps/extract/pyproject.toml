@@ -1,3 +1,0 @@
-[tool.flask]
-app = "extract:create_app"
-debug = True
