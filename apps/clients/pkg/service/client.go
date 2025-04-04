@@ -24,7 +24,7 @@ type ClientServiceInterface interface {
 	GetClient(ctx context.Context, clientID string) (*model.Client, error)
 	GetAllClients(ctx context.Context, query *model.GetClientsQuery) (total int, clients []model.Client, err error)
 	CreateClientByName(ctx context.Context, req *model.CreateClientByNameReq) error
-	UpdateClient(ctx context.Context, clientID string, data bson.D) error
+	UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error
 }
 
 func NewClientService(clientRepository repository.ClientRepository, jobService JobServiceInterface) *ClientService {
@@ -112,17 +112,34 @@ func (s *ClientService) CreateClientByName(ctx context.Context, req *model.Creat
 	return id, nil
 }
 
-func (s *ClientService) UpdateClient(ctx context.Context, clientID string, data bson.D) error {
+func (s *ClientService) UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error {
 	client, err := s.clientRepository.GetOne(ctx, clientID)
 	if err != nil {
-		return fmt.Errorf("Error updating client: %w", err)
+		return fmt.Errorf("error retrieving client: %w", err)
 	}
 
 	if client == nil {
-		return fmt.Errorf("Client not found")
+		return fmt.Errorf("client not found")
 	}
 
-	err = s.clientRepository.Update(ctx, clientID, data)
+	update := bson.D{}
+	for _, change := range changes {
+		if change.Path == "" {
+			continue
+		}
+		// Prefix with "data." to target fields inside the data object
+		key := "data." + change.Path
+		update = append(update, bson.E{Key: key, Value: change.New})
+	}
+
+	if len(update) == 0 {
+		return fmt.Errorf("no valid changes provided")
+	}
+
+	if err := s.clientRepository.Update(ctx, clientID, update); err != nil {
+		return fmt.Errorf("error updating client: %w", err)
+	}
 
 	return nil
 }
+

@@ -54,13 +54,14 @@ type CreateClientByNameRes struct {
 }
 
 type UpdateClientReq struct {
-	Data bson.D `json:"data"`
+	Changes []SimpleChanges `json:"changes"`
 }
 
-type DeleteClientReq struct {
-	ID uint `json:"id"`
+type SimpleChanges struct {
+	Path  string `json:"path"`
+	Old   any    `json:"old"`
+	New   any    `json:"new"`
 }
-
 
 // // Client contains all information for a particular client
 // type Client struct {

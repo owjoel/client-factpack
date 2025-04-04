@@ -28,7 +28,7 @@ type ClientRepository interface {
 	GetOne(ctx context.Context, clientID string) (*model.Client, error)
 	GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error)
 	Count(ctx context.Context) (int, error)
-	Update(ctx context.Context, clientID string, data bson.D) error
+	Update(ctx context.Context, clientID string, update bson.D) error
 }
 
 func (s *mongoClientRepository) GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error) {
@@ -105,20 +105,16 @@ func (s *mongoClientRepository) Count(ctx context.Context) (int, error) {
 	return int(count), nil
 }
 
-func (s *mongoClientRepository) Update(ctx context.Context, clientID string, data bson.D) error {
+func (s *mongoClientRepository) Update(ctx context.Context, clientID string, update bson.D) error {
 	objID, err := bson.ObjectIDFromHex(clientID)
 	if err != nil {
 		return fmt.Errorf("error parsing object id: %w", err)
 	}
 
 	filter := bson.D{{Key: "_id", Value: objID}}
-	update := bson.D{
-		{Key: "$set", Value: bson.D{
-			bson.E{Key: "data", Value: data},
-		}},
-	}
+	updateDoc := bson.D{{Key: "$set", Value: update}}
 
-	result, err := s.clientCollection.UpdateOne(ctx, filter, update)
+	result, err := s.clientCollection.UpdateOne(ctx, filter, updateDoc)
 	if err != nil {
 		return fmt.Errorf("mongo update error: %w", err)
 	}
@@ -127,8 +123,8 @@ func (s *mongoClientRepository) Update(ctx context.Context, clientID string, dat
 		log.Printf("No client found: %s", clientID)
 	}
 	if result.ModifiedCount == 0 {
-		log.Printf("No updates for client: %s", clientID)
+		log.Printf("No updates made for client: %s", clientID)
 	}
-	// TODO: log the update
+
 	return nil
 }

@@ -181,7 +181,7 @@ func (h *ClientHandler) UpdateClient(c *gin.Context) {
 		return
 	}
 
-	err := h.service.UpdateClient(c.Request.Context(), clientID, req.Data)
+	err := h.service.UpdateClient(c.Request.Context(), clientID, req.Changes)
 	if err != nil {
 		log.Printf("Failed to update client: %v", err)
 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not update client"})
