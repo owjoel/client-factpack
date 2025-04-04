@@ -14,8 +14,8 @@ import (
 
 func TestGetClient(t *testing.T) {
 	clientRepo := new(mocks.ClientRepository)
-	jobRepo := new(mocks.JobRepository)
-	clientService := service.NewClientService(clientRepo, jobRepo)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
 
 	clientID := bson.NewObjectID()
 	expectedClient := &model.Client{ID: clientID}
@@ -31,15 +31,15 @@ func TestGetClient(t *testing.T) {
 
 func TestGetAllClients(t *testing.T) {
 	clientRepo := new(mocks.ClientRepository)
-	jobRepo := new(mocks.JobRepository)
-	clientService := service.NewClientService(clientRepo, jobRepo)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
 
 	query := &model.GetClientsQuery{Page: 1, PageSize: 10}
 	expectedClients := []model.Client{{ID: bson.NewObjectID()}, {ID: bson.NewObjectID()}}
 	expectedTotal := 2
 
 	clientRepo.On("GetAll", mock.Anything, query).Return(expectedClients, nil)
-	clientRepo.On("Count", mock.Anything, query).Return(expectedTotal, nil)
+	clientRepo.On("Count", mock.Anything).Return(expectedTotal, nil)
 
 	total, clients, err := clientService.GetAllClients(context.Background(), query)
 
@@ -51,8 +51,8 @@ func TestGetAllClients(t *testing.T) {
 
 func TestCreateClientByName(t *testing.T) {
 	clientRepo := new(mocks.ClientRepository)
-	jobRepo := new(mocks.JobRepository)
-	clientService := service.NewClientService(clientRepo, jobRepo)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
 
 	req := &model.CreateClientByNameReq{Name: "Test Client"}
 
@@ -67,8 +67,8 @@ func TestCreateClientByName(t *testing.T) {
 
 func TestUpdateClient(t *testing.T) {
 	clientRepo := new(mocks.ClientRepository)
-	jobRepo := new(mocks.JobRepository)
-	clientService := service.NewClientService(clientRepo, jobRepo)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
 
 	clientID := "123"
 	data := bson.D{{Key: "name", Value: "Updated Name"}}

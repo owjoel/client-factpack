@@ -49,6 +49,10 @@ type CreateClientByNameReq struct {
 	Name string `json:"name"`
 }
 
+type CreateClientByNameRes struct {
+	JobID string `json:"jobId"`
+}
+
 type UpdateClientReq struct {
 	Data bson.D `json:"data"`
 }

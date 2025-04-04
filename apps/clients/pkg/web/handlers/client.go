@@ -69,7 +69,7 @@ func (h *ClientHandler) HealthCheck(c *gin.Context) {
 //	@Success		200	{object}	handlers.Response{data=model.Client}
 //	@Failure		400	{object}	handlers.Response
 //	@Failure		500	{object}	handlers.Response
-//	@Router			/retrieveProfile [get]
+//	@Router			/:id [get]
 func (h *ClientHandler) GetClient(c *gin.Context) {
 	id := c.Param("id")
 
@@ -97,7 +97,7 @@ func (h *ClientHandler) GetClient(c *gin.Context) {
 //	@Success		200	{object}	handlers.Response{data=[]model.Client}
 //	@Failure		400	{object}	handlers.Response
 //	@Failure		500	{object}	handlers.Response
-//	@Router			/retrieveAllProfiles [get]
+//	@Router			/ [get]
 func (h *ClientHandler) GetAllClients(c *gin.Context) {
 	query := &model.GetClientsQuery{}
 
@@ -120,6 +120,17 @@ func (h *ClientHandler) GetAllClients(c *gin.Context) {
 	})
 }
 
+// CreateClientByName submits a job to prefect to create a client profile
+//
+//	@Summary		Create Client By Name
+//	@Description	Create a client profile by name
+//	@Tags			clients
+//	@Accept			application/json
+//	@Produce		json
+//	@Param			name	body		model.CreateClientByNameReq	true	"Client name"
+//	@Success		200	{object}	handlers.Response{data=model.CreateClientByNameRes}
+//	@Failure		400	{object}	handlers.Response
+//	@Router			/scrape [post]
 func (h *ClientHandler) CreateClientByName(c *gin.Context) {
 	req := &model.CreateClientByNameReq{}
 
@@ -134,16 +145,28 @@ func (h *ClientHandler) CreateClientByName(c *gin.Context) {
 		return
 	}
 
-	err := h.service.CreateClientByName(c.Request.Context(), req)
+	id, err := h.service.CreateClientByName(c.Request.Context(), req)
 	if err != nil {
 		log.Printf("Failed to create client: %v", err)
 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not create client"})
 		return
 	}
 
-	resp(c, http.StatusOK, model.StatusRes{Status: "Client created"})
+	resp(c, http.StatusOK, model.CreateClientByNameRes{JobID: id})
 }
 
+// UpdateClient updates a client profile
+//
+//	@Summary		Update Client
+//	@Description	Update a client profile
+//	@Tags			clients
+//	@Accept			application/json
+//	@Produce		json
+//	@Param			id	query		string	true	"Hex id used to identify client"
+//	@Param			client	body		model.Client	true "Client data"
+//	@Success		200	{object}	handlers.Response
+//	@Failure		400	{object}	handlers.Response
+//	@Router			/:id [put]
 func (h *ClientHandler) UpdateClient(c *gin.Context) {
 	clientID := c.Param("id")
 	req := &model.UpdateClientReq{}

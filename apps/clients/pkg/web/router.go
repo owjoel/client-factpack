@@ -44,18 +44,24 @@ func NewRouter() *Router {
 	mongoDb := repository.InitMongo()
 	clientRepository := repository.NewMongoClientRepository(mongoDb)
 	jobRepository := repository.NewMongoJobRepository(mongoDb)
-	clientService := service.NewClientService(clientRepository, jobRepository)
+	jobService := service.NewJobService(jobRepository)
+	clientService := service.NewClientService(clientRepository, jobService)
 	handler := handlers.New(clientService)
+	jobHandler := handlers.NewJobHandler(jobService)
 
 	// Use RPC styling rather than REST
 	v1API := router.Group("/api/v1/clients")
 	v1API.GET("/health", handler.HealthCheck)
 	v1API.GET("/:id", handler.GetClient)
 	v1API.GET("/", handler.GetAllClients)
-	// v1API.POST("/", handler.CreateClient)
 	v1API.PUT("/:id", handler.UpdateClient)
 	v1API.POST("/scrape", handler.CreateClientByName)
 
+	// startregion Jobs
+	v1Jobs := router.Group("/api/v1/jobs")
+	v1Jobs.GET("/:id", jobHandler.GetJob)
+	v1Jobs.GET("/", jobHandler.GetAllJobs)
+	// endregion Jobs
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
