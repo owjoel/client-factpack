@@ -31,10 +31,10 @@ type Job struct {
 	Input         bson.M        `bson:"input" json:"input"`
 	ScrapeResult  bson.ObjectID `bson:"scrapeResult" json:"scrapeResult"`
 	MatchResults  []MatchResult `bson:"matchResults" json:"matchResults"`
-	Logs          []Log         `bson:"logs" json:"logs"`
+	Logs          []JobLog      `bson:"logs" json:"logs"`
 }
 
-type Log struct {
+type JobLog struct {
 	Message   string        `bson:"message" json:"message"`
 	Timestamp time.Time     `bson:"timestamp" json:"timestamp"`
 }

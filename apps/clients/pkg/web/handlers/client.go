@@ -13,7 +13,7 @@ type ClientHandler struct {
 	service *service.ClientService
 }
 
-func New(service *service.ClientService) *ClientHandler {
+func NewClientHandler(service *service.ClientService) *ClientHandler {
 	return &ClientHandler{service: service}
 }
 
@@ -136,19 +136,19 @@ func (h *ClientHandler) CreateClientByName(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(req); err != nil {
 		log.Printf("Failed to bind request: %v", err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Invalid request"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Invalid request"})
 		return
 	}
 
 	if req.Name == "" {
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Missing name"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Missing name"})
 		return
 	}
 
 	id, err := h.service.CreateClientByName(c.Request.Context(), req)
 	if err != nil {
 		log.Printf("Failed to create client: %v", err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not create client"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not create client"})
 		return
 	}
 
@@ -171,26 +171,39 @@ func (h *ClientHandler) UpdateClient(c *gin.Context) {
 	clientID := c.Param("id")
 	req := &model.UpdateClientReq{}
 	if clientID == "" {
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Missing id"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Missing id"})
 		return
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		log.Printf("Failed to bind request: %v", err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Invalid request"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Invalid request"})
 		return
 	}
 
 	err := h.service.UpdateClient(c.Request.Context(), clientID, req.Changes)
 	if err != nil {
 		log.Printf("Failed to update client: %v", err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not update client"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not update client"})
 		return
 	}
 
 	resp(c, http.StatusOK, model.StatusRes{Status: "Client updated"})
 }
 
-func (h *ClientHandler) DeleteClient(c *gin.Context) {
+func (h *ClientHandler) RescrapeClient(c *gin.Context) {
+	clientID := c.Param("id")
+	if clientID == "" {
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Missing id"})
+		return
+	}
 
+	err := h.service.RescrapeClient(c.Request.Context(), clientID)
+	if err != nil {
+		log.Printf("Failed to rescrape client: %v", err)
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not rescrape client"})
+		return
+	}
+
+	resp(c, http.StatusOK, model.StatusRes{Status: "Client rescraped"})
 }

@@ -14,6 +14,7 @@ type Client struct {
 
 type ClientMetadata struct {
 	Scraped   bool      `bson:"scraped" json:"scraped"`
+	CreatedAt time.Time `bson:"createdAt" json:"createdAt"`
 	UpdatedAt time.Time `bson:"updatedAt" json:"updatedAt"`
 	Sources   []string  `bson:"sources" json:"sources"`
 }
@@ -61,6 +62,10 @@ type SimpleChanges struct {
 	Path  string `json:"path"`
 	Old   any    `json:"old"`
 	New   any    `json:"new"`
+}
+
+type ErrorResponse struct {
+	Message string `json:"message"`
 }
 
 // // Client contains all information for a particular client

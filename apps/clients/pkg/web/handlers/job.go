@@ -21,13 +21,13 @@ func (h *JobHandler) GetJob(c *gin.Context) {
 	jobID := c.Param("id")
 
 	if jobID == "" {
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Missing id"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Missing id"})
 		return
 	}
 
 	job, err := h.service.GetJob(c.Request.Context(), jobID)
 	if err != nil {
-		c.JSON(http.StatusNotFound, model.StatusRes{Status: fmt.Sprintf("Could not retrieve job: %v", err)})
+		resp(c, http.StatusNotFound, model.ErrorResponse{Message: fmt.Sprintf("Could not retrieve job: %v", err)})
 		return
 	}
 
@@ -38,13 +38,13 @@ func (h *JobHandler) GetAllJobs(c *gin.Context) {
 	query := &model.GetJobsQuery{}
 
 	if err := c.ShouldBindQuery(query); err != nil {
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: fmt.Sprintf("Invalid request: %v", err)})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: fmt.Sprintf("Invalid request: %v", err)})
 		return
 	}
 
 	total, jobs, err := h.service.GetAllJobs(c.Request.Context(), query)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: fmt.Sprintf("Could not retrieve jobs: %v", err)})
+		resp(c, http.StatusInternalServerError, model.ErrorResponse{Message: fmt.Sprintf("Could not retrieve jobs: %v", err)})
 		return
 	}
 

@@ -19,17 +19,30 @@ func NewMongoClientRepository(storage *MongoStorage) ClientRepository {
 	return &mongoClientRepository{clientCollection: storage.clientCollection}
 }
 
-func (r *mongoClientRepository) Create(ctx context.Context, c *model.Client) error {
-	return nil
-}
-
 type ClientRepository interface {
-	// Create(ctx context.Context, c *model.Client) error
+	Create(ctx context.Context, c *model.Client) (string, error)
 	GetOne(ctx context.Context, clientID string) (*model.Client, error)
 	GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error)
 	Count(ctx context.Context) (int, error)
 	Update(ctx context.Context, clientID string, update bson.D) error
+	GetClientNameByID(ctx context.Context, clientID string) (string, error)
 }
+
+func (r *mongoClientRepository) Create(ctx context.Context, c *model.Client) (string, error) {
+	result, err := r.clientCollection.InsertOne(ctx, c)
+	if err != nil {
+		return "", fmt.Errorf("mongo insert error: %w", err)
+	}
+
+	insertedID, ok := result.InsertedID.(bson.ObjectID)
+	if !ok {
+		return "", fmt.Errorf("failed to cast inserted ID to ObjectID")
+	}
+
+	log.Printf("[MongoDB] Inserted client with ID: %s", insertedID.Hex())
+	return insertedID.Hex(), nil
+}
+
 
 func (s *mongoClientRepository) GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error) {
 	var clients []model.Client
@@ -88,14 +101,6 @@ func (s *mongoClientRepository) GetOne(ctx context.Context, clientID string) (*m
 	return &client, nil
 }
 
-// func (s *MongoStorage) Create(ctx context.Context, c *model.Client) error {
-// 	res, err := s.clientCollection.InsertOne(ctx, c)
-// 	if err != nil {
-// 		return fmt.Errorf("Failed to insert client: %w", err)
-// 	}
-// 	log.Println(res)
-// 	return nil
-// }
 
 func (s *mongoClientRepository) Count(ctx context.Context) (int, error) {
 	count, err := s.clientCollection.CountDocuments(ctx, bson.M{})
@@ -127,4 +132,33 @@ func (s *mongoClientRepository) Update(ctx context.Context, clientID string, upd
 	}
 
 	return nil
+}
+
+func (s *mongoClientRepository) GetClientNameByID(ctx context.Context, clientID string) (string, error) {
+	objID, err := bson.ObjectIDFromHex(clientID)
+	if err != nil {
+		return "", fmt.Errorf("invalid client ID: %w", err)
+	}
+
+	filter := bson.D{{Key: "_id", Value: objID}}
+	projection := bson.D{{Key: "data.profile.names", Value: 1}}
+
+	var result struct {
+		Data struct {
+			Profile struct {
+				Names []string `bson:"names"`
+			} `bson:"profile"`
+		} `bson:"data"`
+	}
+
+	err = s.clientCollection.FindOne(ctx, filter, options.FindOne().SetProjection(projection)).Decode(&result)
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch client name: %w", err)
+	}
+
+	if len(result.Data.Profile.Names) == 0 {
+		return "", fmt.Errorf("client has no names")
+	}
+
+	return result.Data.Profile.Names[0], nil
 }
