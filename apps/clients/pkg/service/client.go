@@ -1,12 +1,8 @@
 package service
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
 	"time"
 
 	"github.com/owjoel/client-factpack/apps/clients/config"
@@ -18,6 +14,7 @@ import (
 type ClientService struct {
 	clientRepository repository.ClientRepository
 	jobService       JobServiceInterface
+	logService       LogServiceInterface
 }
 
 type ClientServiceInterface interface {
@@ -27,8 +24,8 @@ type ClientServiceInterface interface {
 	UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error
 }
 
-func NewClientService(clientRepository repository.ClientRepository, jobService JobServiceInterface) *ClientService {
-	return &ClientService{clientRepository: clientRepository, jobService: jobService}
+func NewClientService(clientRepository repository.ClientRepository, jobService JobServiceInterface, logService LogServiceInterface) *ClientService {
+	return &ClientService{clientRepository: clientRepository, jobService: jobService, logService: logService}
 }
 
 func (s *ClientService) GetClient(ctx context.Context, clientID string) (*model.Client, error) {
@@ -60,9 +57,9 @@ func (s *ClientService) CreateClientByName(ctx context.Context, req *model.Creat
 		Status:    model.JobStatusPending,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Logs: []model.Log{
+		Logs: []model.JobLog{
 			{
-				Message:   "Job created and submitted to Prefect",
+				Message:   "Job [CREATE] created and submitted to Prefect",
 				Timestamp: time.Now(),
 			},
 		},
@@ -72,44 +69,82 @@ func (s *ClientService) CreateClientByName(ctx context.Context, req *model.Creat
 		return "", fmt.Errorf("Error creating job: %w", err)
 	}
 
-	// trigger prefect workflow with job id
-	// TODO: temporary http request to prefect workflow
-	go func() {
-		requestBody := map[string]interface{}{
-			"parameters": map[string]interface{}{
-				"job_id":  id,
-				"target": req.Name,
+	// create client profile
+	client := &model.Client{
+		Data: bson.D{
+			{
+				Key: "profile", Value: bson.D{
+					{Key: "names", Value: bson.A{req.Name}},
+				},
 			},
-		}
+		},
+		Metadata: model.ClientMetadata{
+			Scraped:   false,
+			CreatedAt: time.Now().UTC(),
+			UpdatedAt: time.Now().UTC(),
+		},
+	}
 
-		jsonData, err := json.Marshal(requestBody)
-		if err != nil {
-			log.Printf("Error marshalling request body: %v", err)
-			return
-		}
+	clientId, err := s.clientRepository.Create(ctx, client)
+	if err != nil {
+		return "", fmt.Errorf("error creating client profile: %w", err)
+	}
 
-		url := config.PrefectAPIURL + config.PrefectScrapeFlowID + "/create_flow_run"
+	// trigger prefect workflow with job id
+	go TriggerScrapeFlowRun(config.PrefectAPIURL, config.PrefectScrapeFlowID, config.PrefectAPIKey, map[string]interface{}{
+		"job_id":    id,
+		"target":    req.Name,
+		"client_id": clientId,
+	})
 
-		req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
-		if err != nil {
-			log.Printf("Error creating request: %v", err)
-			return
-		}
-
-		req.Header.Set("Authorization", "Bearer "+config.PrefectAPIKey)
-		req.Header.Set("Content-Type", "application/json")
-
-		client := &http.Client{}
-		resp, err := client.Do(req)
-
-		if err != nil {
-			log.Printf("HTTP POST failed: %v", err)
-			return
-		}
-		defer resp.Body.Close()
-	}()
+	username := getUsername(ctx)
+	s.logService.CreateLog(ctx, &model.Log{
+		ClientID:  clientId,
+		Actor:     username,
+		Operation: model.OperationCreateAndScrape,
+		Details:   fmt.Sprintf("User %s created a new client profile with job id %s", username, id),
+		Timestamp: time.Now(),
+	})
 
 	return id, nil
+}
+
+func (s *ClientService) RescrapeClient(ctx context.Context, clientID string) error {
+	job := &model.Job{
+		Type:      model.Scrape,
+		Status:    model.JobStatusPending,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Logs: []model.JobLog{
+			{
+				Message:   "Job [RESCRAPE] created and submitted to Prefect",
+				Timestamp: time.Now(),
+			},
+		},
+	}
+
+	id, err := s.jobService.CreateJob(ctx, job)
+	if err != nil {
+		return fmt.Errorf("error creating job: %w", err)
+	}
+
+	clientName, err := s.clientRepository.GetClientNameByID(ctx, clientID)
+	if err != nil {
+		return fmt.Errorf("error getting client name: %w", err)
+	}
+
+	go TriggerScrapeFlowRun(
+		config.PrefectAPIURL,
+		config.PrefectScrapeFlowID,
+		config.PrefectAPIKey,
+		map[string]interface{}{
+			"job_id":    id,
+			"target":    clientName,
+			"client_id": clientID,
+		},
+	)
+
+	return nil
 }
 
 func (s *ClientService) UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error {
@@ -142,4 +177,3 @@ func (s *ClientService) UpdateClient(ctx context.Context, clientID string, chang
 
 	return nil
 }
-

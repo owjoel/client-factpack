@@ -17,6 +17,11 @@ var (
 	PrefectAPIURL       = clean(os.Getenv("PREFECT_API_URL"))
 	PrefectAPIKey       = clean(os.Getenv("PREFECT_API_KEY"))
 	PrefectScrapeFlowID = clean(os.Getenv("PREFECT_SCRAPE_FLOW_ID"))
+
+	ClientID     = os.Getenv("COGNITO_USERPOOL_CLIENT_ID")
+	ClientSecret = os.Getenv("COGNITO_USERPOOL_CLIENT_SECRET")
+	UserPoolID   = os.Getenv("COGNITO_USERPOOL_ID")
+	AwsRegion    = os.Getenv("AWS_REGION")
 )
 
 func GetPort(defaultPort int) int {
