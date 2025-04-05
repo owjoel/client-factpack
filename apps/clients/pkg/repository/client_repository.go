@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -26,9 +27,8 @@ type ClientRepository interface {
 	// Create(ctx context.Context, c *model.Client) error
 	GetOne(ctx context.Context, clientID string) (*model.Client, error)
 	GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error)
-	Count(ctx context.Context, query *model.GetClientsQuery) (int, error)
-	// Update(ctx context.Context, c *model.Client) error
-	Update(ctx context.Context, clientID string, data bson.D) error
+	Count(ctx context.Context) (int, error)
+	Update(ctx context.Context, clientID string, update bson.D) error
 }
 
 func (s *mongoClientRepository) GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error) {
@@ -97,12 +97,7 @@ func (s *mongoClientRepository) GetOne(ctx context.Context, clientID string) (*m
 // 	return nil
 // }
 
-// func (s *MongoStorage) Update(ctx context.Context, c *model.Client) error {
-// 	// coll := s.clientCollection
-// 	return nil
-// }
-
-func (s *mongoClientRepository) Count(ctx context.Context, query *model.GetClientsQuery) (int, error) {
+func (s *mongoClientRepository) Count(ctx context.Context) (int, error) {
 	count, err := s.clientCollection.CountDocuments(ctx, bson.M{})
 	if err != nil {
 		return 0, fmt.Errorf("mongo count error: %w", err)
@@ -110,25 +105,26 @@ func (s *mongoClientRepository) Count(ctx context.Context, query *model.GetClien
 	return int(count), nil
 }
 
-func (s *mongoClientRepository) Update(ctx context.Context, clientID string, data bson.D) error {
+func (s *mongoClientRepository) Update(ctx context.Context, clientID string, update bson.D) error {
 	objID, err := bson.ObjectIDFromHex(clientID)
 	if err != nil {
 		return fmt.Errorf("error parsing object id: %w", err)
 	}
 
 	filter := bson.D{{Key: "_id", Value: objID}}
-	update := bson.D{
-		{Key: "$set", Value: bson.D{
-			bson.E{Key: "data", Value: data},
-		}},
-	}
+	updateDoc := bson.D{{Key: "$set", Value: update}}
 
-	result, err := s.clientCollection.UpdateOne(ctx, filter, update)
+	result, err := s.clientCollection.UpdateOne(ctx, filter, updateDoc)
 	if err != nil {
 		return fmt.Errorf("mongo update error: %w", err)
 	}
 
-	fmt.Printf("matched: %d, modified: %d\n", result.MatchedCount, result.ModifiedCount)
-	// TODO: log the update
+	if result.MatchedCount == 0 {
+		log.Printf("No client found: %s", clientID)
+	}
+	if result.ModifiedCount == 0 {
+		log.Printf("No updates made for client: %s", clientID)
+	}
+
 	return nil
 }

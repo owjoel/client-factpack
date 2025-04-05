@@ -3,17 +3,20 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 )
 
 var (
-	DBUser     = os.Getenv("DB_USERNAME")
-	DBPassword = os.Getenv("DB_PASSWORD")
-	DBHost     = os.Getenv("DB_HOST")
-	DBPort     = os.Getenv("DB_PORT")
-	DBName     = os.Getenv("DB_NAME")
-	MongoURI   = os.Getenv("MONGO_URI")
-	PrefectAPIURL = os.Getenv("PREFECT_API_URL")
-	PrefectAPIKey = os.Getenv("PREFECT_API_KEY")
+	DBUser     = clean(os.Getenv("DB_USERNAME"))
+	DBPassword = clean(os.Getenv("DB_PASSWORD"))
+	DBHost     = clean(os.Getenv("DB_HOST"))
+	DBPort     = clean(os.Getenv("DB_PORT"))
+	DBName     = clean(os.Getenv("DB_NAME"))
+
+	MongoURI            = clean(os.Getenv("MONGO_URI"))
+	PrefectAPIURL       = clean(os.Getenv("PREFECT_API_URL"))
+	PrefectAPIKey       = clean(os.Getenv("PREFECT_API_KEY"))
+	PrefectScrapeFlowID = clean(os.Getenv("PREFECT_SCRAPE_FLOW_ID"))
 )
 
 func GetPort(defaultPort int) int {
@@ -34,4 +37,8 @@ func GetVersion() string {
 		return "0.0.1"
 	}
 	return version
+}
+
+func clean(s string) string {
+	return strings.Trim(s, "\r\n\t ")
 }

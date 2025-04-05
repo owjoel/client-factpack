@@ -49,12 +49,18 @@ type CreateClientByNameReq struct {
 	Name string `json:"name"`
 }
 
-type UpdateClientReq struct {
-	Data bson.D `json:"data"`
+type CreateClientByNameRes struct {
+	JobID string `json:"jobId"`
 }
 
-type DeleteClientReq struct {
-	ID uint `json:"id"`
+type UpdateClientReq struct {
+	Changes []SimpleChanges `json:"changes"`
+}
+
+type SimpleChanges struct {
+	Path  string `json:"path"`
+	Old   any    `json:"old"`
+	New   any    `json:"new"`
 }
 
 // // Client contains all information for a particular client

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -10,9 +11,10 @@ import (
 )
 
 type JobRepository interface {
-	Create(ctx context.Context, job *model.Job) error
+	Create(ctx context.Context, job *model.Job) (string, error)
 	GetOne(ctx context.Context, jobID string) (*model.Job, error)
 	GetAll(ctx context.Context, query *model.GetJobsQuery) ([]model.Job, error)
+	Count(ctx context.Context) (int, error)
 }
 
 type mongoJobRepository struct {
@@ -23,15 +25,32 @@ func NewMongoJobRepository(storage *MongoStorage) JobRepository {
 	return &mongoJobRepository{jobCollection: storage.jobCollection}
 }
 
-func (r *mongoJobRepository) Create(ctx context.Context, job *model.Job) error {
-	_, err := r.jobCollection.InsertOne(ctx, job)
-	return err
+func (r *mongoJobRepository) Create(ctx context.Context, job *model.Job) (string, error) {
+	res, err := r.jobCollection.InsertOne(ctx, job)
+	if err != nil {
+		return "", fmt.Errorf("error creating job: %w", err)
+	}
+
+	return res.InsertedID.(bson.ObjectID).Hex(), nil
 }
 
 func (r *mongoJobRepository) GetOne(ctx context.Context, jobID string) (*model.Job, error) {
 	var job model.Job
-	err := r.jobCollection.FindOne(ctx, bson.M{"_id": jobID}).Decode(&job)
-	return &job, err
+
+	objID, err := bson.ObjectIDFromHex(jobID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid object ID: %w", err)
+	}
+
+	err = r.jobCollection.FindOne(ctx, bson.D{{Key: "_id", Value: objID}}).Decode(&job)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("job not found")
+		}
+		return nil, fmt.Errorf("error finding job: %w", err)
+	}
+
+	return &job, nil
 }
 
 func (r *mongoJobRepository) GetAll(ctx context.Context, query *model.GetJobsQuery) ([]model.Job, error) {
@@ -40,7 +59,15 @@ func (r *mongoJobRepository) GetAll(ctx context.Context, query *model.GetJobsQue
 		filter["status"] = query.Status
 	}
 
-	opts := options.Find().SetSkip(int64(query.Page * query.PageSize)).SetLimit(int64(query.PageSize))
+	if query.Page < 1 {
+		query.Page = 1
+	}
+	if query.PageSize < 1 || query.PageSize > 100 {
+		query.PageSize = 10
+	}
+	skip := (query.Page - 1) * query.PageSize
+
+	opts := options.Find().SetSkip(int64(skip)).SetLimit(int64(query.PageSize))
 	cursor, err := r.jobCollection.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, err
@@ -54,4 +81,10 @@ func (r *mongoJobRepository) GetAll(ctx context.Context, query *model.GetJobsQue
 	return jobs, nil
 }
 
-
+func (r *mongoJobRepository) Count(ctx context.Context) (int, error) {
+	count, err := r.jobCollection.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		return 0, fmt.Errorf("mongo count error: %w", err)
+	}
+	return int(count), nil
+}
