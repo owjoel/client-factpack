@@ -27,7 +27,7 @@ type GetClientsQuery struct {
 }
 
 type GetClientsResponse struct {
-	Total int     `json:"total"`
+	Total int      `json:"total"`
 	Data  []Client `json:"data"`
 }
 
@@ -56,7 +56,6 @@ type UpdateClientReq struct {
 type DeleteClientReq struct {
 	ID uint `json:"id"`
 }
-
 
 // // Client contains all information for a particular client
 // type Client struct {
