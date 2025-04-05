@@ -23,7 +23,7 @@ type ClientRepository interface {
 	Create(ctx context.Context, c *model.Client) (string, error)
 	GetOne(ctx context.Context, clientID string) (*model.Client, error)
 	GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error)
-	Count(ctx context.Context) (int, error)
+	Count(ctx context.Context, query *model.GetClientsQuery) (int, error)
 	Update(ctx context.Context, clientID string, update bson.D) error
 	GetClientNameByID(ctx context.Context, clientID string) (string, error)
 }
@@ -101,9 +101,17 @@ func (s *mongoClientRepository) GetOne(ctx context.Context, clientID string) (*m
 	return &client, nil
 }
 
+func (s *mongoClientRepository) Count(ctx context.Context, query *model.GetClientsQuery) (int, error) {
+	filter := bson.M{}
 
-func (s *mongoClientRepository) Count(ctx context.Context) (int, error) {
-	count, err := s.clientCollection.CountDocuments(ctx, bson.M{})
+	if query.Name != "" {
+		filter["data.profile.names"] = bson.M{
+			"$regex":   query.Name,
+			"$options": "i",
+		}
+	}
+
+	count, err := s.clientCollection.CountDocuments(ctx, filter)
 	if err != nil {
 		return 0, fmt.Errorf("mongo count error: %w", err)
 	}

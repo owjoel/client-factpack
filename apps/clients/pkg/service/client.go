@@ -42,7 +42,7 @@ func (s *ClientService) GetAllClients(ctx context.Context, query *model.GetClien
 		return 0, nil, fmt.Errorf("Error retrieving all client records: %w", err)
 	}
 
-	total, err = s.clientRepository.Count(ctx)
+	total, err = s.clientRepository.Count(ctx, query)
 
 	if err != nil {
 		return 0, nil, fmt.Errorf("Error retrieving total client records: %w", err)
