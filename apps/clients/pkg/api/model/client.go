@@ -27,7 +27,7 @@ type GetClientsQuery struct {
 }
 
 type GetClientsResponse struct {
-	Total int     `json:"total"`
+	Total int      `json:"total"`
 	Data  []Client `json:"data"`
 }
 
