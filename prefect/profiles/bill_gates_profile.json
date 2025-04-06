@@ -1,0 +1,227 @@
+{
+  "profile": {
+    "names": [
+      "William Henry Gates III",
+      "Bill Gates"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1955-10-28",
+    "description": "American businessman and philanthropist, co-founder of Microsoft.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Medina",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 128,
+      "currency": "USD",
+      "source": "Forbes List 2024"
+    },
+    "industries": [
+      "Technology",
+      "Philanthropy"
+    ],
+    "occupations": [
+      "Businessman",
+      "Philanthropist",
+      "Investor"
+    ],
+    "pastOccupations": [
+      "CEO of Microsoft",
+      "Chief Software Architect",
+      "Chairman of Microsoft"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1975",
+        "event": "Co-founded Microsoft"
+      },
+      {
+        "year": "1987",
+        "event": "Became youngest ever billionaire at age 31"
+      },
+      {
+        "year": "2000",
+        "event": "Founded Bill & Melinda Gates Foundation"
+      },
+      {
+        "year": "2014",
+        "event": "Stepped down as Chairman of Microsoft"
+      },
+      {
+        "year": "2020",
+        "event": "Resigned from Microsoft's Board"
+      },
+      {
+        "year": "2024",
+        "event": "Ranked 7th wealthiest person by Forbes"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/BillGates"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Microsoft",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "LinkedIn",
+          "ownershipPercentage": null,
+          "industry": "Technology",
+          "links": []
+        },
+        {
+          "name": "GitHub",
+          "ownershipPercentage": null,
+          "industry": "Technology",
+          "links": []
+        },
+        {
+          "name": "Xbox",
+          "ownershipPercentage": null,
+          "industry": "Technology",
+          "links": []
+        },
+        {
+          "name": "Azure",
+          "ownershipPercentage": null,
+          "industry": "Technology",
+          "links": []
+        },
+        {
+          "name": "Skype",
+          "ownershipPercentage": null,
+          "industry": "Communication",
+          "links": []
+        }
+      ],
+      "links": []
+    },
+    {
+      "name": "Cascade Investment",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Finance",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "TerraPower",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Energy",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Gates Ventures",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Venture Capital",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Breakthrough Energy",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Energy",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "BEN",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Business",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Signature Aviation",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Aviation",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Melinda French Gates",
+      "relationship": "Ex-wife"
+    },
+    {
+      "name": "Jennifer Katherine Gates",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Rory John Gates",
+      "relationship": "Son"
+    },
+    {
+      "name": "Phoebe Adele Gates",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Kristi (Kristianne)",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Libby",
+      "relationship": "Sister"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Paul Allen",
+      "relationship": "Co-founder of Microsoft",
+      "associatedCompanies": [
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Steve Ballmer",
+      "relationship": "Former CEO of Microsoft",
+      "associatedCompanies": [
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Warren Buffett",
+      "relationship": "Co-founder of the Giving Pledge",
+      "associatedCompanies": []
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 0.9
+    },
+    {
+      "source": "Bill & Melinda Gates Foundation",
+      "confidence": 0.8
+    },
+    {
+      "source": "Harvard University",
+      "confidence": 0.8
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "profile": {
+    "names": [
+      "Mark Elliot Zuckerberg"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1984-05-14",
+    "description": "",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Palo Alto",
+      "country": "USA"
+    },
+    "netWorth": {
+      "estimatedValue": 219,
+      "currency": "USD",
+      "source": "Forbes"
+    },
+    "industries": [
+      "Technology"
+    ],
+    "occupations": [
+      "Chairman",
+      "CEO",
+      "Controlling Shareholder"
+    ],
+    "pastOccupations": [],
+    "careerTimeline": [
+      {
+        "year": "1984",
+        "event": "Born in White Plains, New York"
+      },
+      {
+        "year": "2004",
+        "event": "Launched Facebook"
+      },
+      {
+        "year": "2008",
+        "event": "Became the world's youngest self-made billionaire"
+      },
+      {
+        "year": "2010",
+        "event": "The Social Network film released"
+      },
+      {
+        "year": "2013",
+        "event": "Launched Internet.org"
+      },
+      {
+        "year": "2016",
+        "event": "Signed The Giving Pledge"
+      },
+      {
+        "year": "2018",
+        "event": "Testified before the U.S. Senate regarding Facebook-Cambridge Analytica scandal"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Facebook",
+        "link": "https://www.facebook.com/zuck"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Meta Platforms",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Facebook",
+          "ownershipPercentage": null,
+          "industry": "Technology",
+          "links": []
+        },
+        {
+          "name": "Instagram",
+          "ownershipPercentage": null,
+          "industry": "Technology",
+          "links": []
+        },
+        {
+          "name": "WhatsApp",
+          "ownershipPercentage": null,
+          "industry": "Technology",
+          "links": []
+        }
+      ],
+      "links": [
+        {
+          "label": "Official Website",
+          "url": "https://about.fb.com"
+        }
+      ]
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Priscilla Chan",
+      "relationship": "Wife"
+    },
+    {
+      "name": "Maxima Chan Zuckerberg",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "August Chan Zuckerberg",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Aurelia Chan Zuckerberg",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Karen Kempner",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Edward Zuckerberg",
+      "relationship": "Father"
+    },
+    {
+      "name": "Arielle Zuckerberg",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Randi Zuckerberg",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Donna Zuckerberg",
+      "relationship": "Sister"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Eduardo Saverin",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Dustin Moskovitz",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Chris Hughes",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Andrew McCollum",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": null
+    },
+    {
+      "source": "The Social Network Film",
+      "confidence": null
+    }
+  ]
+}

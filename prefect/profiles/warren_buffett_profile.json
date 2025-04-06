@@ -1,0 +1,148 @@
+{
+  "profile": {
+    "names": [
+      "Warren Edward Buffett"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1930-08-30",
+    "description": "Warren Edward Buffett is an American investor and philanthropist, known for his successful investment strategies and leadership as the chairman and CEO of Berkshire Hathaway.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Omaha, Nebraska",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 149600000000,
+      "currency": "USD",
+      "source": "Forbes estimate as of February 2025"
+    },
+    "industries": [
+      "Finance",
+      "Investment",
+      "Philanthropy"
+    ],
+    "occupations": [
+      "Chairman and CEO of Berkshire Hathaway",
+      "Investor",
+      "Philanthropist"
+    ],
+    "pastOccupations": [
+      "Investment Salesman",
+      "Securities Analyst"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1947",
+        "event": "Matriculated at the Wharton School of the University of Pennsylvania"
+      },
+      {
+        "year": "1970",
+        "event": "Became Chairman and CEO of Berkshire Hathaway"
+      },
+      {
+        "year": "2010",
+        "event": "Founded Giving Pledge with Bill Gates"
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Berkshire Hathaway",
+      "ownershipType": "Majority Stake",
+      "ownershipPercentage": null,
+      "industry": "Finance",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "BNSF Railway",
+          "ownershipPercentage": 100,
+          "industry": "Railway Transportation",
+          "links": []
+        },
+        {
+          "name": "GEICO",
+          "ownershipPercentage": null,
+          "industry": "Insurance",
+          "links": []
+        }
+      ],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "GEICO",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Insurance",
+      "status": "Active"
+    },
+    {
+      "name": "The Coca-Cola Company",
+      "type": "Equity",
+      "value": {
+        "value": 1020000000,
+        "currency": "USD"
+      },
+      "industry": "Beverages",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Howard Buffett",
+      "relationship": "Father"
+    },
+    {
+      "name": "Leila Buffett",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Susan Thompson",
+      "relationship": "First Wife"
+    },
+    {
+      "name": "Astrid Menks",
+      "relationship": "Second Wife"
+    },
+    {
+      "name": "Susan Alice",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Howard",
+      "relationship": "Son"
+    },
+    {
+      "name": "Peter",
+      "relationship": "Son"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Charlie Munger",
+      "relationship": "Business Partner",
+      "associatedCompanies": [
+        "Berkshire Hathaway"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": null
+    },
+    {
+      "source": "Buffett Partnership, Ltd documents",
+      "confidence": null
+    },
+    {
+      "source": "New York Times articles",
+      "confidence": null
+    }
+  ]
+}
