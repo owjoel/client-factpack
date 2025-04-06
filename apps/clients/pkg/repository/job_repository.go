@@ -14,7 +14,7 @@ type JobRepository interface {
 	Create(ctx context.Context, job *model.Job) (string, error)
 	GetOne(ctx context.Context, jobID string) (*model.Job, error)
 	GetAll(ctx context.Context, query *model.GetJobsQuery) ([]model.Job, error)
-	Count(ctx context.Context) (int, error)
+	Count(ctx context.Context, query *model.GetJobsQuery) (int, error)
 }
 
 type mongoJobRepository struct {
@@ -81,8 +81,14 @@ func (r *mongoJobRepository) GetAll(ctx context.Context, query *model.GetJobsQue
 	return jobs, nil
 }
 
-func (r *mongoJobRepository) Count(ctx context.Context) (int, error) {
-	count, err := r.jobCollection.CountDocuments(ctx, bson.M{})
+func (r *mongoJobRepository) Count(ctx context.Context, query *model.GetJobsQuery) (int, error) {
+
+	filter := bson.M{}
+	if query.Status != "" {
+		filter["status"] = query.Status
+	}
+
+	count, err := r.jobCollection.CountDocuments(ctx, filter)
 	if err != nil {
 		return 0, fmt.Errorf("mongo count error: %w", err)
 	}

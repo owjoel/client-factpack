@@ -41,9 +41,7 @@ type JobLog struct {
 
 type MatchResult struct {
 	ID         bson.ObjectID `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
-	Similarity float64       `bson:"similarity" json:"similarity"`
-	CreatedAt  time.Time     `bson:"createdAt" json:"createdAt"`
-	UpdatedAt  time.Time     `bson:"updatedAt" json:"updatedAt"`
+	SimilarityScore      float64       `bson:"similarityScore" json:"similarityScore"`
 }
 
 type GetJobsQuery struct {

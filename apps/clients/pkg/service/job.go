@@ -46,7 +46,7 @@ func (s *JobService) GetAllJobs(ctx context.Context, query *model.GetJobsQuery) 
 		return 0, nil, err
 	}
 
-	total, err = s.jobRepository.Count(ctx)
+	total, err = s.jobRepository.Count(ctx, query)
 	if err != nil {
 		return 0, nil, err
 	}
