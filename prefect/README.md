@@ -1,5 +1,16 @@
 # Running Prefect Worker Locally
 
+Set .env
+
+```
+MONGO_URI=
+
+QDRANT_URL=
+QDRANT_API_KEY=
+
+OPENAI_API_KEY=
+```
+
 Install Deps
 
 ```zsh
