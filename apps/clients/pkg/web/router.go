@@ -64,6 +64,7 @@ func NewRouter() *Router {
 	v1API.PUT("/:id", clientHandler.UpdateClient)
 	v1API.POST("/scrape", clientHandler.CreateClientByName)
 	v1API.POST("/:id/scrape", clientHandler.RescrapeClient)
+	v1API.POST("/match", clientHandler.MatchClient)
 	// endregion Clients
 
 	// startregion Jobs

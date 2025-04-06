@@ -39,7 +39,7 @@ def scrape_client_flow(job_id: str, target: str, client_id: str):
 
         print(f"[{target}] Client profile updated, upserting into Qdrant...")
 
-        upsert_text_to_qdrant("clients", profile_json, client_id)
+        upsert_text_to_qdrant(profile_json, client_id, "clients")
         add_job_log(job_id, f"[{target}] Upserted into Qdrant")
         print(f"[{target}] Upserted into Qdrant, job complete")
 

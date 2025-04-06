@@ -50,10 +50,6 @@ type CreateClientByNameReq struct {
 	Name string `json:"name"`
 }
 
-type CreateClientByNameRes struct {
-	JobID string `json:"jobId"`
-}
-
 type UpdateClientReq struct {
 	Changes []SimpleChanges `json:"changes"`
 }
@@ -66,6 +62,14 @@ type SimpleChanges struct {
 
 type ErrorResponse struct {
 	Message string `json:"message"`
+}
+
+type MatchClientReq struct {
+	Text string `json:"text"`
+}
+
+type JobIDRes struct {
+	JobID string `json:"jobId"`
 }
 
 // // Client contains all information for a particular client

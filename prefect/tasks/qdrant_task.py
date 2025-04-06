@@ -30,6 +30,7 @@ def upsert_text_to_qdrant(profile: dict, record_id: str, collection_name: str = 
         vector = transform_into_vector(text)
 
         client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+
         point = PointStruct(
             id=str(uuid5(NAMESPACE_DNS, record_id)),
             vector=vector,

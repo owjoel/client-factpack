@@ -20,8 +20,9 @@ type ClientService struct {
 type ClientServiceInterface interface {
 	GetClient(ctx context.Context, clientID string) (*model.Client, error)
 	GetAllClients(ctx context.Context, query *model.GetClientsQuery) (total int, clients []model.Client, err error)
-	CreateClientByName(ctx context.Context, req *model.CreateClientByNameReq) error
+	CreateClientByName(ctx context.Context, req *model.CreateClientByNameReq) (string, error)
 	UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error
+	MatchClient(ctx context.Context, req *model.MatchClientReq) (string, error)
 }
 
 func NewClientService(clientRepository repository.ClientRepository, jobService JobServiceInterface, logService LogServiceInterface) *ClientService {
@@ -91,7 +92,7 @@ func (s *ClientService) CreateClientByName(ctx context.Context, req *model.Creat
 	}
 
 	// trigger prefect workflow with job id
-	go TriggerScrapeFlowRun(config.PrefectAPIURL, config.PrefectScrapeFlowID, config.PrefectAPIKey, map[string]interface{}{
+	go TriggerPrefectFlowRun(config.PrefectScrapeFlowID, config.PrefectAPIKey, map[string]interface{}{
 		"job_id":    id,
 		"target":    req.Name,
 		"client_id": clientId,
@@ -133,8 +134,7 @@ func (s *ClientService) RescrapeClient(ctx context.Context, clientID string) err
 		return fmt.Errorf("error getting client name: %w", err)
 	}
 
-	go TriggerScrapeFlowRun(
-		config.PrefectAPIURL,
+	go TriggerPrefectFlowRun(
 		config.PrefectScrapeFlowID,
 		config.PrefectAPIKey,
 		map[string]interface{}{
@@ -177,3 +177,36 @@ func (s *ClientService) UpdateClient(ctx context.Context, clientID string, chang
 
 	return nil
 }
+
+
+func (s *ClientService) MatchClient(ctx context.Context, req *model.MatchClientReq) (string, error) {
+	job := &model.Job{
+		Type:      model.Match,
+		Status:    model.JobStatusPending,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Logs: []model.JobLog{
+			{
+				Message:   "Job [MATCH] created and submitted to Prefect",
+				Timestamp: time.Now(),
+			},
+		},
+	}
+
+	id, err := s.jobService.CreateJob(ctx, job)
+	if err != nil {
+		return "", fmt.Errorf("error creating job: %w", err)
+	}
+
+	go TriggerPrefectFlowRun(
+		config.PrefectMatchFlowID,
+		config.PrefectAPIKey,
+		map[string]interface{}{
+			"job_id": id,
+			"text":   req.Text,
+		},
+	)
+
+	return id, nil
+}
+

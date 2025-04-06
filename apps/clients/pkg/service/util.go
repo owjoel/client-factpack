@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/owjoel/client-factpack/apps/clients/config"
 )
 
 func getUsername(ctx context.Context) string {
@@ -17,7 +19,7 @@ func getUsername(ctx context.Context) string {
 	return username
 }
 
-func TriggerScrapeFlowRun(prefectURL, deploymentID, apiKey string, params map[string]interface{}) error {
+func TriggerPrefectFlowRun(deploymentID, apiKey string, params map[string]interface{}) error {
 	requestBody := map[string]interface{}{
 		"parameters": params,
 	}
@@ -27,14 +29,14 @@ func TriggerScrapeFlowRun(prefectURL, deploymentID, apiKey string, params map[st
 		return fmt.Errorf("error marshalling request body: %w", err)
 	}
 
-	url := prefectURL + deploymentID + "/create_flow_run"
+	url := config.PrefectAPIURL + deploymentID + "/create_flow_run"
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("error creating HTTP request: %w", err)
 	}
 
-	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Authorization", "Bearer "+ apiKey)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}

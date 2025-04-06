@@ -3,9 +3,16 @@
 Install Deps
 
 ```zsh
+cd prefect
+
 pip install -r requirements.txt
 ```
 
+To start the agent locally
+
+```zsh
+prefect worker start --pool justin-local
+```
 
 To initialize Prefect
 
@@ -19,15 +26,10 @@ To deploy a workflow:
 prefect deploy
 ```
 
-To start the agent locally
-
-```zsh
-prefect worker start --pool <worker-pool-name>
-```
 
 To trigger with API call
 
-```
+```zsh
 POST https://api.prefect.cloud/api/accounts/<account-id>/workspaces/<workspace-id>/deployments/<deployment-id>/create_flow_run
 
 Body:

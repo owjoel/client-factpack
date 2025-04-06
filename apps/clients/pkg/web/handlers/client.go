@@ -152,7 +152,7 @@ func (h *ClientHandler) CreateClientByName(c *gin.Context) {
 		return
 	}
 
-	resp(c, http.StatusOK, model.CreateClientByNameRes{JobID: id})
+	resp(c, http.StatusOK, model.JobIDRes{JobID: id})
 }
 
 // UpdateClient updates a client profile
@@ -206,4 +206,22 @@ func (h *ClientHandler) RescrapeClient(c *gin.Context) {
 	}
 
 	resp(c, http.StatusOK, model.StatusRes{Status: "Client rescraped"})
+}
+
+func (h *ClientHandler) MatchClient(c *gin.Context) {
+	req := &model.MatchClientReq{}
+	if err := c.ShouldBindJSON(req); err != nil {
+		log.Printf("Failed to bind request: %v", err)
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Invalid request"})
+		return
+	}
+
+	id, err := h.service.MatchClient(c.Request.Context(), req)
+	if err != nil {
+		log.Printf("Failed to match client: %v", err)
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not match client"})
+		return
+	}
+
+	resp(c, http.StatusOK, model.JobIDRes{JobID: id})
 }
