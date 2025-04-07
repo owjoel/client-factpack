@@ -52,9 +52,9 @@ func (r *mongoLogRepository) GetAll(ctx context.Context, query *model.GetLogsQue
 	if query.ClientID != "" {
 		objID, err := bson.ObjectIDFromHex(query.ClientID)
 		if err != nil {
-			return nil, fmt.Errorf("%w: clientID '%s' is not a valid ObjectID", errorx.ErrInvalidInput, query.ClientID)
+			return nil, fmt.Errorf("%w: clientId '%s' is not a valid ObjectID", errorx.ErrInvalidInput, query.ClientID)
 		}
-		filter["clientID"] = objID
+		filter["clientId"] = objID
 	}
 	if query.Operation != "" {
 		filter["operation"] = query.Operation

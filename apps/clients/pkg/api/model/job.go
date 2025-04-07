@@ -45,9 +45,9 @@ type MatchResult struct {
 }
 
 type GetJobsQuery struct {
-	Status   JobStatus `bson:"status" json:"status"`
-	Page     int       `bson:"page" json:"page"`
-	PageSize int       `bson:"pageSize" json:"pageSize"`
+	Status   JobStatus `bson:"status" json:"status" form:"status"`
+	Page     int       `bson:"page" json:"page" form:"page"`
+	PageSize int       `bson:"pageSize" json:"pageSize" form:"pageSize"`
 }
 
 type GetJobsResponse struct {
