@@ -85,7 +85,7 @@ func NewRouter() *Router {
 }
 
 func (r *Router) Run() {
-	port := config.GetPort(8080)
+	port := config.GetPort(8081)
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", port),
 		Handler: r.Engine,

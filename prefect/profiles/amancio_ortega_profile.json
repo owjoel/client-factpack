@@ -1,0 +1,169 @@
+{
+  "profile": {
+    "names": [
+      "Amancio Ortega Gaona"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1936-03-28",
+    "description": "",
+    "nationality": "Spanish",
+    "currentResidence": {
+      "city": "A Coru\u00f1a",
+      "country": "Spain"
+    },
+    "netWorth": {
+      "estimatedValue": 103000000000,
+      "currency": "USD",
+      "source": "Forbes 2024"
+    },
+    "industries": [
+      "Fashion",
+      "Retail",
+      "Real Estate"
+    ],
+    "occupations": [
+      "Founder",
+      "Chairman"
+    ],
+    "pastOccupations": [
+      "Shop Hand"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1963",
+        "event": "Founded Confecciones Goa"
+      },
+      {
+        "year": "1975",
+        "event": "Opened first Zara store"
+      },
+      {
+        "year": "2001",
+        "event": "Inditex went public"
+      },
+      {
+        "year": "2009",
+        "event": "Appointed Knight Grand Cross of the Order of Civil Merit"
+      },
+      {
+        "year": "2011",
+        "event": "Announced retirement from Inditex"
+      },
+      {
+        "year": "2012",
+        "event": "Donated about \u20ac20 million to Caritas Internationalis"
+      },
+      {
+        "year": "2017",
+        "event": "Received award from Spanish Association of Foundations"
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Inditex",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 59.29,
+      "industry": "Fashion",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Zara",
+          "ownershipPercentage": null,
+          "industry": "Fashion",
+          "links": []
+        },
+        {
+          "name": "Massimo Dutti",
+          "ownershipPercentage": null,
+          "industry": "Fashion",
+          "links": []
+        },
+        {
+          "name": "Pull and Bear",
+          "ownershipPercentage": null,
+          "industry": "Fashion",
+          "links": []
+        },
+        {
+          "name": "Bershka",
+          "ownershipPercentage": null,
+          "industry": "Fashion",
+          "links": []
+        }
+      ],
+      "links": []
+    },
+    {
+      "name": "Pontegadea",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Real Estate",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Enag\u00e1s",
+      "type": "Equity",
+      "value": {
+        "value": 281640000,
+        "currency": "EUR"
+      },
+      "industry": "Energy",
+      "status": "Active"
+    },
+    {
+      "name": "Red El\u00e9ctrica",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": ""
+      },
+      "industry": "Energy",
+      "status": "Active"
+    },
+    {
+      "name": "Redes Energ\u00e9ticas Nacionais",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": ""
+      },
+      "industry": "Energy",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Rosal\u00eda Mera Goyenechea",
+      "relationship": "Former Spouse"
+    },
+    {
+      "name": "Marcos Ortega Mera",
+      "relationship": "Child"
+    },
+    {
+      "name": "Sandra Ortega Mera",
+      "relationship": "Child"
+    },
+    {
+      "name": "Flora P\u00e9rez Marcote",
+      "relationship": "Spouse"
+    },
+    {
+      "name": "Marta Ortega P\u00e9rez",
+      "relationship": "Child"
+    }
+  ],
+  "associates": [],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": null
+    }
+  ]
+}
