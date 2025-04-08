@@ -32,7 +32,7 @@ func NewClientService(clientRepository repository.ClientRepository, jobService J
 func (s *ClientService) GetClient(ctx context.Context, clientID string) (*model.Client, error) {
 	c, err := s.clientRepository.GetOne(ctx, clientID)
 	if err != nil {
-		return nil, fmt.Errorf("Error retrieving client profile: %w", err)
+		return nil, fmt.Errorf("error retrieving client profile: %w", err)
 	}
 	return c, nil
 }
@@ -40,13 +40,13 @@ func (s *ClientService) GetClient(ctx context.Context, clientID string) (*model.
 func (s *ClientService) GetAllClients(ctx context.Context, query *model.GetClientsQuery) (total int, clients []model.Client, err error) {
 	clients, err = s.clientRepository.GetAll(ctx, query)
 	if err != nil {
-		return 0, nil, fmt.Errorf("Error retrieving all client records: %w", err)
+		return 0, nil, fmt.Errorf("error retrieving all client records: %w", err)
 	}
 
 	total, err = s.clientRepository.Count(ctx, query)
 
 	if err != nil {
-		return 0, nil, fmt.Errorf("Error retrieving total client records: %w", err)
+		return 0, nil, fmt.Errorf("error retrieving total client records: %w", err)
 	}
 
 	return total, clients, nil
@@ -67,7 +67,7 @@ func (s *ClientService) CreateClientByName(ctx context.Context, req *model.Creat
 	}
 	id, err := s.jobService.CreateJob(ctx, job)
 	if err != nil {
-		return "", fmt.Errorf("Error creating job: %w", err)
+		return "", fmt.Errorf("error creating job: %w", err)
 	}
 
 	// create client profile
@@ -178,7 +178,6 @@ func (s *ClientService) UpdateClient(ctx context.Context, clientID string, chang
 	return nil
 }
 
-
 func (s *ClientService) MatchClient(ctx context.Context, req *model.MatchClientReq) (string, error) {
 	job := &model.Job{
 		Type:      model.Match,
@@ -209,4 +208,3 @@ func (s *ClientService) MatchClient(ctx context.Context, req *model.MatchClientR
 
 	return id, nil
 }
-

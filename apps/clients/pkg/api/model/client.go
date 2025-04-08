@@ -25,6 +25,7 @@ type GetClientsQuery struct {
 	Name     string `form:"name"`
 	Page     int    `form:"page" binding:"required"`
 	PageSize int    `form:"pageSize" binding:"required"`
+	Sort     bool   `form:"sort"`
 }
 
 type GetClientsResponse struct {
@@ -55,9 +56,9 @@ type UpdateClientReq struct {
 }
 
 type SimpleChanges struct {
-	Path  string `json:"path"`
-	Old   any    `json:"old"`
-	New   any    `json:"new"`
+	Path string `json:"path"`
+	Old  any    `json:"old"`
+	New  any    `json:"new"`
 }
 
 type ErrorResponse struct {

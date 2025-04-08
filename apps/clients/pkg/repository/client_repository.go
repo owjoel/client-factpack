@@ -43,7 +43,6 @@ func (r *mongoClientRepository) Create(ctx context.Context, c *model.Client) (st
 	return insertedID.Hex(), nil
 }
 
-
 func (s *mongoClientRepository) GetAll(ctx context.Context, query *model.GetClientsQuery) ([]model.Client, error) {
 	var clients []model.Client
 
@@ -66,6 +65,10 @@ func (s *mongoClientRepository) GetAll(ctx context.Context, query *model.GetClie
 	opts := options.Find().
 		SetSkip(int64(skip)).
 		SetLimit(int64(query.PageSize))
+
+	if query.Sort {
+		opts.SetSort(bson.D{{Key: "metadata.updatedAt", Value: -1}})
+	}
 
 	cursor, err := s.clientCollection.Find(ctx, filter, opts)
 	if err != nil {
