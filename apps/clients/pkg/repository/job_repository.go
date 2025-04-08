@@ -67,7 +67,10 @@ func (r *mongoJobRepository) GetAll(ctx context.Context, query *model.GetJobsQue
 	}
 	skip := (query.Page - 1) * query.PageSize
 
-	opts := options.Find().SetSkip(int64(skip)).SetLimit(int64(query.PageSize))
+	opts := options.Find().
+		SetSkip(int64(skip)).
+		SetLimit(int64(query.PageSize)).
+		SetSort(bson.D{{Key: "updatedAt", Value: -1}})
 	cursor, err := r.jobCollection.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, err
