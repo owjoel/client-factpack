@@ -45,7 +45,6 @@ func (r *mongoLogRepository) Create(ctx context.Context, log *model.Log) (string
 	return insertedID.Hex(), nil
 }
 
-
 func (r *mongoLogRepository) GetAll(ctx context.Context, query *model.GetLogsQuery) ([]model.Log, error) {
 	filter := bson.M{}
 
@@ -76,7 +75,9 @@ func (r *mongoLogRepository) GetAll(ctx context.Context, query *model.GetLogsQue
 
 	skip := (query.Page - 1) * query.PageSize
 	limit := query.PageSize
-	opts := options.Find().SetSkip(int64(skip)).SetLimit(int64(limit))
+	opts := options.Find().
+		SetSkip(int64(skip)).
+		SetLimit(int64(limit)).SetSort(bson.D{{Key: "timestamp", Value: -1}})
 
 	cursor, err := r.logCollection.Find(ctx, filter, opts)
 	if err != nil {
@@ -90,7 +91,6 @@ func (r *mongoLogRepository) GetAll(ctx context.Context, query *model.GetLogsQue
 
 	return logs, nil
 }
-
 
 func (r *mongoLogRepository) GetOne(ctx context.Context, logID string) (*model.Log, error) {
 	objID, err := bson.ObjectIDFromHex(logID)
@@ -110,7 +110,6 @@ func (r *mongoLogRepository) GetOne(ctx context.Context, logID string) (*model.L
 	return &log, nil
 }
 
-
 func (r *mongoLogRepository) Count(ctx context.Context) (int, error) {
 	count, err := r.logCollection.CountDocuments(ctx, bson.M{})
 	if err != nil {
@@ -118,4 +117,3 @@ func (r *mongoLogRepository) Count(ctx context.Context) (int, error) {
 	}
 	return int(count), nil
 }
-
