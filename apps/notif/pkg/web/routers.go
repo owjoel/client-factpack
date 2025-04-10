@@ -22,6 +22,9 @@ func InitRouter() {
 		api.HandleWebSocketConnections(c.Writer, c.Request)
 	})
 
+	// REST: Get notifications
+	router.GET("/api/v1/notifications", api.GetUserNotifications)
+
 	port := ":8081"
 	fmt.Println("Starting server on port", port)
 	router.Run(port)

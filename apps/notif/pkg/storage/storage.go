@@ -11,9 +11,16 @@ import (
 
 type Notification struct {
 	gorm.Model
-	UserID  string `gorm:"user_id"`
-	Message string `gorm:"message"`
+	UserID           string `gorm:"column:user_id"`
+	NotificationType string `gorm:"column:notification_type"`
+	Username         string `gorm:"column:username"`
+	ID               string `gorm:"column:job_id"`
+	Status           string `gorm:"column:job_status"`
+	Type             string `gorm:"column:job_type"`
+	ClientName       string `gorm:"column:client_name"`
+	Priority         string `gorm:"column:priority"`
 }
+
 
 type NotificationStorage struct {
 	*gorm.DB
@@ -36,4 +43,10 @@ func InitDatabase() *gorm.DB {
 // Saves notification to the database
 func (s *NotificationStorage) SaveNotification(n *Notification) error {
 	return s.Create(n).Error
+}
+
+func (s *NotificationStorage) GetNotificationsByUser(userID string) ([]Notification, error) {
+	var notifications []Notification
+	err := s.Where("user_id = ?", userID).Order("created_at DESC").Find(&notifications).Error
+	return notifications, err
 }
