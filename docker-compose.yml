@@ -27,4 +27,6 @@ services:
     container_name: prefect_worker
     env_file:
       - ./prefect/.env
+    volumes:
+      - /Users/clarissa/Documents/SMU/CS480/client-factpack/prefect:/Users/clarissa/Documents/SMU/CS480/client-factpack/prefect
     restart: unless-stopped

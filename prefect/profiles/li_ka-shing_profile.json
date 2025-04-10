@@ -1,0 +1,69 @@
+{
+  "profile": {
+    "names": [
+      "Sir Ka-shing Li",
+      "Li Ka-shing"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1928-07-29",
+    "description": "Hong Kong billionaire business magnate, investor, and philanthropist",
+    "nationality": "Chinese",
+    "currentResidence": {
+      "city": "Hong Kong",
+      "country": "Hong Kong"
+    },
+    "netWorth": {
+      "estimatedValue": 37.3,
+      "currency": "USD",
+      "source": "Forbes"
+    },
+    "industries": [
+      "Transportation",
+      "Real Estate",
+      "Financial Services",
+      "Retail",
+      "Energy and Utilities"
+    ],
+    "occupations": [
+      "Business Magnate",
+      "Investor",
+      "Philanthropist"
+    ],
+    "pastOccupations": [
+      "Chairman of CK Hutchison Holdings",
+      "Chairman of CK Asset Holdings"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1950",
+        "event": "Founded Cheung Kong Industries"
+      },
+      {
+        "year": "1972",
+        "event": "Cheung Kong Holdings listed on the Hong Kong Stock Exchange"
+      },
+      {
+        "year": "1979",
+        "event": "Acquired Hutchison Whampoa"
+      },
+      {
+        "year": "1985",
+        "event": "Acquired Hongkong Electric Holdings"
+      },
+      {
+        "year": "2018",
+        "event": "Retired as Chairman from CK Hutchison Holdings and CK Asset Holdings"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Notable Media Coverage",
+        "link": "https://www.forbes.com"
+      },
+      {
+        "platform": "Business News",
+        "link": "https://www.bloomberg.com"
+      }
+    ]
+  }
+}
