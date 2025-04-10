@@ -1,0 +1,30 @@
+version: '3.9'
+
+services:
+  auth:
+    build:
+      context: ./apps/auth
+    container_name: auth_service
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./apps/auth/.env
+    restart: unless-stopped
+
+  clients:
+    build:
+      context: ./apps/clients
+    container_name: clients_service
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./apps/clients/.env
+    restart: unless-stopped
+
+  prefect:
+    build:
+      context: ./prefect
+    container_name: prefect_worker
+    env_file:
+      - ./prefect/.env
+    restart: unless-stopped

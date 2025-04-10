@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o auth ./cmd
+RUN go build -o clients ./cmd
 
 # ------------------------------------------
 
@@ -19,8 +19,8 @@ WORKDIR /app
 RUN adduser -D -g '' app
 USER app
 
-COPY --from=build /app/auth .
+COPY --from=build /app/clients .
 
-EXPOSE 8080
+EXPOSE 8081
 
-CMD ["./auth"]
+CMD ["./clients"]
