@@ -7,6 +7,7 @@ import (
 	"github.com/owjoel/client-factpack/apps/notif/pkg/storage"
     "github.com/owjoel/client-factpack/apps/notif/config"
     "github.com/owjoel/client-factpack/apps/notif/pkg/utils"
+	"github.com/owjoel/client-factpack/apps/notif/pkg/rest"
 )
 
 // Swagger
@@ -22,7 +23,7 @@ func main() {
     config.Load() 
 	db := storage.InitDatabase()
 	store := &storage.NotificationStorage{DB: db}
-	api.InitNotificationAPI(store)
+	rest.InitNotificationAPI(store)
 	storage.InitMessageQueue(db)
 	web.InitRouter()
 

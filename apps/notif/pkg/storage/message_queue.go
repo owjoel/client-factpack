@@ -2,19 +2,21 @@ package storage
 
 import (
 	"encoding/json"
-
+	"gorm.io/gorm"
 	"github.com/streadway/amqp"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
+	"github.com/owjoel/client-factpack/apps/notif/pkg/api/model"
+	"github.com/owjoel/client-factpack/apps/notif/config"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/utils"
 )
 
 type NotificationMessage struct {
-	UserID           string           `json:"userId"`
 	NotificationType model.NotificationType `json:"notificationType"`
 	Username         string           `json:"username,omitempty"`
-	ID               string           `json:"id,omitempty"`
+	JobID            string           `json:"id,omitempty"`
 	Status           model.JobStatus  `json:"status,omitempty"`
 	Type             model.JobType    `json:"type,omitempty"`
+	ClientID		 string           `json:"clientId,omitempty"`
 	ClientName       string           `json:"clientName,omitempty"`
 	Priority         model.Priority   `json:"priority,omitempty"`
 }
@@ -32,7 +34,7 @@ func InitMessageQueue(db *gorm.DB) {
 		return
 	}
 
-	q, err := ch.QueueDeclare("notifications", false, false, false, false, nil)
+	q, err := ch.QueueDeclare("notifications", true, false, false, false, nil)
 	if err != nil {
 		utils.Logger.Fatal("Failed to declare queue:", err)
 		return
@@ -59,10 +61,9 @@ func InitMessageQueue(db *gorm.DB) {
 
 			// Store in DB
 			store.SaveNotification(&Notification{
-				UserID:           notification.UserID,
 				NotificationType: string(notification.NotificationType),
 				Username:         notification.Username,
-				ID:               notification.ID,
+				JobID:               notification.JobID,
 				Status:           string(notification.Status),
 				Type:             string(notification.Type),
 				ClientName:       notification.ClientName,
@@ -71,7 +72,7 @@ func InitMessageQueue(db *gorm.DB) {
 
 			// Forward to WebSocket
 			msgBytes, _ := json.Marshal(notification)
-			api.SendNotification(notification.UserID, string(msgBytes))
+			api.SendNotification(notification.Username, string(msgBytes), string(notification.NotificationType))
 		}
 	}()
 }

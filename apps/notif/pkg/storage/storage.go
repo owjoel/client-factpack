@@ -11,12 +11,12 @@ import (
 
 type Notification struct {
 	gorm.Model
-	UserID           string `gorm:"column:user_id"`
 	NotificationType string `gorm:"column:notification_type"`
 	Username         string `gorm:"column:username"`
-	ID               string `gorm:"column:job_id"`
+	JobID               string `gorm:"column:job_id"`
 	Status           string `gorm:"column:job_status"`
 	Type             string `gorm:"column:job_type"`
+	ClientID       string `gorm:"column:client_id"`
 	ClientName       string `gorm:"column:client_name"`
 	Priority         string `gorm:"column:priority"`
 }
@@ -28,11 +28,13 @@ type NotificationStorage struct {
 
 // Connects to MySQL database
 func InitDatabase() *gorm.DB {
+	
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 		config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName,
 	)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
+		log.Fatalf(config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
