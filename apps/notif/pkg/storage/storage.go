@@ -14,11 +14,25 @@ type Notification struct {
 	NotificationType string `gorm:"column:notification_type"`
 	Username         string `gorm:"column:username"`
 	JobID               string `gorm:"column:job_id"`
-	Status           string `gorm:"column:job_status"`
-	Type             string `gorm:"column:job_type"`
+	Status           string `gorm:"column:status"`
+	Type             string `gorm:"column:type"`
 	ClientID       string `gorm:"column:client_id"`
 	ClientName       string `gorm:"column:client_name"`
 	Priority         string `gorm:"column:priority"`
+}
+
+type JobNotification struct {
+	Username string `json:"username"`
+	JobID    string `json:"jobId"`
+	Status   string `json:"status"`
+	Type     string `json:"type"`
+}
+
+type ClientNotification struct {
+	ClientID   string `json:"clientId"`   // comes from Notification.UserID
+	ClientName string `json:"clientName"` // Notification.ClientName
+	Priority   string `json:"priority"`   // Notification.Priority
+	JobID      string `json:"jobId"`      // Notification.ID
 }
 
 
@@ -47,8 +61,25 @@ func (s *NotificationStorage) SaveNotification(n *Notification) error {
 	return s.Create(n).Error
 }
 
-func (s *NotificationStorage) GetNotificationsByUser(userID string) ([]Notification, error) {
-	var notifications []Notification
-	err := s.Where("user_id = ?", userID).Order("created_at DESC").Find(&notifications).Error
-	return notifications, err
+func (s *NotificationStorage) GetNotificationsByUser(username string) ([]JobNotification, error) {
+	var result []JobNotification
+	err := s.Model(&Notification{}).
+		Select("username, job_id AS job_id, status, type").
+		Where("username = ? AND notification_type = ?", username, "job").
+		Order("created_at DESC").
+		Scan(&result).Error
+
+	return result, err
+}
+
+
+func (s *NotificationStorage) GetClientNotifications() ([]ClientNotification, error) {
+	var result []ClientNotification
+	err := s.Model(&Notification{}).
+		Select("client_id AS client_id, client_name, priority, job_id AS job_id").
+		Where("notification_type = ?", "client").
+		Order("created_at DESC").
+		Scan(&result).Error
+
+	return result, err
 }

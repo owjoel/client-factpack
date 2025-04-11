@@ -13,10 +13,10 @@ import (
 type NotificationMessage struct {
 	NotificationType model.NotificationType `json:"notificationType"`
 	Username         string           `json:"username,omitempty"`
-	JobID            string           `json:"id,omitempty"`
+	JobID            string           `json:"jobId,omitempty"`
 	Status           model.JobStatus  `json:"status,omitempty"`
 	Type             model.JobType    `json:"type,omitempty"`
-	ClientID		 string           `json:"clientId,omitempty"`
+	ClientID         string           `json:"clientId,omitempty"`
 	ClientName       string           `json:"clientName,omitempty"`
 	Priority         model.Priority   `json:"priority,omitempty"`
 }
@@ -67,6 +67,7 @@ func InitMessageQueue(db *gorm.DB) {
 				Status:           string(notification.Status),
 				Type:             string(notification.Type),
 				ClientName:       notification.ClientName,
+				ClientID:         notification.ClientID,
 				Priority:         string(notification.Priority),
 			})
 

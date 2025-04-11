@@ -25,7 +25,7 @@ const (
 type Notification struct {
 	NotificationType NotificationType `json:"notificationType"`
 	Username         string           `json:"username,omitempty"`    // job
-	JobID               string           `json:"id,omitempty"`          // job
+	JobID               string           `json:"jobId,omitempty"`          // job
 	Status           JobStatus        `json:"status,omitempty"`      // job
 	Type             JobType          `json:"type,omitempty"`        // job
 	ClientID       string		   `json:"clientId,omitempty"`    // client

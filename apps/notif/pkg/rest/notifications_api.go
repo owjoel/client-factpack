@@ -13,7 +13,7 @@ func InitNotificationAPI(store *storage.NotificationStorage) {
 	Store = store
 }
 
-// GET /api/v1/notifications?userId=xxx
+// GET /api/v1/notifications?username=xxx
 func GetUserNotifications(c *gin.Context) {
 	username := c.Query("username")
 	if username == "" {
@@ -27,5 +27,19 @@ func GetUserNotifications(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, notifications)
+	c.JSON(http.StatusOK,  gin.H{
+		"notifications": notifications,
+	})
+}
+
+func GetClientNotifications(c *gin.Context) {
+	notifications, err := Store.GetClientNotifications()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve client notifications"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"notifications": notifications,
+	})
 }
