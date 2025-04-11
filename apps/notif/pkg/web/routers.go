@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
+	"github.com/owjoel/client-factpack/apps/notif/pkg/rest"
 )
 
 // Initializes Gin router
@@ -22,6 +23,9 @@ func InitRouter() {
 		api.HandleWebSocketConnections(c.Writer, c.Request)
 	})
 
+	// REST: Get notifications
+	router.GET("/api/v1/notif/jobs", rest.GetUserNotifications)
+	router.GET("/api/v1/notif/clients", rest.GetClientNotifications)
 	port := ":8081"
 	fmt.Println("Starting server on port", port)
 	router.Run(port)

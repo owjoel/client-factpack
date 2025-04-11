@@ -7,6 +7,7 @@ import (
 	"github.com/owjoel/client-factpack/apps/notif/pkg/storage"
     "github.com/owjoel/client-factpack/apps/notif/config"
     "github.com/owjoel/client-factpack/apps/notif/pkg/utils"
+	"github.com/owjoel/client-factpack/apps/notif/pkg/rest"
 )
 
 // Swagger
@@ -20,8 +21,11 @@ func main() {
 	utils.InitLogger() // Initialize logger
 	utils.Logger.Info("Starting WebSocket Notification Service...")
     config.Load() 
-	storage.InitMessageQueue() // Initialize message queue subscription
-	web.InitRouter() // Set up WebSocket routing
+	db := storage.InitDatabase()
+	store := &storage.NotificationStorage{DB: db}
+	rest.InitNotificationAPI(store)
+	storage.InitMessageQueue(db)
+	web.InitRouter()
 
 	port := ":8081"
 	utils.Logger.Infof("Listening on %s", port)
