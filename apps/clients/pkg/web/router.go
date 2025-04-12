@@ -54,11 +54,22 @@ func NewRouter() *Router {
 	clientService := service.NewClientService(clientRepository, jobService, logService)
 	clientHandler := handlers.NewClientHandler(clientService)
 
-	// Use RPC styling rather than REST
 
-	// startregion Clients
 	v1API := router.Group("/api/v1/clients")
+	v1Logs := router.Group("/api/v1/logs")
+	v1Jobs := router.Group("/api/v1/jobs")
 	v1API.GET("/health", clientHandler.HealthCheck)
+
+	// enable auth
+	authEnabled := false 
+	if authEnabled {
+		v1API.Use(handlers.Authenticate)
+		v1Logs.Use(handlers.Authenticate)
+		v1Jobs.Use(handlers.Authenticate)
+	}
+
+	// Use RPC styling rather than REST
+	// startregion Clients
 	v1API.GET("/:id", clientHandler.GetClient)
 	v1API.GET("/", clientHandler.GetAllClients)
 	v1API.PUT("/:id", clientHandler.UpdateClient)
@@ -68,13 +79,11 @@ func NewRouter() *Router {
 	// endregion Clients
 
 	// startregion Jobs
-	v1Jobs := router.Group("/api/v1/jobs")
 	v1Jobs.GET("/:id", jobHandler.GetJob)
 	v1Jobs.GET("/", jobHandler.GetAllJobs)
 	// endregion Jobs
 
 	// startregion Logs
-	v1Logs := router.Group("/api/v1/logs")
 	v1Logs.GET("/", logHandler.GetLogs)
 	v1Logs.GET("/:id", logHandler.GetLog)
 	// endregion Logs

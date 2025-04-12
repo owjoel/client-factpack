@@ -41,7 +41,6 @@ func (s *LogService) GetLogs(ctx context.Context, query *model.GetLogsQuery) (in
 	return total, logs, nil
 }
 
-
 func (s *LogService) GetLog(ctx context.Context, logID string) (*model.Log, error) {
 	log, err := s.logRepository.GetOne(ctx, logID)
 	if err != nil {
@@ -71,4 +70,3 @@ func (s *LogService) CreateLog(ctx context.Context, log *model.Log) (string, err
 	}
 	return id, nil
 }
-

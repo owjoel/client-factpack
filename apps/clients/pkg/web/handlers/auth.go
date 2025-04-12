@@ -15,7 +15,7 @@ import (
 )
 
 // Authenticate is a middleware that checks if the user is authenticated by validating the "accessToken" cookie.
-func (h *ClientHandler) Authenticate(c *gin.Context) {
+func Authenticate(c *gin.Context) {
 
 	requiredTokenUse := "access" // default check for access token
 	awsDefaultRegion := config.AwsRegion
@@ -25,13 +25,16 @@ func (h *ClientHandler) Authenticate(c *gin.Context) {
 	jwks, err := GetJWKS(awsDefaultRegion, cognitoUserPoolId)
 	if err != nil {
 		log.Printf("Failed to retrieve Cognito JWKS: %s", err)
-		resp(c, http.StatusInternalServerError, errorx.ErrInternal)
+		resp(c, http.StatusInternalServerError, errorx.ErrInternal.Error())
+		c.Abort()
 		return
 	}
 
 	tokenString, err := c.Cookie("access_token")
 	if err != nil || tokenString == "" {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		log.Printf("No access token found in cookie: %s", err)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 
@@ -49,39 +52,45 @@ func (h *ClientHandler) Authenticate(c *gin.Context) {
 		jwt.WithExpirationRequired(),
 		jwt.WithIssuer(fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s", awsDefaultRegion, cognitoUserPoolId)))
 	if err != nil || !token.Valid {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 
 	// Parse JWT claims
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 
 	// Validate token expiration
 	expClaim, err := claims.GetExpirationTime()
 	if err != nil {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 	if expClaim.Unix() < time.Now().Unix() {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 
 	// Validate token use
 	tokenUseClaim, ok := claims["token_use"].(string)
 	if !ok || tokenUseClaim != requiredTokenUse {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 
 	// Validate subject claim (user identifier)
 	subClaim, err := claims.GetSubject()
 	if err != nil {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 	c.Set("username", subClaim)
@@ -103,24 +112,28 @@ func (h *ClientHandler) Authenticate(c *gin.Context) {
 	if tokenUseClaim == "id" {
 		audienceClaims, err := claims.GetAudience()
 		if err != nil || len(audienceClaims) == 0 {
-			resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+			resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+			c.Abort()
 			return
 		}
 		appClientIdClaim = audienceClaims[0]
 	} else if tokenUseClaim == "access" {
 		clientIdClaim, ok := claims["client_id"].(string)
 		if !ok {
-			resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+			resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+			c.Abort()
 			return
 		}
 		appClientIdClaim = clientIdClaim
 	} else {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 
 	if appClientIdClaim != cognitoAppClientId {
-		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+		resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+		c.Abort()
 		return
 	}
 
@@ -134,7 +147,8 @@ func (h *ClientHandler) Authenticate(c *gin.Context) {
 				userGroupsClaims = append(userGroupsClaims, e.(string))
 			}
 		default:
-			resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized)
+			resp(c, http.StatusUnauthorized, errorx.ErrUnauthorized.Error())
+			c.Abort()
 			return
 		}
 	}

@@ -34,6 +34,16 @@ func (s *ClientService) GetClient(ctx context.Context, clientID string) (*model.
 	if err != nil {
 		return nil, fmt.Errorf("error retrieving client profile: %w", err)
 	}
+
+	username := GetUsername(ctx)
+	s.logService.CreateLog(ctx, &model.Log{
+		ClientID:  clientID,
+		Actor:     username,
+		Operation: model.OperationGet,
+		Details:   fmt.Sprintf("User %s viewed client profile with id %s", username, clientID),
+		Timestamp: time.Now(),
+	})
+
 	return c, nil
 }
 
@@ -98,7 +108,7 @@ func (s *ClientService) CreateClientByName(ctx context.Context, req *model.Creat
 		"client_id": clientId,
 	})
 
-	username := getUsername(ctx)
+	username := GetUsername(ctx)
 	s.logService.CreateLog(ctx, &model.Log{
 		ClientID:  clientId,
 		Actor:     username,
@@ -144,6 +154,15 @@ func (s *ClientService) RescrapeClient(ctx context.Context, clientID string) err
 		},
 	)
 
+	username := GetUsername(ctx)
+	s.logService.CreateLog(ctx, &model.Log{
+		ClientID:  clientID,
+		Actor:     username,
+		Operation: model.OperationScrape,
+		Details:   fmt.Sprintf("User %s rescrapped client profile with job id %s", username, id),
+		Timestamp: time.Now(),
+	})
+
 	return nil
 }
 
@@ -174,6 +193,15 @@ func (s *ClientService) UpdateClient(ctx context.Context, clientID string, chang
 	if err := s.clientRepository.Update(ctx, clientID, update); err != nil {
 		return fmt.Errorf("error updating client: %w", err)
 	}
+
+	username := GetUsername(ctx)
+	s.logService.CreateLog(ctx, &model.Log{
+		ClientID:  clientID,
+		Actor:     username,
+		Operation: model.OperationUpdate,
+		Details:   fmt.Sprintf("User %s updated client profile with id %s", username, clientID),
+		Timestamp: time.Now(),
+	})
 
 	return nil
 }

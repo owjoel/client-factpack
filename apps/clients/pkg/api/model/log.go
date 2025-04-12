@@ -8,7 +8,7 @@ import (
 
 type Log struct {
 	ID        bson.ObjectID `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
-	ClientID  string `bson:"clientId" json:"clientId"`
+	ClientID  string        `bson:"clientId" json:"clientId"`
 	Actor     string        `bson:"actor" json:"actor"`
 	Operation Operation     `bson:"operation" json:"operation"`
 	Details   string        `bson:"details" json:"details"`
@@ -18,11 +18,12 @@ type Log struct {
 type Operation string
 
 const (
-	OperationCreate Operation = "create"
-	OperationUpdate Operation = "update"
-	OperationDelete Operation = "delete"
-	OperationScrape Operation = "scrape"
-	OperationMatch  Operation = "match"
+	OperationGet             Operation = "view"
+	OperationCreate          Operation = "create"
+	OperationUpdate          Operation = "update"
+	OperationDelete          Operation = "delete"
+	OperationScrape          Operation = "scrape"
+	OperationMatch           Operation = "match"
 	OperationCreateAndScrape Operation = "create & scrape"
 )
 
@@ -37,10 +38,9 @@ type GetLogsQuery struct {
 }
 
 type GetLogsResponse struct {
-	Total int    `json:"total"`
-	Logs  []Log  `json:"logs"`
+	Total int   `json:"total"`
+	Logs  []Log `json:"logs"`
 }
-
 
 type GetLogResponse struct {
 	Log *Log `json:"log"`

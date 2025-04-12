@@ -11,7 +11,7 @@ import (
 	"github.com/owjoel/client-factpack/apps/clients/config"
 )
 
-func getUsername(ctx context.Context) string {
+func GetUsername(ctx context.Context) string {
 	username, ok := ctx.Value("username").(string)
 	if !ok || username == "" {
 		return "Unknown"

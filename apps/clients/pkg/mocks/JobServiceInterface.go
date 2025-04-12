@@ -15,21 +15,31 @@ type JobServiceInterface struct {
 }
 
 // CreateJob provides a mock function with given fields: ctx, job
-func (_m *JobServiceInterface) CreateJob(ctx context.Context, job *model.Job) error {
+func (_m *JobServiceInterface) CreateJob(ctx context.Context, job *model.Job) (string, error) {
 	ret := _m.Called(ctx, job)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateJob")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.Job) error); ok {
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Job) (string, error)); ok {
+		return rf(ctx, job)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Job) string); ok {
 		r0 = rf(ctx, job)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(string)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, *model.Job) error); ok {
+		r1 = rf(ctx, job)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetAllJobs provides a mock function with given fields: ctx, query
