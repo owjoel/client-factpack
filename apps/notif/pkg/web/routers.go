@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/rest"
@@ -12,6 +13,16 @@ import (
 // Initializes Gin router
 func InitRouter() {
 	router := gin.Default()
+
+	// enable CORS
+	router.Use(
+		cors.New(cors.Config{
+			AllowOrigins:     []string{"http://localhost:5173"},
+			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowHeaders:     []string{"Content-Type", "Authorization"},
+			AllowCredentials: true,
+		}),
+	)
 
 	// Health Check
 	router.GET("/api/v1/health", func(c *gin.Context) {
