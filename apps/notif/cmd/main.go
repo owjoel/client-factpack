@@ -14,7 +14,7 @@ import (
 // @title		client-factpack/notifications
 // @version	1.0
 // @description	Notification service for handling real-time WebSocket notifications
-// @host		localhost:8081
+// @host		localhost:8082
 // @BasePath	/api/v1
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 	storage.InitMessageQueue(db)
 	web.InitRouter()
 
-	port := ":8081"
+	port := ":8082"
 	utils.Logger.Infof("Listening on %s", port)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {

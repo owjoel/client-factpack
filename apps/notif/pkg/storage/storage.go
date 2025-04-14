@@ -13,10 +13,10 @@ type Notification struct {
 	gorm.Model
 	NotificationType string `gorm:"column:notification_type"`
 	Username         string `gorm:"column:username"`
-	JobID               string `gorm:"column:job_id"`
+	JobID            string `gorm:"column:job_id"`
 	Status           string `gorm:"column:status"`
 	Type             string `gorm:"column:type"`
-	ClientID       string `gorm:"column:client_id"`
+	ClientID         string `gorm:"column:client_id"`
 	ClientName       string `gorm:"column:client_name"`
 	Priority         string `gorm:"column:priority"`
 }
@@ -35,14 +35,13 @@ type ClientNotification struct {
 	JobID      string `json:"jobId"`      // Notification.ID
 }
 
-
 type NotificationStorage struct {
 	*gorm.DB
 }
 
 // Connects to MySQL database
 func InitDatabase() *gorm.DB {
-	
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 		config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName,
 	)
@@ -71,7 +70,6 @@ func (s *NotificationStorage) GetNotificationsByUser(username string) ([]JobNoti
 
 	return result, err
 }
-
 
 func (s *NotificationStorage) GetClientNotifications() ([]ClientNotification, error) {
 	var result []ClientNotification

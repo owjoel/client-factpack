@@ -26,7 +26,7 @@ func InitRouter() {
 	// REST: Get notifications
 	router.GET("/api/v1/notif/jobs", rest.GetUserNotifications)
 	router.GET("/api/v1/notif/clients", rest.GetClientNotifications)
-	port := ":8081"
+	port := ":8082"
 	fmt.Println("Starting server on port", port)
 	router.Run(port)
 }
