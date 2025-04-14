@@ -1,3 +1,5 @@
+package rest
+
 import "strconv"
 
 func parseIntWithDefault(str string, defaultVal int) int {
