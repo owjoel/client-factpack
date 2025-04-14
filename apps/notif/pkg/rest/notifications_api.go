@@ -21,19 +21,31 @@ func GetUserNotifications(c *gin.Context) {
 		return
 	}
 
-	notifications, err := Store.GetNotificationsByUser(username)
+	status := c.Query("status")
+	page := parseIntWithDefault(c.Query("page"), 1)
+	pageSize := parseIntWithDefault(c.Query("pageSize"), 10)
+
+	notifications, err := Store.GetNotificationsByUser(username, status, page, pageSize)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve notifications"})
 		return
 	}
 
-	c.JSON(http.StatusOK,  gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"notifications": notifications,
+		"page":          page,
+		"pageSize":      pageSize,
 	})
 }
 
+
 func GetClientNotifications(c *gin.Context) {
-	notifications, err := Store.GetClientNotifications()
+	name := c.Query("name")
+	priority := c.Query("priority")
+	page := parseIntWithDefault(c.Query("page"), 1)
+	pageSize := parseIntWithDefault(c.Query("pageSize"), 10)
+
+	notifications, err := Store.GetClientNotifications(name, priority, page, pageSize)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve client notifications"})
 		return
@@ -41,5 +53,8 @@ func GetClientNotifications(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"notifications": notifications,
+		"page":          page,
+		"pageSize":      pageSize,
 	})
 }
+
