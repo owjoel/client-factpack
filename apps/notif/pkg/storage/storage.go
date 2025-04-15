@@ -60,23 +60,44 @@ func (s *NotificationStorage) SaveNotification(n *Notification) error {
 	return s.Create(n).Error
 }
 
-func (s *NotificationStorage) GetNotificationsByUser(username string) ([]JobNotification, error) {
+func (s *NotificationStorage) GetNotificationsByUser(username string, status string, page, pageSize int) ([]JobNotification, error) {
 	var result []JobNotification
-	err := s.Model(&Notification{}).
-		Select("username, job_id AS job_id, status, type").
-		Where("username = ? AND notification_type = ?", username, "job").
+	query := s.Model(&Notification{}).
+		Select("username, job_id, status, type").
+		Where("username = ? AND notification_type = ?", username, "job")
+
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	offset := (page - 1) * pageSize
+	err := query.
 		Order("created_at DESC").
+		Limit(pageSize).
+		Offset(offset).
 		Scan(&result).Error
 
 	return result, err
 }
 
-func (s *NotificationStorage) GetClientNotifications() ([]ClientNotification, error) {
+func (s *NotificationStorage) GetClientNotifications(name, priority string, page, pageSize int) ([]ClientNotification, error) {
 	var result []ClientNotification
-	err := s.Model(&Notification{}).
-		Select("client_id AS client_id, client_name, priority, job_id AS job_id").
-		Where("notification_type = ?", "client").
+	query := s.Model(&Notification{}).
+		Select("client_id, client_name, priority, job_id").
+		Where("notification_type = ?", "client")
+
+	if name != "" {
+		query = query.Where("client_name = ?", name)
+	}
+	if priority != "" {
+		query = query.Where("priority = ?", priority)
+	}
+
+	offset := (page - 1) * pageSize
+	err := query.
 		Order("created_at DESC").
+		Limit(pageSize).
+		Offset(offset).
 		Scan(&result).Error
 
 	return result, err
