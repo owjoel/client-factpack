@@ -1,19 +1,19 @@
-import logging
+import json
 from datetime import datetime
 
-import pika
-from prefect import flow, task
+from prefect import flow, get_run_logger
 from prefect.task_runners import ThreadPoolTaskRunner
 from tasks.article_processing_task import *
+from tasks.sentiment_task import *
 from model.client_article import ClientArticle 
 
-@flow(task_runner=ThreadPoolTaskRunner(max_workers=3))
+@flow(task_runner=ThreadPoolTaskRunner(max_workers=3), log_prints=True)
 def search_client(c: str):
+    # logger = get_run_logger()
     articles = get_articles.submit(kw=c, date=datetime.now().strftime("%Y-%m-%d")).result()
     if not articles:
-        logging.info(f"No aticles for client: {c}")
+        print(f"No articles for client: {c}")
         return
-    print("Hello, trying to print")
     data: list[ClientArticle] = []
     for article in articles:
         title: str = article.get("title", "Unknown Title")
@@ -23,7 +23,7 @@ def search_client(c: str):
         if article_text.startswith("Error"):
             continue
         summary = summarize_text.submit(article_text).result()
-
+        sentiment = analyze_sentiment.submit(summary).result()
         obj = ClientArticle(
             source=source,
             title=title,
@@ -31,19 +31,18 @@ def search_client(c: str):
             summary=summary
         )
         data.append(obj)
-    print(data)
     message = {
         "client": c,
         "articles": [a.model_dump() for a in data]
     }
-    print(message)
-    send_to_queue.submit(message)
+    send_to_queue.submit(message).result()
 
 @flow
 def update_clients():
+    logger = get_run_logger()
     clients = get_clients.submit().result()
     if len(clients) == 0:
-        logging.info("No articles fetched. Exiting.")
+        logger.info("No articles fetched. Exiting.")
         return
     
     for c in clients:

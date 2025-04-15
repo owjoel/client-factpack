@@ -2,30 +2,34 @@ import os
 import ssl
 import json
 import httpx
-import datetime
+from datetime import datetime
 
 import pika
-from prefect import task
+from dotenv import load_dotenv
+from prefect import task, get_run_logger
 from prefect.task_runners import ThreadPoolTaskRunner
 from bs4 import BeautifulSoup
 from transformers import BartForConditionalGeneration, BartTokenizer
 from newsapi import NewsApiClient
 
+load_dotenv()
 NEWS_API_KEY=os.getenv("NEWS_API_KEY")
 MODEL_NAME=os.getenv("SUMMARIZER_MODEL")
 tokenizer = BartTokenizer.from_pretrained(MODEL_NAME)
 model = BartForConditionalGeneration.from_pretrained(MODEL_NAME)
 newsapi_client = NewsApiClient(api_key=NEWS_API_KEY)
 
-RABBITMQ_HOST = os.getenv("RABBITMQ_HOST")
-RABBITMQ_PORT = 5671
-RABBITMQ_USER = os.getenv("RABBITMQ_USER")
+RABBITMQ_HOST     = os.getenv("RABBITMQ_HOST")
+RABBITMQ_PORT     = os.getenv("RABBITMQ_PORT")
+RABBITMQ_USER     = os.getenv("RABBITMQ_USER")
 RABBITMQ_PASSWORD = os.getenv("RABBITMQ_PASSWORD")
-QUEUE_NAME = "news_queue"
+
+QUEUE_NAME = "notifications"
 
 @task
 def send_to_queue(news_data):
     """Sends the summarized news data to the RabbitMQ queue."""
+    logger = get_run_logger()
     credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASSWORD)
     ssl_context = ssl.create_default_context()
     parameters = pika.ConnectionParameters(
@@ -49,18 +53,19 @@ def send_to_queue(news_data):
         properties=pika.BasicProperties(delivery_mode=2)
     )
 
-    print(f"[x] Sent news to queue for client: {news_data['client']}")
+    logger.info(f"[x] Sent news to queue for client: {news_data['client']}")
     connection.close()
 
 @task
 def get_articles(kw: str, date: str):
     articles = newsapi_client.get_everything(
         q=kw,
-        from_param=datetime(2025, 3, 11).strftime("%Y-%m-%d"),
+        from_param=datetime(2025, 4, 1).strftime("%Y-%m-%d"),
         to=date,
         language='en',
         sort_by='relevancy',
-        page=1
+        page=1,
+        page_size=2
     )
     return articles["articles"]
 
