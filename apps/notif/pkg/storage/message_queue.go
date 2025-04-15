@@ -2,12 +2,14 @@ package storage
 
 import (
 	"encoding/json"
-	"gorm.io/gorm"
-	"github.com/streadway/amqp"
+	"fmt"
+
+	"github.com/owjoel/client-factpack/apps/notif/config"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api/model"
-	"github.com/owjoel/client-factpack/apps/notif/config"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/utils"
+	"github.com/streadway/amqp"
+	"gorm.io/gorm"
 )
 
 type NotificationMessage struct {

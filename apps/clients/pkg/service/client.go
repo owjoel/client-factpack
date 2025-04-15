@@ -106,6 +106,7 @@ func (s *ClientService) CreateClientByName(ctx context.Context, req *model.Creat
 		"job_id":    id,
 		"target":    req.Name,
 		"client_id": clientId,
+		"username":  GetUsername(ctx),
 	})
 
 	username := GetUsername(ctx)
@@ -151,6 +152,7 @@ func (s *ClientService) RescrapeClient(ctx context.Context, clientID string) err
 			"job_id":    id,
 			"target":    clientName,
 			"client_id": clientID,
+			"username":  GetUsername(ctx),
 		},
 	)
 

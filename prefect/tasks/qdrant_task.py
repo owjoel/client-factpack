@@ -110,26 +110,3 @@ def search_articles(summarised_article: str, collection_name: str = "articles"):
         traceback.print_exc()
         raise
 
-
-# TODO: not required, can remove
-@task
-def search_profile_by_mongo_id(mongo_id: str):
-    """
-    Search a profile in Qdrant using the original Mongo ObjectID string.
-    Uses UUIDv5 derived from the mongo_id as Qdrant point ID.
-    """
-    qdrant_id = uuid5(NAMESPACE_DNS, mongo_id)
-
-    client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
-
-    result = client.retrieve(collection_name=COLLECTION_NAME, ids=[qdrant_id])
-
-    if not result:
-        print(f"[❌] No Qdrant point found for Mongo ID: {mongo_id}")
-        return None
-
-    point = result[0]
-
-    return {
-        "mongo_id": point.payload.get("mongo_id"),
-    }
