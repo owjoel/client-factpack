@@ -17,7 +17,7 @@ clients_collection = "clients"
 
 def put_article(article: ClientArticle):
     articles = db[article_collection]
-    result = articles.insert_one(article)
+    result = articles.insert_one(article.model_dump())
     id = result.inserted_id
     return id
 
@@ -27,6 +27,7 @@ def update_client_article(client_id: str, article_id: ObjectId):
         _id = ObjectId(client_id)
     except:
         logging.error("invalid clientId", exc_info=True)
+        return []
 
     clients = db[clients_collection]
     result = clients.find_one_and_update(
@@ -34,6 +35,10 @@ def update_client_article(client_id: str, article_id: ObjectId):
         {"$addToSet": {"articles": article_id}},
         projection={"names": 1}
     )
+
+    if not result:
+        logging.warning(f"Client with ID {_id} not found")
+
     return result['names']
 
 

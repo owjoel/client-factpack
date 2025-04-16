@@ -49,7 +49,7 @@ def search_client(c: str):
 
         # Extract client info then dedupe
         client_info = extract_client_info.submit(summary).result()
-        client_id = dedupe_against_mongo.submit(client_info, matched_clients).result()
+        client_id = dedupe_against_mongo.submit(client_info.model_dump(), matched_clients).result()
         if not client_id:
             continue
 
