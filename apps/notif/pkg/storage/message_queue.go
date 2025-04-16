@@ -2,7 +2,6 @@ package storage
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/owjoel/client-factpack/apps/notif/config"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
@@ -14,13 +13,13 @@ import (
 
 type NotificationMessage struct {
 	NotificationType model.NotificationType `json:"notificationType"`
-	Username         string           `json:"username,omitempty"`
-	JobID            string           `json:"jobId,omitempty"`
-	Status           model.JobStatus  `json:"status,omitempty"`
-	Type             model.JobType    `json:"type,omitempty"`
-	ClientID         string           `json:"clientId,omitempty"`
-	ClientName       string           `json:"clientName,omitempty"`
-	Priority         model.Priority   `json:"priority,omitempty"`
+	Username         string                 `json:"username,omitempty"`
+	JobID            string                 `json:"jobId,omitempty"`
+	Status           model.JobStatus        `json:"status,omitempty"`
+	Type             model.JobType          `json:"type,omitempty"`
+	ClientID         string                 `json:"clientId,omitempty"`
+	ClientName       string                 `json:"clientName,omitempty"`
+	Priority         model.Priority         `json:"priority,omitempty"`
 }
 
 // Initialize RabbitMQ listener
@@ -65,7 +64,7 @@ func InitMessageQueue(db *gorm.DB) {
 			store.SaveNotification(&Notification{
 				NotificationType: string(notification.NotificationType),
 				Username:         notification.Username,
-				JobID:               notification.JobID,
+				JobID:            notification.JobID,
 				Status:           string(notification.Status),
 				Type:             string(notification.Type),
 				ClientName:       notification.ClientName,

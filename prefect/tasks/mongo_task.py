@@ -51,11 +51,19 @@ def add_job_log(job_id: str, log_message: str):
 
         result = collection.update_one(
             {"_id": ObjectId(job_id)},
-            {"$push": {"logs": {"message": log_message, "timestamp": datetime.now(timezone.utc)}}},
+            {
+                "$push": {
+                    "logs": {
+                        "message": log_message,
+                        "timestamp": datetime.now(timezone.utc),
+                    }
+                }
+            },
         )
 
         if result.matched_count == 0:
             raise ValueError(f"Job with ID {job_id} not found")
+
 
 @task
 def update_job_match_results(job_id: str, match_results: list):
@@ -64,11 +72,12 @@ def update_job_match_results(job_id: str, match_results: list):
         collection = db["jobs"]
 
         result = collection.update_one(
-            {"_id": ObjectId(job_id)},
-            {"$set": {"matchResults": match_results}})
-        
+            {"_id": ObjectId(job_id)}, {"$set": {"matchResults": match_results}}
+        )
+
         if result.matched_count == 0:
             raise ValueError(f"Job with ID {job_id} not found")
+
 
 @task
 def update_job_scrape_result(job_id: str, scrape_result: str):
@@ -77,9 +86,8 @@ def update_job_scrape_result(job_id: str, scrape_result: str):
         collection = db["jobs"]
 
         result = collection.update_one(
-            {"_id": ObjectId(job_id)},
-            {"$set": {"scrapeResult": scrape_result}})
+            {"_id": ObjectId(job_id)}, {"$set": {"scrapeResult": scrape_result}}
+        )
 
         if result.matched_count == 0:
             raise ValueError(f"Job with ID {job_id} not found")
-

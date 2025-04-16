@@ -5,6 +5,7 @@ import httpx
 from datetime import datetime
 
 import pika
+from openai import OpenAI
 from dotenv import load_dotenv
 from prefect import task, get_run_logger
 from prefect.task_runners import ThreadPoolTaskRunner
@@ -12,9 +13,15 @@ from bs4 import BeautifulSoup
 from transformers import BartForConditionalGeneration, BartTokenizer
 from newsapi import NewsApiClient
 
+from model.client import ClientProfile
+
 load_dotenv()
 NEWS_API_KEY=os.getenv("NEWS_API_KEY")
 MODEL_NAME=os.getenv("SUMMARIZER_MODEL")
+
+OPENAI_ASSISTANT_ID = os.getenv("OPENAI_ASSISTANT_ID")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL")
+
 tokenizer = BartTokenizer.from_pretrained(MODEL_NAME)
 model = BartForConditionalGeneration.from_pretrained(MODEL_NAME)
 newsapi_client = NewsApiClient(api_key=NEWS_API_KEY)
@@ -23,6 +30,8 @@ RABBITMQ_HOST     = os.getenv("RABBITMQ_HOST")
 RABBITMQ_PORT     = os.getenv("RABBITMQ_PORT")
 RABBITMQ_USER     = os.getenv("RABBITMQ_USER")
 RABBITMQ_PASSWORD = os.getenv("RABBITMQ_PASSWORD")
+
+client = OpenAI()
 
 QUEUE_NAME = "news_queue"
 
@@ -96,3 +105,17 @@ def summarize_text(text, max_length=300, min_length=150):
 @task
 def get_clients():
     return ['Elon Musk']
+
+@task
+def extract_client_info(text: str) -> ClientProfile:
+    print("extracting client info")
+    completion = client.beta.chat.completions.parse(
+        model=OPENAI_MODEL,
+        messages=[
+            {"role": "system", "content": "Extract relevant infomation out of the user raw text in a JSON object."},
+            {"role": "user", "content": text}
+        ],
+        response_format=ClientProfile
+    )
+    client_data = completion.choices[0].message.parsed
+    return client_data

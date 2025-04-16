@@ -6,6 +6,7 @@ from prefect.task_runners import ThreadPoolTaskRunner
 from tasks.article_processing_task import *
 from tasks.sentiment_task import *
 from tasks.qdrant_task import search_profiles_by_json, transform_into_vector
+from tasks.dedupe_task import *
 from model.client_article import ClientArticle 
 from utils.mongo_utils import *
 
@@ -40,6 +41,10 @@ def search_client(c: str):
         data.append(obj)
 
         article_id = put_article(obj)
+        client_info = extract_client_info.submit(summary).result()
+
+        dedupe_against_mongo.submit(client_info, matched_clients).result()
+
         for client in matched_clients:
             names = update_client_article(client['id'])
             message = {
