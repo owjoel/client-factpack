@@ -16,15 +16,20 @@ def search_client(c: str):
     if not articles:
         print(f"No articles for client: {c}")
         return
+    
     data: list[ClientArticle] = []
+    logger = get_run_logger()
     for article in articles:
-        logger = get_run_logger()
+
+        # scrape articles
         title: str = article.get("title", "Unknown Title")
         url: str = article.get("url", "Unknown URL")
         source: str = article["source"].get("name", "Unknown Source")
         article_text: str = scrape_article.submit(url).result()
         if article_text.startswith("Error"):
             continue
+
+        # summarize, sentimet analysis
         summary = summarize_text.submit(article_text).result()
         sentiment = analyze_sentiment.submit(summary).result()
         obj = ClientArticle(
@@ -34,38 +39,34 @@ def search_client(c: str):
             summary=summary,
             sentiment=sentiment
         )
+
+        # qdrant to match client
         matched_clients = search_profiles_by_json(obj.model_dump())
         logger.info(obj.sentiment.model_dump_json())
         for i in matched_clients:
             logger.info(json.dumps(i, ensure_ascii=False))
         data.append(obj)
 
-        article_id = put_article(obj)
+        # Extract client info then dedupe
         client_info = extract_client_info.submit(summary).result()
+        client_id = dedupe_against_mongo.submit(client_info, matched_clients).result()
+        if not client_id:
+            continue
 
-        dedupe_against_mongo.submit(client_info, matched_clients).result()
+        # upload article, update client, and send to queue
+        article_id = put_article(obj)
+        names = update_client_article(client_id, article_id)
+        message = {
+            "notificationType": "client",
+            "title": obj.title,
+            "source": obj.source,
+            "clientId": client_id,
+            "clientName": ';'.join(names),
+            "priority": getPriority(sentiment.label),
+        }
+        send_to_queue.submit(message).result()
+        logger.info(json.dumps(message))
 
-        for client in matched_clients:
-            names = update_client_article(client['id'])
-            message = {
-                "notificationType": "client",
-                "title": obj.title,
-                "source": obj.source,
-                "clientId": client['id'],
-                "clientName": ';'.join(names),
-                "priority": getPriority(sentiment.label),
-            }
-            send_to_queue.submit(message).result()
-            logger.info(json.dumps(message))
-
-        
-
-
-    message = {
-        "client": c,
-        "articles": [a.model_dump() for a in data]
-    }
-    send_to_queue.submit(message).result()
 
 @flow
 def update_clients():

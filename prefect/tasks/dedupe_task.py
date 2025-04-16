@@ -9,7 +9,7 @@ import json
 
 
 @task
-def dedupe_against_mongo(new_record: Dict, qdrant_matches: list) -> Optional[list]:
+def dedupe_against_mongo(new_record: Dict, qdrant_matches: list) -> str | None:
     """
     Match a new record against existing records in MongoDB using pandas-dedupe.
 

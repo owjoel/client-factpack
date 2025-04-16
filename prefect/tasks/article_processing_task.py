@@ -33,7 +33,7 @@ RABBITMQ_PASSWORD = os.getenv("RABBITMQ_PASSWORD")
 
 client = OpenAI()
 
-QUEUE_NAME = "news_queue"
+QUEUE_NAME = "notifications"
 
 @task
 def send_to_queue(news_data):
@@ -118,4 +118,5 @@ def extract_client_info(text: str) -> ClientProfile:
         response_format=ClientProfile
     )
     client_data = completion.choices[0].message.parsed
+    print("extraction ended")
     return client_data
