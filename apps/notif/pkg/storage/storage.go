@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 	"log"
-
+	"strings"
 	"github.com/owjoel/client-factpack/apps/notif/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -12,6 +12,8 @@ import (
 type Notification struct {
 	gorm.Model
 	NotificationType string `gorm:"column:notification_type"`
+	Title            string `gorm:"column:title"`
+	Source           string `gorm:"column:source"`
 	Username         string `gorm:"column:username"`
 	JobID            string `gorm:"column:job_id"`
 	Status           string `gorm:"column:status"`
@@ -29,6 +31,8 @@ type JobNotification struct {
 }
 
 type ClientNotification struct {
+	Title      string `json:"title"`
+	Source     string `json:"source"`
 	ClientID   string `json:"clientId"`   // comes from Notification.UserID
 	ClientName string `json:"clientName"` // Notification.ClientName
 	Priority   string `json:"priority"`   // Notification.Priority
@@ -83,11 +87,11 @@ func (s *NotificationStorage) GetNotificationsByUser(username string, status str
 func (s *NotificationStorage) GetClientNotifications(name, priority string, page, pageSize int) ([]ClientNotification, error) {
 	var result []ClientNotification
 	query := s.Model(&Notification{}).
-		Select("client_id, client_name, priority, job_id").
+		Select("client_id, client_name, priority, title, source").
 		Where("notification_type = ?", "client")
 
 	if name != "" {
-		query = query.Where("client_name = ?", name)
+		query = query.Where("LOWER(client_name) LIKE ?", "%"+strings.ToLower(name)+"%")
 	}
 	if priority != "" {
 		query = query.Where("priority = ?", priority)
