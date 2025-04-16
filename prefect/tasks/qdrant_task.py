@@ -13,6 +13,7 @@ load_dotenv()
 QDRANT_URL = os.getenv("QDRANT_URL")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
 
+
 @task
 def transform_into_vector(text: str):
     model = SentenceTransformer("BAAI/bge-large-en-v1.5")
@@ -80,6 +81,7 @@ def search_profiles_by_json(query_json: dict, collection_name: str = "clients"):
         traceback.print_exc()
         raise
 
+
 @task
 def search_articles(summarised_article: str, collection_name: str = "articles"):
     try:
@@ -109,4 +111,3 @@ def search_articles(summarised_article: str, collection_name: str = "articles"):
         print(f"[❌] Failed to search articles in Qdrant: {e}")
         traceback.print_exc()
         raise
-
