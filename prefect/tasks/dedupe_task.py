@@ -31,7 +31,9 @@ def dedupe_against_mongo(new_record: Dict, qdrant_matches: list) -> Optional[lis
     candidate_records = mongo_utils.fetch_mongo_records_by_ids(mongo_ids)
 
     # Extract flattened data
-    existing_records = [extract_dedupe_fields(doc) for doc in candidate_records]
+    existing_records = [
+        {**extract_dedupe_fields(doc), "_id": str(doc["_id"])} for doc in candidate_records
+    ]
     df = pd.DataFrame(existing_records)
     df["_is_existing"] = True
 
@@ -78,7 +80,7 @@ def dedupe_against_mongo(new_record: Dict, qdrant_matches: list) -> Optional[lis
         (deduped_df["_is_existing"]) & (deduped_df["cluster id"] == new_id)
     ]
 
-    return match.iloc[0].to_dict() if not match.empty else None
+    return match.iloc[0]["_id"] if not match.empty else None
 
 
 def extract_dedupe_fields(doc: dict) -> dict:
