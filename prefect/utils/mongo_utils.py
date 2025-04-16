@@ -33,13 +33,13 @@ def update_client_article(client_id: str, article_id: ObjectId):
     result = clients.find_one_and_update(
         {"_id": _id},
         {"$addToSet": {"articles": article_id}},
-        projection={"names": 1}
+        projection={"data.profile.names": 1},
     )
 
     if not result:
         logging.warning(f"Client with ID {_id} not found")
 
-    return result['names']
+    return result["data"]["profile"]["names"]
 
 
 def fetch_mongo_records_by_ids(ids: list):
