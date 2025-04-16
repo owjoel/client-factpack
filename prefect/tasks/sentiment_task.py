@@ -2,6 +2,7 @@ from prefect import task
 import torch
 import logging
 
+from model.client_article import Sentiment
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +24,7 @@ def analyze_sentiment(text):
     Analyze the sentiment of the article text using FinBERT
     """
     if not text:
-        return {"label": "neutral", "score": 0.5}
+        return Sentiment(label="neutral", score=0.5)
 
     try:
         # For long texts, analyze chunks and take the average
@@ -51,10 +52,19 @@ def analyze_sentiment(text):
             else:
                 final_label = "neutral"
 
-            return {"label": final_label, "score": abs(weighted_sentiment)}
+            return Sentiment(label=final_label, score=abs(weighted_sentiment))
         else:
             result = sentiment_analyzer(text)[0]
-            return result
+            return Sentiment(label=result['label'], score=result['score'])
     except Exception as e:
         logging.error("Error analyzing sentiment", exc_info=True)
-        return {"label": "neutral", "score": 0.5}
+        return Sentiment(label="neutral", score=0.5)
+
+def getPriority(label: str):
+    match label:
+        case "positive":
+            return "low"
+        case "neutral":
+            return "medium"
+        case "negative":
+            return "high"

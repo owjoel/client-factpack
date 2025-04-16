@@ -16,6 +16,7 @@ def put_article(article: ClientArticle):
     articles = db[article_collection]
     result = articles.insert_one(article)
     id = result.inserted_id
+    return id
 
 def update_client_article(client_id: str, article_id: ObjectId):
     try:
@@ -24,8 +25,9 @@ def update_client_article(client_id: str, article_id: ObjectId):
         logging.error("invalid clientId", exc_info=True)
         
     clients = db[clients_collection]
-    result = clients.update_one(
+    result = clients.find_one_and_update(
         {"_id": _id},
-        {"$addToSet": {"articles": article_id}}
+        {"$addToSet": {"articles": article_id}},
+        projection={"names": 1}
     )
-    return result.modified_count
+    return result['names']

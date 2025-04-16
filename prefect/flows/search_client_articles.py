@@ -5,17 +5,19 @@ from prefect import flow, get_run_logger
 from prefect.task_runners import ThreadPoolTaskRunner
 from tasks.article_processing_task import *
 from tasks.sentiment_task import *
+from tasks.qdrant_task import search_profiles_by_json, transform_into_vector
 from model.client_article import ClientArticle 
+from utils.mongo_utils import *
 
 @flow(task_runner=ThreadPoolTaskRunner(max_workers=3), log_prints=True)
 def search_client(c: str):
-    # logger = get_run_logger()
     articles = get_articles.submit(kw=c, date=datetime.now().strftime("%Y-%m-%d")).result()
     if not articles:
         print(f"No articles for client: {c}")
         return
     data: list[ClientArticle] = []
     for article in articles:
+        logger = get_run_logger()
         title: str = article.get("title", "Unknown Title")
         url: str = article.get("url", "Unknown URL")
         source: str = article["source"].get("name", "Unknown Source")
@@ -28,9 +30,32 @@ def search_client(c: str):
             source=source,
             title=title,
             url=url,
-            summary=summary
+            summary=summary,
+            sentiment=sentiment
         )
+        matched_clients = search_profiles_by_json(obj.model_dump())
+        logger.info(obj.sentiment.model_dump_json())
+        for i in matched_clients:
+            logger.info(json.dumps(i, ensure_ascii=False))
         data.append(obj)
+
+        article_id = put_article(obj)
+        for client in matched_clients:
+            names = update_client_article(client['id'])
+            message = {
+                "notificationType": "client",
+                "title": obj.title,
+                "source": obj.source,
+                "clientId": client['id'],
+                "clientName": ';'.join(names),
+                "priority": getPriority(sentiment.label),
+            }
+            send_to_queue.submit(message).result()
+            logger.info(json.dumps(message))
+
+        
+
+
     message = {
         "client": c,
         "articles": [a.model_dump() for a in data]
