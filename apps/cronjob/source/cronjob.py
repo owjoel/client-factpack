@@ -143,5 +143,5 @@ def run_news_scraper():
                 break
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     run_news_scraper()

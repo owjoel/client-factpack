@@ -66,6 +66,64 @@ class TestCronJob(unittest.TestCase):
         self.assertIn("Scraping failed", content)
 
 
+    @patch('cronjob.KEYWORDS', ["mocked_keyword"])
+    @patch('cronjob.send_to_queue')
+    @patch('cronjob.summarize_text', return_value="Mock Summary")
+    @patch('cronjob.scrape_article_content', return_value="Mock Article Text")
+    @patch('cronjob.get_articles')
+    @patch('builtins.print')
+    @patch('time.sleep', return_value=None)
+    def test_run_news_scraper_flow(self, mock_sleep, mock_print, mock_get_articles, mock_scrape, mock_summarize, mock_send):
+        from cronjob import run_news_scraper
+
+        mock_get_articles.return_value = [
+            {
+                "title": "Test Article",
+                "url": "http://example.com",
+                "source": {"name": "Test Source"}
+            },
+            {
+                "title": "Another Article",
+                "url": "http://example2.com",
+                "source": {"name": "Another Source"}
+            },
+            {
+                "title": "Extra Article",
+                "url": "http://example3.com",
+                "source": {"name": "Extra Source"}
+            }
+        ]
+
+        run_news_scraper()
+
+        self.assertEqual(mock_scrape.call_count, 1)
+        self.assertEqual(mock_summarize.call_count, 1)
+        self.assertEqual(mock_send.call_count, 1)
+        mock_print.assert_any_call("Summary:")
+
+
+    @patch('cronjob.requests.get')
+    def test_scrape_article_content_bad_status(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.status_code = 404
+        mock_response.text = "Not Found"
+        mock_get.return_value = mock_response
+
+        result = scrape_article_content("http://example.com")
+        self.assertIn("Error fetching article: 404", result)
+
+
+    @patch('cronjob.KEYWORDS', ["mocked_keyword"])
+    @patch('cronjob.get_articles', return_value=[])
+    @patch('builtins.print')
+    def test_run_news_scraper_exits_on_empty(self, mock_print, mock_get_articles):
+        from cronjob import run_news_scraper
+        run_news_scraper()
+
+        mock_print.assert_any_call("No articles fetched. Exiting.")
+        self.assertEqual(mock_get_articles.call_count, 1)
+
+
     def test_pytest_runs(self):
         self.assertTrue(1 + 1 == 2)
 
