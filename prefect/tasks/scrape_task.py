@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 import json
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from pymongo import MongoClient
 from bson import ObjectId
 from utils import wiki_utils, openai_utils, prompt_utils, file_utils
 
@@ -84,6 +83,6 @@ def update_client_profile(client_id: str, profile_json: dict):
         )
 
         if result.modified_count == 0:
-            print(f"[ℹ️] No updates made to client: {client_id}")
+            print(f"[LOG] No updates made to client: {client_id}")
         else:
-            print(f"[✅] Updated client {client_id} with new profile.")
+            print(f"[LOG] Updated client {client_id} with new profile.")

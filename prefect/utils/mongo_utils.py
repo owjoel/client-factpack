@@ -25,8 +25,8 @@ def put_article(article: ClientArticle):
 def update_client_article(client_id: str, article_id: ObjectId):
     try:
         _id = ObjectId(client_id)
-    except:
-        logging.error("invalid clientId", exc_info=True)
+    except Exception:
+        logging.error("Invalid clientId: Unable to convert to ObjectId", exc_info=True)
         return []
 
     clients = db[clients_collection]

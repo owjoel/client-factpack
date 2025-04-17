@@ -1,6 +1,7 @@
 def build_prompt_no_schema(text):
     return f"""
-        You are an expert at structured data extraction. You will be given unstructured text from the provided unstructured text and should convert it into the given structure.
+        You are an expert at structured data extraction. You will be given unstructured text from the provided "
+        "unstructured text and should convert it into the given structure.
 
         Text to extract data from:
         {text}

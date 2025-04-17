@@ -21,7 +21,9 @@ def transform_into_vector(text: str):
 
 
 @task
-def upsert_text_to_qdrant(profile: dict, record_id: str, collection_name: str = "clients"):
+def upsert_text_to_qdrant(
+    profile: dict, record_id: str, collection_name: str = "clients"
+):
     try:
         if not profile or not record_id:
             raise ValueError("Profile and record_id must be provided.")
@@ -42,7 +44,7 @@ def upsert_text_to_qdrant(profile: dict, record_id: str, collection_name: str = 
         print(f"[Qdrant] Inserted vector for record ID: {record_id}")
 
     except Exception as e:
-        print(f"[❌] Failed to upsert into Qdrant: {e}")
+        print(f"[ERROR] Failed to upsert into Qdrant: {e}")
         traceback.print_exc()
         raise
 
@@ -77,7 +79,7 @@ def search_profiles_by_json(query_json: dict, collection_name: str = "clients"):
         return matches
 
     except Exception as e:
-        print(f"[❌] Failed to search profiles in Qdrant: {e}")
+        print(f"[ERROR] Failed to search profiles in Qdrant: {e}")
         traceback.print_exc()
         raise
 
@@ -108,6 +110,6 @@ def search_articles(summarised_article: str, collection_name: str = "articles"):
         return matches
 
     except Exception as e:
-        print(f"[❌] Failed to search articles in Qdrant: {e}")
+        print(f"[ERROR] Failed to search articles in Qdrant: {e}")
         traceback.print_exc()
         raise
