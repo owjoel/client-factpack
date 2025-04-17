@@ -2,7 +2,7 @@ package storage
 
 import (
 	"encoding/json"
-
+	"strings"
 	"github.com/owjoel/client-factpack/apps/notif/config"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api/model"
@@ -20,7 +20,7 @@ type NotificationMessage struct {
 	Status           model.JobStatus        `json:"status,omitempty"`
 	Type             model.JobType          `json:"type,omitempty"`
 	ClientID         string                 `json:"clientId,omitempty"`
-	ClientName       string                 `json:"clientName,omitempty"`
+	ClientName       []string                 `json:"clientName,omitempty"`
 	Priority         model.Priority         `json:"priority,omitempty"`
 }
 
@@ -71,7 +71,7 @@ func InitMessageQueue(db *gorm.DB) {
 				JobID:            notification.JobID,
 				Status:           string(notification.Status),
 				Type:             string(notification.Type),
-				ClientName:       notification.ClientName,
+				ClientName:       strings.Join(notification.ClientName, ";"),
 				ClientID:         notification.ClientID,
 				Priority:         string(notification.Priority),
 			})

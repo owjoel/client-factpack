@@ -31,6 +31,6 @@ type Notification struct {
 	Status           JobStatus        `json:"status,omitempty"`     // job
 	Type             JobType          `json:"type,omitempty"`       // job
 	ClientID         string           `json:"clientId,omitempty"`   // client
-	ClientName       string           `json:"clientName,omitempty"` // client
+	ClientName       []string           `json:"clientName,omitempty"` // client
 	Priority         Priority         `json:"priority,omitempty"`   // client
 }
