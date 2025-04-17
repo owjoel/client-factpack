@@ -8,7 +8,6 @@ import pika
 from openai import OpenAI
 from dotenv import load_dotenv
 from prefect import task, get_run_logger
-from prefect.task_runners import ThreadPoolTaskRunner
 from bs4 import BeautifulSoup
 from transformers import BartForConditionalGeneration, BartTokenizer
 from newsapi import NewsApiClient

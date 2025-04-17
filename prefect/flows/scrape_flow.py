@@ -20,9 +20,7 @@ from tasks.notification_task import (
 
 
 @flow(name="scrape-client", log_prints=True)
-def scrape_client_flow(
-    job_id: str, target: str, client_id: str, username: str
-):
+def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
     try:
         if job_id:
             update_job_status(
@@ -70,7 +68,7 @@ def scrape_client_flow(
             priority=Priority.LOW,
         )
 
-        print(f"Job Completed. Sending notification...")
+        print("Job Completed. Sending notification...")
         publish_notification(notification)
 
     except Exception as e:
@@ -89,5 +87,5 @@ def scrape_client_flow(
             priority=Priority.LOW,
         )
 
-        print(f"Job Failed: Sending notification...")
+        print("Job Failed: Sending notification...")
         publish_notification(notification)
