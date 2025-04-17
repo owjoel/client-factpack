@@ -2,18 +2,18 @@ import os
 import ssl
 import json
 import httpx
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pika
 from openai import OpenAI
 from dotenv import load_dotenv
 from prefect import task, get_run_logger
-from prefect.task_runners import ThreadPoolTaskRunner
 from bs4 import BeautifulSoup
 from transformers import BartForConditionalGeneration, BartTokenizer
 from newsapi import NewsApiClient
 
 from model.client import ClientProfile
+from utils.mongo_utils import get_all_client_primary_names
 
 load_dotenv()
 NEWS_API_KEY=os.getenv("NEWS_API_KEY")
@@ -66,11 +66,14 @@ def send_to_queue(news_data):
     connection.close()
 
 @task
-def get_articles(kw: str, date: str):
+def get_articles(kw: str):
+    ystd = (datetime.now() - timedelta(days=1))
+    start = ystd.replace(hour=0, minute=0)
+    end = ystd.replace(hour=23, minute=59)
     articles = newsapi_client.get_everything(
         q=kw,
-        from_param=datetime(2025, 4, 1).strftime("%Y-%m-%d"),
-        to=date,
+        from_param=start,
+        to=end,
         language='en',
         sort_by='relevancy',
         page=1,
@@ -103,8 +106,8 @@ def summarize_text(text, max_length=300, min_length=150):
     return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
 @task
-def get_clients():
-    return ['Elon Musk']
+def get_clients() -> list[str]:
+    return get_all_client_primary_names()
 
 @task
 def extract_client_info(text: str) -> ClientProfile:

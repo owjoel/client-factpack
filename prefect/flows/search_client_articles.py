@@ -1,5 +1,4 @@
 import json
-from datetime import datetime
 
 from prefect import flow, get_run_logger
 from prefect.task_runners import ThreadPoolTaskRunner
@@ -12,7 +11,7 @@ from utils.mongo_utils import *
 
 @flow(task_runner=ThreadPoolTaskRunner(max_workers=3), log_prints=True)
 def search_client(c: str):
-    articles = get_articles.submit(kw=c, date=datetime.now().strftime("%Y-%m-%d")).result()
+    articles = get_articles.submit(c).result()
     if not articles:
         print(f"No articles for client: {c}")
         return

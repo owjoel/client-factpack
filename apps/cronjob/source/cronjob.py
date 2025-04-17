@@ -6,7 +6,7 @@ import json
 import ssl
 from bs4 import BeautifulSoup
 from transformers import BartForConditionalGeneration, BartTokenizer
-from newsapi import NewsApiClient
+from newsapi  import NewsApiClient
 
 # RabbitMQ Configuration
 RABBITMQ_HOST = "RABBIT_MQ_HOST"

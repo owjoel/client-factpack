@@ -10,6 +10,7 @@ type Client struct {
 	ID       bson.ObjectID  `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
 	Data     bson.D         `bson:"data" json:"data"`
 	Metadata ClientMetadata `bson:"metadata" json:"metadata"`
+	Articles []bson.ObjectID `json:"articles"`
 }
 
 type ClientMetadata struct {

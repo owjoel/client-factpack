@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 class Residence(BaseModel):
     city: str
@@ -9,7 +9,7 @@ class Residence(BaseModel):
 class NetWorth(BaseModel):
     estimated_value: int = Field(..., alias="estimatedValue")
     currency: str
-    source: str
+    source: str = Field(..., description="news article/website source")
 
 
 class SocialMedia(BaseModel):
@@ -32,8 +32,8 @@ class Investment(BaseModel):
     type: str
     value: InvestmentValue
     industry: str
-    status: str
-    source: str
+    status: Literal['Active', 'Inactive'] = Field(..., description="whether investment ongoing or not")
+    source: str = Field(..., description="news article/website url", exclude=True)
 
 
 class Associate(BaseModel):
@@ -43,12 +43,13 @@ class Associate(BaseModel):
 
 
 class Metadata(BaseModel):
-    sources: List[str]
+    sources: List[str] = Field(exclude=True)
 
 
 class Profile(BaseModel):
     name: str
     age: int
+    description: str = Field(..., description="their main business title or position")
     nationality: str
     current_residence: Residence = Field(..., alias="currentResidence")
     net_worth: NetWorth = Field(..., alias="netWorth")
@@ -62,4 +63,4 @@ class Client(BaseModel):
     profile: Profile
     investments: Optional[List[Investment]]
     associates: Optional[List[Associate]]
-    metadata: Metadata
+    metadata: Metadata = Field(exclude=True)
