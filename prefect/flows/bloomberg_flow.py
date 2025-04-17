@@ -19,4 +19,4 @@ def scrape_bloomberg_flow():
         return
 
     save_to_csv(data, folder_name, csv_file)
-    print(f"[✅] Saved to {folder_name}/{csv_file}")
+    print(f"[LOG] Saved to {folder_name}/{csv_file}")

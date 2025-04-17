@@ -30,3 +30,13 @@ services:
     volumes:
       - /Users/clarissa/Documents/SMU/CS480/client-factpack/prefect:/Users/clarissa/Documents/SMU/CS480/client-factpack/prefect
     restart: unless-stopped
+
+  notif:
+    build:
+      context: ./apps/notif
+    container_name: notif_service
+    ports:
+      - "8082:8082"
+    env_file:
+      - ./apps/notif/config/.env
+    restart: unless-stopped

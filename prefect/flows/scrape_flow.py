@@ -9,10 +9,18 @@ from tasks.scrape_task import (
     update_client_profile,
 )
 from tasks.mongo_task import update_job_status, add_job_log
+from tasks.notification_task import (
+    publish_notification,
+    JobStatus,
+    JobType,
+    Priority,
+    Notification,
+    NotificationType,
+)
 
 
 @flow(name="scrape-client", log_prints=True)
-def scrape_client_flow(job_id: str, target: str, client_id: str):
+def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
     try:
         if job_id:
             update_job_status(
@@ -24,7 +32,7 @@ def scrape_client_flow(job_id: str, target: str, client_id: str):
         add_job_log(job_id, f"[{target}] Wikipedia text retrieved")
         print(f"[{target}] Wikipedia text retrieved, calling OpenAI...")
 
-        response = generate_openai_response(target, wiki_text)
+        response = generate_openai_response(wiki_text, target, [target])
         print(f"[{target}] OpenAI response generated, parsing...")
 
         profile_json = parse_openai_response(response)
@@ -49,8 +57,35 @@ def scrape_client_flow(job_id: str, target: str, client_id: str):
                 job_id, "completed", f"Client scraping job completed for {target}"
             )
 
+        notification = Notification(
+            notificationType=NotificationType.JOB,
+            username=username,
+            jobId=job_id,
+            status=JobStatus.COMPLETED,
+            type=JobType.SCRAPE,
+            clientId=client_id,
+            clientName=target_clean,
+            priority=Priority.LOW,
+        )
+
+        print("Job Completed. Sending notification...")
+        publish_notification(notification)
+
     except Exception as e:
         error_msg = f"Error while processing {target}: {str(e)}"
         print(error_msg)
         if job_id:
             update_job_status(job_id, "failed", error_msg)
+        notification = Notification(
+            notificationType=NotificationType.JOB,
+            username=username,
+            jobId=job_id,
+            status=JobStatus.FAILED,
+            type=JobType.SCRAPE,
+            clientId=client_id,
+            clientName=target_clean,
+            priority=Priority.LOW,
+        )
+
+        print("Job Failed: Sending notification...")
+        publish_notification(notification)

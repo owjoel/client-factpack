@@ -1,18 +1,21 @@
-.venv/
-env
 
-*.pyc
-__pycache__/
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-instance/
+# Test binary, built with `go test -c`
+*.test
 
-.pytest_cache/
-.coverage
-htmlcov/
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
-dist/
-build/
-*.egg-info/
+# Go workspace file
+go.work
+go.work.sum
 
+# env file
 *.env
-*.txt
+

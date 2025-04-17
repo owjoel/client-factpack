@@ -3,12 +3,28 @@ from flows.match_flow import match_client_flow
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
-from tasks.qdrant_task import upsert_text_to_qdrant
+from tasks.qdrant_task import upsert_text_to_qdrant, create_clients_collection_in_qdrant
 
 load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
-text = "Jeff Bezos is a visionary entrepreneur, investor, and philanthropist best known as the founder of Amazon.com, one of the world\’s most influential and valuable companies. Born on January 12, 1964, in Albuquerque, New Mexico, Bezos showed an early fascination with technology and innovation. After graduating as valedictorian from his high school, he pursued electrical engineering and computer science at Princeton University, where he graduated with honors in 1986. Bezos began his career on Wall Street, working at firms such as Fitel, Bankers Trust, and the hedge fund D.E. Shaw & Co., where he rose quickly through the ranks. It was at D.E. Shaw that he conceived the idea for an online bookstore—a radical notion at a time when the internet was in its infancy. In 1994, he left his stable finance job, moved to Seattle, and launched Amazon from his garage. Initially focused on selling books, Amazon soon expanded into other categories, eventually becoming the “everything store.” Under Bezos\’s leadership, the company revolutionized e-commerce, customer service, and cloud computing. Bezos emphasized a long-term vision, reinvesting profits into infrastructure, technology, and logistics. His mantra of customer obsession, willingness to experiment, and tolerance for failure shaped Amazon\’s unique corporate culture and contributed to its meteoric rise. In 2006, Amazon launched Amazon Web Services (AWS), a cloud computing platform that became a cornerstone of the modern internet. AWS not only turned into a massive revenue stream but also laid the groundwork for startups and enterprises to scale efficiently. Bezos\'s foresight in this area is widely regarded as one of his most brilliant business moves. Beyond Amazon, Bezos has pursued ambitious ventures through his aerospace company Blue Origin, founded in 2000. With the motto \"Gradatim Ferociter\" (Step by Step, Ferociously), Blue Origin aims to lower the cost of space travel and enable millions of people to live and work in space. Bezos views space exploration as essential to the long-term survival of humanity. In 2013, Bezos bought *The Washington Post*, revitalizing the historic newspaper with digital innovation and returning it to profitability. His ownership has been largely hands-off editorially, but instrumental in ensuring its sustainability in the digital age. Bezos stepped down as Amazon\’s CEO in 2021 to focus more on his other ventures, including Blue Origin, philanthropic efforts like the Bezos Earth Fund, and the Day 1 Families Fund. Despite stepping back from day-to-day operations, he remains Amazon\’s executive chairman and a defining figure in tech and business. As one of the richest individuals in the world, Bezos is often both admired and critiqued. He has been praised for his bold thinking and ability to disrupt industries, but also scrutinized for Amazon’s labor practices and market dominance. Nonetheless, Jeff Bezos’s legacy is cemented as a transformative force in technology, retail, and space exploration—a modern titan whose impact continues to shape the future."
 
-# NOTE: main.py used for testing flows
+
+def main():
+    client = MongoClient(MONGO_URI)
+    db = client["client-factpack"]
+    collection = db["clients"]
+
+    create_clients_collection_in_qdrant()
+
+    for doc in collection.find():
+        try:
+            record_id = str(doc["_id"])
+            profile = doc.get("data", {})
+            print(record_id)
+            upsert_text_to_qdrant(profile=profile, record_id=record_id)
+        except Exception as e:
+            print(f"[❌] Failed to process document {doc.get('_id')}: {e}")
+
+
 if __name__ == "__main__":
-    match_client_flow(text)
+    main()
