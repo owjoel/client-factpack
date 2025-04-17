@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 import json
 from pymongo import MongoClient
 from dotenv import load_dotenv
-from pymongo import MongoClient
 from bson import ObjectId
 from utils import wiki_utils, openai_utils, prompt_utils, file_utils
 
@@ -24,10 +23,8 @@ def get_wikipedia_text(target: str) -> str:
 
 
 @task
-def generate_openai_response(wiki_text: str, target: str = "Unknown") -> str:
-    prompt = prompt_utils.build_prompt_no_schema(
-        f"This is the profile of {target}\n {wiki_text}"
-    )
+def generate_openai_response(wiki_text: str, target: str = "Unknown", known_names: list[str] = []) -> str:
+    prompt = prompt_utils.build_prompt_no_schema(wiki_text, target, known_names)
     print("Querying OpenAI...")
     return openai_utils.query_gpt4o(prompt)
 
@@ -84,6 +81,6 @@ def update_client_profile(client_id: str, profile_json: dict):
         )
 
         if result.modified_count == 0:
-            print(f"[ℹ️] No updates made to client: {client_id}")
+            print(f"[LOG] No updates made to client: {client_id}")
         else:
-            print(f"[✅] Updated client {client_id} with new profile.")
+            print(f"[LOG] Updated client {client_id} with new profile.")

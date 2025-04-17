@@ -1,25 +1,30 @@
 from prefect import flow
 from tasks.scrape_task import generate_openai_response, parse_openai_response
 from tasks.qdrant_task import search_profiles_by_json
-
-# from tasks.mongo_task import update_job_status, update_job_match_results
 from tasks.dedupe_task import dedupe_against_mongo
+from tasks.mongo_task import update_job_status, update_job_match_results, get_client_names
+from tasks.pdf_task import decode_file, extract_text
 
 
 # for text matching
 @flow(name="match-client", log_prints=True)
-def match_client_flow(text: str, job_id: str):
+def match_client_flow(file_name: str, file_bytes: str, job_id: str, target_id: str):
     """
-    1. Update job status to processing
-    2. Extract structured data from incoming text
-    3. Vectorise and search for matches in Qdrant
-    4. Match the text against the top 3 matches returned by Qdrant
+    1. Decode and extract text
+    2. Generate and parse LLM response
+    3. Search for profile matches
+    4. Update job results and status
     """
     try:
         # if job_id:
         # update_job_status(job_id, "processing", "Client matching job started")
 
-        response = generate_openai_response(text)
+        file_stream = decode_file(file_bytes)
+        text = extract_text(file_stream, file_name)
+
+        names = get_client_names(target_id)
+
+        response = generate_openai_response(text, names[0], names)
         print("[MATCHING] OpenAI response generated, parsing response...")
 
         profile_json = parse_openai_response(response)
@@ -35,8 +40,8 @@ def match_client_flow(text: str, job_id: str):
             else:
                 print("[DEDUPLICATION] No matching profile found.")
 
-            # if dedupe_match:
-            #     update_job_match_results(job_id, [dedupe_match])
+        # if dedupe_match:
+        #     update_job_match_results(job_id, [dedupe_match])
         # else:
         #     update_job_match_results(job_id, [])
 

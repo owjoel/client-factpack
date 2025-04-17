@@ -22,7 +22,7 @@ type ClientServiceInterface interface {
 	GetAllClients(ctx context.Context, query *model.GetClientsQuery) (total int, clients []model.Client, err error)
 	CreateClientByName(ctx context.Context, req *model.CreateClientByNameReq) (string, error)
 	UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error
-	MatchClient(ctx context.Context, req *model.MatchClientReq) (string, error)
+	MatchClient(ctx context.Context, req *model.MatchClientReq, clientID string) (string, error)
 }
 
 func NewClientService(clientRepository repository.ClientRepository, jobService JobServiceInterface, logService LogServiceInterface) *ClientService {
@@ -208,7 +208,7 @@ func (s *ClientService) UpdateClient(ctx context.Context, clientID string, chang
 	return nil
 }
 
-func (s *ClientService) MatchClient(ctx context.Context, req *model.MatchClientReq) (string, error) {
+func (s *ClientService) MatchClient(ctx context.Context, req *model.MatchClientReq, clientID string) (string, error) {
 	job := &model.Job{
 		Type:      model.Match,
 		Status:    model.JobStatusPending,
@@ -231,8 +231,10 @@ func (s *ClientService) MatchClient(ctx context.Context, req *model.MatchClientR
 		config.PrefectMatchFlowID,
 		config.PrefectAPIKey,
 		map[string]interface{}{
-			"job_id": id,
-			"text":   req.Text,
+			"job_id":     id,
+			"file_name":  req.FileName,
+			"file_bytes": req.FileBytes,
+			"target_id": clientID,
 		},
 	)
 

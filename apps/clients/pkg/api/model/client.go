@@ -67,8 +67,10 @@ type ErrorResponse struct {
 }
 
 type MatchClientReq struct {
-	Text string `json:"text"`
+	FileName  string `form:"fileName"`
+	FileBytes string
 }
+
 
 type JobIDRes struct {
 	JobID string `json:"jobId"`

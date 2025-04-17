@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from enum import Enum
 import pika
-import json
 from dotenv import load_dotenv
 from prefect import task
 import os

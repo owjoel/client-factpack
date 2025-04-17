@@ -20,9 +20,7 @@ from tasks.notification_task import (
 
 
 @flow(name="scrape-client", log_prints=True)
-def scrape_client_flow(
-    job_id: str, target: str, client_id: str, username: str
-):
+def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
     try:
         if job_id:
             update_job_status(
@@ -34,7 +32,7 @@ def scrape_client_flow(
         add_job_log(job_id, f"[{target}] Wikipedia text retrieved")
         print(f"[{target}] Wikipedia text retrieved, calling OpenAI...")
 
-        response = generate_openai_response(target, wiki_text)
+        response = generate_openai_response(wiki_text, target, [target])
         print(f"[{target}] OpenAI response generated, parsing...")
 
         profile_json = parse_openai_response(response)
@@ -70,7 +68,7 @@ def scrape_client_flow(
             priority=Priority.LOW,
         )
 
-        print(f"Job Completed. Sending notification...")
+        print("Job Completed. Sending notification...")
         publish_notification(notification)
 
     except Exception as e:
@@ -89,5 +87,5 @@ def scrape_client_flow(
             priority=Priority.LOW,
         )
 
-        print(f"Job Failed: Sending notification...")
+        print("Job Failed: Sending notification...")
         publish_notification(notification)

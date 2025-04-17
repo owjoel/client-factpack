@@ -2,20 +2,37 @@ import json
 
 from prefect import flow, get_run_logger
 from prefect.task_runners import ThreadPoolTaskRunner
-from tasks.article_processing_task import *
-from tasks.sentiment_task import *
-from tasks.qdrant_task import search_profiles_by_json, transform_into_vector
-from tasks.dedupe_task import *
-from model.client_article import ClientArticle 
-from utils.mongo_utils import *
+from tasks.article_processing_task import (
+    send_to_queue,
+    get_articles,
+    scrape_article,
+    summarize_text,
+    get_clients,
+    extract_client_info,
+)
+from tasks.sentiment_task import analyze_sentiment, getPriority
+from tasks.qdrant_task import search_profiles_by_json
+from tasks.dedupe_task import dedupe_against_mongo
+from model.client_article import ClientArticle
+from utils.mongo_utils import (
+    put_article,
+    update_client_article,
+)
+
 
 @flow(task_runner=ThreadPoolTaskRunner(max_workers=3), log_prints=True)
 def search_client(c: str):
+<<<<<<< HEAD
     articles = get_articles.submit(c).result()
+=======
+    articles = get_articles.submit(
+        kw=c, date=datetime.now().strftime("%Y-%m-%d")
+    ).result()
+>>>>>>> f8dc0dfde07218dcd9b8ffb8773dee0a2e0dcd8c
     if not articles:
         print(f"No articles for client: {c}")
         return
-    
+
     data: list[ClientArticle] = []
     logger = get_run_logger()
     for article in articles:
@@ -28,15 +45,11 @@ def search_client(c: str):
         if article_text.startswith("Error"):
             continue
 
-        # summarize, sentimet analysis
+        # summarize, sentiment analysis
         summary = summarize_text.submit(article_text).result()
         sentiment = analyze_sentiment.submit(summary).result()
         obj = ClientArticle(
-            source=source,
-            title=title,
-            url=url,
-            summary=summary,
-            sentiment=sentiment
+            source=source, title=title, url=url, summary=summary, sentiment=sentiment
         )
 
         # qdrant to match client
@@ -48,7 +61,9 @@ def search_client(c: str):
 
         # Extract client info then dedupe
         client_info = extract_client_info.submit(summary).result()
-        client_id = dedupe_against_mongo.submit(client_info.model_dump(), matched_clients).result()
+        client_id = dedupe_against_mongo.submit(
+            client_info.model_dump(), matched_clients
+        ).result()
         if not client_id:
             continue
 
@@ -60,7 +75,7 @@ def search_client(c: str):
             "title": obj.title,
             "source": obj.source,
             "clientId": client_id,
-            "clientName": ';'.join(names),
+            "clientName": names,
             "priority": getPriority(sentiment.label),
         }
         send_to_queue.submit(message).result()
@@ -74,6 +89,6 @@ def update_clients():
     if len(clients) == 0:
         logger.info("No articles fetched. Exiting.")
         return
-    
+
     for c in clients:
         search_client(c)

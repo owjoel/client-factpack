@@ -18,6 +18,7 @@ sentiment_analyzer = pipeline(
     device=device,
 )
 
+
 @task
 def analyze_sentiment(text):
     """
@@ -31,7 +32,10 @@ def analyze_sentiment(text):
         if len(text) > 500:
             max_chars = 5000
             chunk_size = 500
-            chunks = [text[i : i + 500] for i in range(0, min(len(text), max_chars), chunk_size)]
+            chunks = [
+                text[i : i + 500]
+                for i in range(0, min(len(text), max_chars), chunk_size)
+            ]
             results = []
 
             for chunk in chunks:
@@ -55,10 +59,11 @@ def analyze_sentiment(text):
             return Sentiment(label=final_label, score=abs(weighted_sentiment))
         else:
             result = sentiment_analyzer(text)[0]
-            return Sentiment(label=result['label'], score=result['score'])
-    except Exception as e:
+            return Sentiment(label=result["label"], score=result["score"])
+    except Exception:
         logging.error("Error analyzing sentiment", exc_info=True)
         return Sentiment(label="neutral", score=0.5)
+
 
 def getPriority(label: str):
     match label:
