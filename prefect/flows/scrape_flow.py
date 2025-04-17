@@ -34,7 +34,7 @@ def scrape_client_flow(
         add_job_log(job_id, f"[{target}] Wikipedia text retrieved")
         print(f"[{target}] Wikipedia text retrieved, calling OpenAI...")
 
-        response = generate_openai_response(target, wiki_text)
+        response = generate_openai_response(wiki_text, target, [target])
         print(f"[{target}] OpenAI response generated, parsing...")
 
         profile_json = parse_openai_response(response)

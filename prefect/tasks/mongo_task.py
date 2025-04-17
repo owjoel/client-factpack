@@ -6,11 +6,11 @@ from bson import ObjectId
 from datetime import datetime, timezone
 
 load_dotenv()
-
+MONGO_URI=os.getenv("MONGO_URI")
 
 @task
 def update_job_status(job_id: str, status: str, log_message: str = None):
-    with MongoClient(os.getenv("MONGO_URI")) as client:
+    with MongoClient(MONGO_URI) as client:
         db = client["client-factpack"]
         collection = db["jobs"]
 
@@ -45,7 +45,7 @@ def update_job_status(job_id: str, status: str, log_message: str = None):
 
 @task
 def add_job_log(job_id: str, log_message: str):
-    with MongoClient(os.getenv("MONGO_URI")) as client:
+    with MongoClient(MONGO_URI) as client:
         db = client["client-factpack"]
         collection = db["jobs"]
 
@@ -67,7 +67,7 @@ def add_job_log(job_id: str, log_message: str):
 
 @task
 def update_job_match_results(job_id: str, match_results: list):
-    with MongoClient(os.getenv("MONGO_URI")) as client:
+    with MongoClient(MONGO_URI) as client:
         db = client["client-factpack"]
         collection = db["jobs"]
 
@@ -81,7 +81,7 @@ def update_job_match_results(job_id: str, match_results: list):
 
 @task
 def update_job_scrape_result(job_id: str, scrape_result: str):
-    with MongoClient(os.getenv("MONGO_URI")) as client:
+    with MongoClient(MONGO_URI) as client:
         db = client["client-factpack"]
         collection = db["jobs"]
 
@@ -91,3 +91,16 @@ def update_job_scrape_result(job_id: str, scrape_result: str):
 
         if result.matched_count == 0:
             raise ValueError(f"Job with ID {job_id} not found")
+
+
+@task
+def get_client_names(id: str) -> list[str]:
+    with MongoClient(MONGO_URI) as client:
+        db = client["client-factpack"]
+        collection = db["clients"]
+
+        result = collection.find_one({"_id": ObjectId(id)}, {"data.profile.names": 1})
+
+        if result and "data" in result and "profile" in result["data"]:
+            return result["data"]["profile"].get("names", [])
+        return []

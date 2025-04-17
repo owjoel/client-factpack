@@ -1,7 +1,7 @@
 from qdrant_client import QdrantClient
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
-from qdrant_client.http.models import PointStruct
+from qdrant_client.http.models import Distance, VectorParams, PointStruct
 from prefect import task
 import os
 import json
@@ -111,3 +111,18 @@ def search_articles(summarised_article: str, collection_name: str = "articles"):
         print(f"[❌] Failed to search articles in Qdrant: {e}")
         traceback.print_exc()
         raise
+
+
+def create_clients_collection_in_qdrant():
+    try:
+        client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+        client.recreate_collection(
+            collection_name="clients",
+            vectors_config=VectorParams(
+                size=1024,
+                distance=Distance.DOT,
+            ),
+        )
+        print("[Qdrant] 'clients' collection created successfully.")
+    except Exception as e:
+        print(f"[❌] Failed to create collection: {e}")

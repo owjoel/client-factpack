@@ -1,0 +1,140 @@
+{
+  "profile": {
+    "names": [
+      "Selena Marie Gomez"
+    ],
+    "gender": "Female",
+    "dateOfBirth": "1992-07-22",
+    "description": "Selena Gomez is an American actress, singer, songwriter, producer, and businesswoman known for her versatility in entertainment and philanthropy.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Los Angeles",
+      "country": "USA"
+    },
+    "netWorth": {
+      "estimatedValue": 1300000000,
+      "currency": "USD",
+      "source": "Various business ventures including Rare Beauty and a successful entertainment career."
+    },
+    "industries": [
+      "Entertainment",
+      "Music",
+      "Fashion",
+      "Beauty"
+    ],
+    "occupations": [
+      "Actress",
+      "Singer",
+      "Songwriter",
+      "Producer"
+    ],
+    "pastOccupations": [
+      "Child Actress"
+    ],
+    "careerTimeline": [
+      {
+        "year": "2002",
+        "event": "Began acting career on Barney & Friends."
+      },
+      {
+        "year": "2007",
+        "event": "Landed the role of Alex Russo on Wizards of Waverly Place."
+      },
+      {
+        "year": "2009",
+        "event": "Formed the band Selena Gomez & the Scene."
+      },
+      {
+        "year": "2013",
+        "event": "Released first solo album Stars Dance."
+      },
+      {
+        "year": "2020",
+        "event": "Released studio album Rare."
+      },
+      {
+        "year": "2021",
+        "event": "Released Spanish EP Revelaci\u00f3n."
+      },
+      {
+        "year": "2025",
+        "event": "Released collaborative album, I Said I Love You First."
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Instagram",
+        "link": "https://www.instagram.com/selenagomez"
+      },
+      {
+        "platform": "Facebook",
+        "link": "https://www.facebook.com/Selena"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Rare Beauty",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Beauty",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": [
+        {
+          "label": "Official Website",
+          "url": "https://www.rarebeauty.com"
+        }
+      ]
+    }
+  ],
+  "investments": [
+    {
+      "name": "Serendipity Brands",
+      "type": "Other",
+      "value": {
+        "value": null,
+        "currency": ""
+      },
+      "industry": "Food",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Mandy Teefey",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Ricardo Joel Gomez",
+      "relationship": "Father"
+    },
+    {
+      "name": "Gracie Elliot Teefey",
+      "relationship": "Half-sister"
+    },
+    {
+      "name": "Victoria 'Tori' Gomez",
+      "relationship": "Half-sister"
+    },
+    {
+      "name": "Marcus Gomez",
+      "relationship": "Stepbrother"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Benny Blanco",
+      "relationship": "Fianc\u00e9",
+      "associatedCompanies": [
+        "I Said I Love You First album"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Various reputable publications and official social media",
+      "confidence": null
+    }
+  ]
+}

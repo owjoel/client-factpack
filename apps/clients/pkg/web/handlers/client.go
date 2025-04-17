@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"encoding/base64"
+	"io"
 	"log"
 	"net/http"
 
@@ -29,33 +31,6 @@ func (h *ClientHandler) HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, model.StatusRes{Status: "Connection successful"})
 }
 
-// CreateClient creates a new client profile, given the populated json
-//
-//	@Summary		Create Clients
-//	@Description	Create new client profile, given the populated json
-//	@Tags			clients
-//	@Accept			application/json
-//	@Produce		json
-//	@Param			client	body		model.Client	true "Client data"
-//	@Success		201		{object}	handlers.Response
-//	@Failure		400		{object}	handlers.Response
-//	@Failure		500		{object}	handlers.Response
-//	@Router			/createProfile [post]
-// func (h *ClientHandler) CreateClient(c *gin.Context) {
-// 	client := &model.Client{}
-// 	if err := c.ShouldBindJSON(&client); err != nil {
-// 		log.Println(err)
-// 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
-// 		return
-// 	}
-// 	err := h.service.CreateClient(c.Request.Context(), client)
-// 	if err != nil {
-// 		log.Println(err)
-// 		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
-// 		return
-// 	}
-// 	resp(c, http.StatusCreated, "Success")
-// }
 
 // GetClient retrieves the profile of the client by id
 //
@@ -209,14 +184,49 @@ func (h *ClientHandler) RescrapeClient(c *gin.Context) {
 }
 
 func (h *ClientHandler) MatchClient(c *gin.Context) {
-	req := &model.MatchClientReq{}
-	if err := c.ShouldBindJSON(req); err != nil {
-		log.Printf("Failed to bind request: %v", err)
-		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Invalid request"})
+	clientID := c.Param("id")
+	if clientID == "" {
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Missing id"})
+	}
+
+	var fileBytes []byte
+	var fileName string
+
+	formFile, fileErr := c.FormFile("file")
+	text := c.PostForm("text")
+
+	if (fileErr == nil && text != "") || (fileErr != nil && text == "") {
+		resp(c, http.StatusBadRequest, model.ErrorResponse{
+			Message: "Provide either a file or raw text, not both",
+		})
 		return
 	}
 
-	id, err := h.service.MatchClient(c.Request.Context(), req)
+	if fileErr == nil {
+		file, err := formFile.Open()
+		if err != nil {
+			resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Failed to open uploaded file"})
+			return
+		}
+		defer file.Close()
+
+		fileBytes, err = io.ReadAll(file)
+		if err != nil {
+			resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Failed to read uploaded file"})
+			return
+		}
+		fileName = formFile.Filename
+	} else {
+		fileBytes = []byte(text)
+		fileName = "input.txt"
+	}
+
+	req := &model.MatchClientReq{
+		FileName:  fileName,
+		FileBytes: base64.StdEncoding.EncodeToString(fileBytes),
+	}
+
+	id, err := h.service.MatchClient(c.Request.Context(), req, clientID)
 	if err != nil {
 		log.Printf("Failed to match client: %v", err)
 		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not match client"})

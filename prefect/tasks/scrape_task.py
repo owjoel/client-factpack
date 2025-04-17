@@ -24,10 +24,8 @@ def get_wikipedia_text(target: str) -> str:
 
 
 @task
-def generate_openai_response(wiki_text: str, target: str = "Unknown") -> str:
-    prompt = prompt_utils.build_prompt_no_schema(
-        f"This is the profile of {target}\n {wiki_text}"
-    )
+def generate_openai_response(wiki_text: str, target: str = "Unknown", known_names: list[str] = []) -> str:
+    prompt = prompt_utils.build_prompt_no_schema(wiki_text, target, known_names)
     print("Querying OpenAI...")
     return openai_utils.query_gpt4o(prompt)
 
