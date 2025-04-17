@@ -24,11 +24,13 @@ const (
 
 type Notification struct {
 	NotificationType NotificationType `json:"notificationType"`
-	Username         string           `json:"username,omitempty"`    // job
-	JobID               string           `json:"jobId,omitempty"`          // job
-	Status           JobStatus        `json:"status,omitempty"`      // job
-	Type             JobType          `json:"type,omitempty"`        // job
-	ClientID       string		   `json:"clientId,omitempty"`    // client
-	ClientName       string           `json:"clientName,omitempty"`  // client
-	Priority         Priority         `json:"priority,omitempty"`    // client
+	Title            string           `json:"title,omitempty"`
+	Source           string           `json:"source,omitempty"`
+	Username         string           `json:"username,omitempty"`   // job
+	JobID            string           `json:"jobId,omitempty"`      // job
+	Status           JobStatus        `json:"status,omitempty"`     // job
+	Type             JobType          `json:"type,omitempty"`       // job
+	ClientID         string           `json:"clientId,omitempty"`   // client
+	ClientName       []string           `json:"clientName,omitempty"` // client
+	Priority         Priority         `json:"priority,omitempty"`   // client
 }
