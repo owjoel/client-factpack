@@ -69,15 +69,15 @@ def send_to_queue(news_data):
 
 @task
 def get_articles(kw: str):
-    ystd = (datetime.now() - timedelta(days=1))
+    ystd = datetime.now() - timedelta(days=1)
     start = ystd.replace(hour=0, minute=0)
     end = ystd.replace(hour=23, minute=59)
     articles = newsapi_client.get_everything(
         q=kw,
         from_param=start,
         to=end,
-        language='en',
-        sort_by='relevancy',
+        language="en",
+        sort_by="relevancy",
         page=1,
         page_size=2,
     )
@@ -120,6 +120,7 @@ def summarize_text(text, max_length=300, min_length=150):
 @task
 def get_clients() -> list[str]:
     return get_all_client_primary_names()
+
 
 @task
 def extract_client_info(text: str) -> ClientProfile:

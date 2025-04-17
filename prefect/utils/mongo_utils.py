@@ -53,13 +53,14 @@ def fetch_mongo_records_by_ids(ids: list):
     client.close()
     return results
 
+
 def get_all_client_primary_names() -> list[str]:
     clients = mongo_client[db_name][clients_collection]
 
     primary_names = []
     for doc in clients.find({}, {"data.profile.names": 1}):
         try:
-            primary = doc['data']['profile']['names'][0]
+            primary = doc["data"]["profile"]["names"][0]
             primary_names.append(primary)
         except (KeyError, IndexError):
             continue
