@@ -14,6 +14,7 @@ def test_extract_client_info_mocked(monkeypatch):
                         name="Jane",
                         age=30,
                         nationality="UK",
+                        description="A tech engineer from London",  # Required by Pydantic
                         currentResidence=Residence(city="London", country="UK"),
                         netWorth=NetWorth(estimatedValue=500000, currency="GBP", source="mock"),
                         industries=["Tech"],
@@ -31,11 +32,12 @@ def test_extract_client_info_mocked(monkeypatch):
                 choices = [Choice()]
             return Completion()
 
+    # Monkeypatch OpenAI used inside service.py
     monkeypatch.setattr("apps.extract.extract.service.OpenAI", lambda: MockClient())
 
     from apps.extract.extract.service import OpenAIClientParser
     parser = OpenAIClientParser()
+
     client_data = parser.extract_client_info("Jane is from London")
 
     assert client_data.profile.name == "Jane"
-

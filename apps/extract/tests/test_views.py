@@ -9,16 +9,17 @@ def client(mocker):
     mock_completions = mocker.Mock()
     mock_completions.parse.return_value = Client(
         profile=Profile(
-            name="Jane",
-            age=30,
-            nationality="SG",
-            currentResidence=Residence(city="Singapore", country="SG"),
-            netWorth=NetWorth(estimatedValue=500000, currency="SGD", source="source"),
-            industries=["Tech"],
-            occupations=["Engineer"],
-            socials=[],
-            contact=Contact(phone="123456", workAddress="123 Orchard Rd")
-        ),
+        name="Jane",
+        age=30,
+        nationality="SG",
+        description="A software engineer based in Singapore",  # ← Add this
+        currentResidence=Residence(city="Singapore", country="SG"),
+        netWorth=NetWorth(estimatedValue=500000, currency="SGD", source="source"),
+        industries=["Tech"],
+        occupations=["Engineer"],
+        socials=[],
+        contact=Contact(phone="123456", workAddress="123 Orchard Rd")
+    ),
         investments=[],
         associates=[],
         metadata=Metadata(sources=["mock"])
@@ -58,16 +59,17 @@ def test_extract_info_endpoint(client):
     # Setup fake client object
     fake_client = Client(
         profile=Profile(
-            name="Jane",
-            age=30,
-            nationality="SG",
-            currentResidence=Residence(city="Singapore", country="SG"),
-            netWorth=NetWorth(estimatedValue=500000, currency="SGD", source="source"),
-            industries=["Tech"],
-            occupations=["Engineer"],
-            socials=[],
-            contact=Contact(phone="123456", workAddress="123 Orchard Rd")
-        ),
+        name="Jane",
+        age=30,
+        nationality="SG",
+        description="A software engineer based in Singapore",  # ← Add this
+        currentResidence=Residence(city="Singapore", country="SG"),
+        netWorth=NetWorth(estimatedValue=500000, currency="SGD", source="source"),
+        industries=["Tech"],
+        occupations=["Engineer"],
+        socials=[],
+        contact=Contact(phone="123456", workAddress="123 Orchard Rd")
+    ),
         investments=[],
         associates=[],
         metadata=Metadata(sources=["mock"])
