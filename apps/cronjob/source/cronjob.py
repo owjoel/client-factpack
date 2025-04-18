@@ -17,7 +17,7 @@ QUEUE_NAME = "news_queue"
 
 
 # API Configuration
-NEWS_API_KEY = 'key'
+NEWS_API_KEY = "key"
 newsapi = NewsApiClient(api_key=NEWS_API_KEY)
 
 KEYWORDS = ["Elon Musk"]
@@ -49,7 +49,7 @@ def send_to_queue(news_data):
         credentials=credentials,
         ssl_options=pika.SSLOptions(ssl_context),
         heartbeat=600,  # Keep connection alive
-        blocked_connection_timeout=300  # Prevent timeouts
+        blocked_connection_timeout=300,  # Prevent timeouts
     )
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
@@ -59,10 +59,10 @@ def send_to_queue(news_data):
 
     # Publish the message
     channel.basic_publish(
-        exchange='',
+        exchange="",
         routing_key=QUEUE_NAME,
         body=json.dumps(news_data),
-        properties=pika.BasicProperties(delivery_mode=2)  # Persistent message
+        properties=pika.BasicProperties(delivery_mode=2),  # Persistent message
     )
 
     print(f"[x] Sent news to queue: {news_data['title']}")
@@ -74,18 +74,25 @@ def get_articles(keyword, date=datetime.now().strftime("%Y-%m-%d")):
         q=keyword,
         from_param="2025-03-09",
         to="2025-03-09",
-        language='en',
-        sort_by='relevancy',
-        page=2
+        language="en",
+        sort_by="relevancy",
+        page=2,
     )
     return articles["articles"]
 
 
 def summarize_text(text, max_length=300, min_length=150):
     """Summarizes the given text using the BART model."""
-    inputs = tokenizer.encode("summarize: " + text, return_tensors="pt", max_length=1024, truncation=True)
+    inputs = tokenizer.encode(
+        "summarize: " + text, return_tensors="pt", max_length=1024, truncation=True
+    )
     summary_ids = model.generate(
-        inputs, max_length=max_length, min_length=min_length, length_penalty=2.0, num_beams=4, early_stopping=True
+        inputs,
+        max_length=max_length,
+        min_length=min_length,
+        length_penalty=2.0,
+        num_beams=4,
+        early_stopping=True,
     )
     return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
@@ -132,7 +139,7 @@ def run_news_scraper():
                 "source": source,
                 "title": title,
                 "url": url,
-                "summary": summary
+                "summary": summary,
             }
 
             send_to_queue(news_data)

@@ -14,22 +14,60 @@ type JobRepository struct {
 	mock.Mock
 }
 
+// Count provides a mock function with given fields: ctx
+func (_m *JobRepository) Count(ctx context.Context) (int, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Count")
+	}
+
+	var r0 int
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) (int, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) int); ok {
+		r0 = rf(ctx)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Create provides a mock function with given fields: ctx, job
-func (_m *JobRepository) Create(ctx context.Context, job *model.Job) error {
+func (_m *JobRepository) Create(ctx context.Context, job *model.Job) (string, error) {
 	ret := _m.Called(ctx, job)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Create")
 	}
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.Job) error); ok {
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Job) (string, error)); ok {
+		return rf(ctx, job)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Job) string); ok {
 		r0 = rf(ctx, job)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(string)
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(context.Context, *model.Job) error); ok {
+		r1 = rf(ctx, job)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetAll provides a mock function with given fields: ctx, query

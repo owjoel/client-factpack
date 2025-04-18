@@ -1,0 +1,201 @@
+{
+  "profile": {
+    "names": [
+      "Michael Rubens Bloomberg"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1942-02-14",
+    "description": "Michael Rubens Bloomberg is an American businessman and politician. He is the majority owner and co-founder of Bloomberg L.P. and served as the 108th mayor of New York City for three terms from 2002 to 2013. Bloomberg was also a candidate for the 2020 Democratic nomination for president of the United States. He is widely recognized for his philanthropic contributions and influence on New York City's development and policies.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "New York",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 104.7,
+      "currency": "USD",
+      "source": "Forbes, 2025"
+    },
+    "industries": [
+      "Finance",
+      "Media",
+      "Technology",
+      "Politics"
+    ],
+    "occupations": [
+      "Businessman",
+      "Politician"
+    ],
+    "pastOccupations": [
+      "Mayor of New York City",
+      "CEO of Bloomberg L.P.",
+      "Candidate for Presidential Nomination"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1966",
+        "event": "Started career at Salomon Brothers"
+      },
+      {
+        "year": "1981",
+        "event": "Co-founded Bloomberg L.P."
+      },
+      {
+        "year": "2002",
+        "event": "Became mayor of New York City"
+      },
+      {
+        "year": "2019",
+        "event": "Announced presidential campaign"
+      },
+      {
+        "year": "2024",
+        "event": "Received Presidential Medal of Freedom"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "None",
+        "link": ""
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Bloomberg L.P.",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 88,
+      "industry": "Media",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Bloomberg News",
+          "ownershipPercentage": null,
+          "industry": "Media",
+          "links": []
+        },
+        {
+          "name": "Bloomberg Radio",
+          "ownershipPercentage": null,
+          "industry": "Media",
+          "links": []
+        },
+        {
+          "name": "Bloomberg Message",
+          "ownershipPercentage": null,
+          "industry": "Media",
+          "links": []
+        },
+        {
+          "name": "Bloomberg Tradebook",
+          "ownershipPercentage": null,
+          "industry": "Finance",
+          "links": []
+        }
+      ],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Baltimore Orioles",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Sports",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Charlotte Rubens Bloomberg",
+      "relationship": "Mother"
+    },
+    {
+      "name": "William Henry Bloomberg",
+      "relationship": "Father"
+    },
+    {
+      "name": "Susan Elizabeth Barbara Brown",
+      "relationship": "Ex-Wife"
+    },
+    {
+      "name": "Emma Beth Bloomberg",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Georgina Leigh Bloomberg",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Marjorie Tiven",
+      "relationship": "Sister"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Lex Fenwick",
+      "relationship": "Former CEO of Bloomberg L.P.",
+      "associatedCompanies": [
+        "Bloomberg L.P."
+      ]
+    },
+    {
+      "name": "Daniel L. Doctoroff",
+      "relationship": "Former CEO of Bloomberg L.P.",
+      "associatedCompanies": [
+        "Bloomberg L.P."
+      ]
+    },
+    {
+      "name": "John P. Angelos",
+      "relationship": "Business Associate",
+      "associatedCompanies": [
+        "Baltimore Orioles"
+      ]
+    },
+    {
+      "name": "David Rubenstein",
+      "relationship": "Business Associate",
+      "associatedCompanies": [
+        "Baltimore Orioles"
+      ]
+    },
+    {
+      "name": "Kurt Schmoke",
+      "relationship": "Business Associate",
+      "associatedCompanies": [
+        "Baltimore Orioles"
+      ]
+    },
+    {
+      "name": "Cal Ripken",
+      "relationship": "Business Associate",
+      "associatedCompanies": [
+        "Baltimore Orioles"
+      ]
+    },
+    {
+      "name": "Michael Arougheti",
+      "relationship": "Business Associate",
+      "associatedCompanies": [
+        "Baltimore Orioles"
+      ]
+    },
+    {
+      "name": "Grant Hill",
+      "relationship": "Business Associate",
+      "associatedCompanies": [
+        "Baltimore Orioles"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 0.9
+    }
+  ]
+}

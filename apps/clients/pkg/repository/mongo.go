@@ -13,6 +13,7 @@ const (
 	collection = "clients"
 	templates  = "templates"
 	jobs       = "jobs"
+	logs       = "logs"
 )
 
 type MongoStorage struct {
@@ -20,6 +21,7 @@ type MongoStorage struct {
 	clientCollection *mongo.Collection
 	templateCollection *mongo.Collection
 	jobCollection *mongo.Collection
+	logCollection *mongo.Collection
 }
 
 func InitMongo() *MongoStorage {
@@ -36,5 +38,6 @@ func InitMongo() *MongoStorage {
 	clientColl := db.Collection(collection)
 	templateColl := db.Collection(templates)
 	jobColl := db.Collection(jobs)
-	return &MongoStorage{db, clientColl, templateColl, jobColl} 
+	logColl := db.Collection(logs)
+	return &MongoStorage{db, clientColl, templateColl, jobColl, logColl} 
 }

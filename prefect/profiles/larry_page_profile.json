@@ -1,0 +1,129 @@
+{
+  "profile": {
+    "names": [
+      "Lawrence Edward Page",
+      "Larry Page"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1973-03-26",
+    "description": "",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Palo Alto",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 175,
+      "currency": "USD",
+      "source": "Bloomberg Billionaires Index"
+    },
+    "industries": [
+      "Technology"
+    ],
+    "occupations": [
+      "Businessman",
+      "Computer Engineer",
+      "Computer Scientist"
+    ],
+    "pastOccupations": [
+      "Chief Executive Officer (CEO) of Google"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1997",
+        "event": "Became CEO of Google"
+      },
+      {
+        "year": "2001",
+        "event": "Stepped down as CEO of Google"
+      },
+      {
+        "year": "2011",
+        "event": "Resumed role as CEO of Google"
+      },
+      {
+        "year": "2015",
+        "event": "Became CEO of Alphabet Inc."
+      },
+      {
+        "year": "2019",
+        "event": "Stepped down from executive positions at Alphabet, remains a board member and controlling shareholder"
+      }
+    ],
+    "socials": [],
+    "ownedCompanies": [],
+    "investments": [
+      {
+        "name": "Tesla Motors",
+        "type": "Equity",
+        "value": {
+          "value": null,
+          "currency": "USD"
+        },
+        "industry": "Automotive",
+        "status": "Active"
+      },
+      {
+        "name": "Kitty Hawk",
+        "type": "Equity",
+        "value": {
+          "value": null,
+          "currency": "USD"
+        },
+        "industry": "Aviation",
+        "status": "Merged"
+      },
+      {
+        "name": "Opener",
+        "type": "Equity",
+        "value": {
+          "value": null,
+          "currency": "USD"
+        },
+        "industry": "Aviation",
+        "status": "Merged"
+      }
+    ],
+    "family": [
+      {
+        "name": "Gloria Page",
+        "relationship": "Mother"
+      },
+      {
+        "name": "Lucinda Southworth",
+        "relationship": "Spouse"
+      },
+      {
+        "name": "Unnamed",
+        "relationship": "Children"
+      }
+    ],
+    "associates": [
+      {
+        "name": "Sergey Brin",
+        "relationship": "Co-founder of Google",
+        "associatedCompanies": [
+          "Google",
+          "Alphabet Inc."
+        ]
+      },
+      {
+        "name": "Eric Schmidt",
+        "relationship": "Former CEO of Google",
+        "associatedCompanies": [
+          "Google"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "source": "Bloomberg Billionaires Index",
+        "confidence": null
+      },
+      {
+        "source": "Forbes",
+        "confidence": null
+      }
+    ]
+  }
+}

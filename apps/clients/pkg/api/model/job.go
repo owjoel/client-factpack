@@ -22,22 +22,35 @@ const (
 )
 
 type Job struct {
-	ID           bson.ObjectID   `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
-	Type         JobType         `bson:"type" json:"type"`
-	Status       JobStatus       `bson:"status" json:"status"`
-	CreatedAt    time.Time       `bson:"createdAt" json:"createdAt"`
-	UpdatedAt    time.Time       `bson:"updatedAt" json:"updatedAt"`
-	Input        bson.M          `bson:"input" json:"input"`
-	ScrapeResult bson.ObjectID   `bson:"scrapeResult" json:"scrapeResult"`
-	MatchResults []bson.ObjectID `bson:"matchResults" json:"matchResults"`
+	ID            bson.ObjectID `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
+	PrefectFlowID string        `bson:"prefectFlowID" json:"prefectFlowID"`
+	Type          JobType       `bson:"type" json:"type"`
+	Status        JobStatus     `bson:"status" json:"status"`
+	CreatedAt     time.Time     `bson:"createdAt" json:"createdAt"`
+	UpdatedAt     time.Time     `bson:"updatedAt" json:"updatedAt"`
+	Input         bson.M        `bson:"input" json:"input"`
+	ScrapeResult  bson.ObjectID `bson:"scrapeResult" json:"scrapeResult"`
+	MatchResults  []MatchResult `bson:"matchResults" json:"matchResults"`
+	Logs          []JobLog      `bson:"logs" json:"logs"`
+}
+
+type JobLog struct {
+	Message   string        `bson:"message" json:"message"`
+	Timestamp time.Time     `bson:"timestamp" json:"timestamp"`
+}
+
+type MatchResult struct {
+	ID         bson.ObjectID `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
+	SimilarityScore      float64       `bson:"similarityScore" json:"similarityScore"`
 }
 
 type GetJobsQuery struct {
-	Status   JobStatus `bson:"status" json:"status"`
-	Page     int       `bson:"page" json:"page"`
-	PageSize int       `bson:"pageSize" json:"pageSize"`
+	Status   JobStatus `bson:"status" json:"status" form:"status"`
+	Page     int       `bson:"page" json:"page" form:"page"`
+	PageSize int       `bson:"pageSize" json:"pageSize" form:"pageSize"`
 }
 
 type GetJobsResponse struct {
-	Jobs []Job `bson:"jobs" json:"jobs"`
+	Total int   `bson:"total" json:"total"`
+	Jobs  []Job `bson:"jobs" json:"jobs"`
 }

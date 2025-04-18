@@ -1,0 +1,92 @@
+basePath: /api/v1
+host: localhost:8082
+info:
+  contact: {}
+  description: Notification service for handling real-time WebSocket notifications
+  title: client-factpack/notifications
+  version: "1.0"
+paths:
+  /notifications:
+    get:
+      description: Returns job notifications for a given username, optionally filtered
+        by status
+      parameters:
+      - description: Username
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: Job status filter (completed, pending, failed, processing)
+        in: query
+        name: status
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of items per page
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get job notifications
+      tags:
+      - notifications
+  /notifications/client:
+    get:
+      description: Returns paginated client notifications, optionally filtered by
+        name and priority
+      parameters:
+      - description: Client name filter
+        in: query
+        name: name
+        type: string
+      - description: Priority filter (low, medium, high)
+        in: query
+        name: priority
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Number of items per page
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get client notifications
+      tags:
+      - notifications
+swagger: "2.0"

@@ -7,23 +7,27 @@ import (
 	"github.com/owjoel/client-factpack/apps/notif/pkg/storage"
     "github.com/owjoel/client-factpack/apps/notif/config"
     "github.com/owjoel/client-factpack/apps/notif/pkg/utils"
+	"github.com/owjoel/client-factpack/apps/notif/pkg/rest"
 )
 
 // Swagger
 // @title		client-factpack/notifications
 // @version	1.0
 // @description	Notification service for handling real-time WebSocket notifications
-// @host		localhost:8081
+// @host		localhost:8082
 // @BasePath	/api/v1
 
 func main() {
 	utils.InitLogger() // Initialize logger
 	utils.Logger.Info("Starting WebSocket Notification Service...")
     config.Load() 
-	storage.InitMessageQueue() // Initialize message queue subscription
-	web.InitRouter() // Set up WebSocket routing
+	db := storage.InitDatabase()
+	store := &storage.NotificationStorage{DB: db}
+	rest.InitNotificationAPI(store)
+	storage.InitMessageQueue(db)
+	web.InitRouter()
 
-	port := ":8081"
+	port := ":8082"
 	utils.Logger.Infof("Listening on %s", port)
 	err := http.ListenAndServe(port, nil)
 	if err != nil {

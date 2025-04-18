@@ -10,10 +10,12 @@ type Client struct {
 	ID       bson.ObjectID  `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
 	Data     bson.D         `bson:"data" json:"data"`
 	Metadata ClientMetadata `bson:"metadata" json:"metadata"`
+	Articles []bson.ObjectID `json:"articles"`
 }
 
 type ClientMetadata struct {
 	Scraped   bool      `bson:"scraped" json:"scraped"`
+	CreatedAt time.Time `bson:"createdAt" json:"createdAt"`
 	UpdatedAt time.Time `bson:"updatedAt" json:"updatedAt"`
 	Sources   []string  `bson:"sources" json:"sources"`
 }
@@ -24,10 +26,11 @@ type GetClientsQuery struct {
 	Name     string `form:"name"`
 	Page     int    `form:"page" binding:"required"`
 	PageSize int    `form:"pageSize" binding:"required"`
+	Sort     bool   `form:"sort"`
 }
 
 type GetClientsResponse struct {
-	Total int     `json:"total"`
+	Total int      `json:"total"`
 	Data  []Client `json:"data"`
 }
 
@@ -50,13 +53,28 @@ type CreateClientByNameReq struct {
 }
 
 type UpdateClientReq struct {
-	Data bson.D `json:"data"`
+	Changes []SimpleChanges `json:"changes"`
 }
 
-type DeleteClientReq struct {
-	ID uint `json:"id"`
+type SimpleChanges struct {
+	Path string `json:"path"`
+	Old  any    `json:"old"`
+	New  any    `json:"new"`
 }
 
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
+
+type MatchClientReq struct {
+	FileName  string `form:"fileName"`
+	FileBytes string
+}
+
+
+type JobIDRes struct {
+	JobID string `json:"jobId"`
+}
 
 // // Client contains all information for a particular client
 // type Client struct {
