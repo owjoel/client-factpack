@@ -18,10 +18,10 @@ var (
 
 // Handle WebSocket connections
 func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
-	userID := r.URL.Query().Get("userId")
+	userID := r.URL.Query().Get("username")
 	if userID == "" {
-		utils.Logger.Warn("WebSocket connection attempt without user ID")
-		http.Error(w, "User ID required", http.StatusBadRequest)
+		utils.Logger.Warn("WebSocket connection attempt without username")
+		http.Error(w, "Username required", http.StatusBadRequest)
 		return
 	}
 
@@ -52,12 +52,20 @@ func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 // Send notification to a specific user
-func SendNotification(userID, message string) {
+func SendNotification(userID, message, notificationType string) {
 	clientsMu.Lock()
 	conn, exists := clients[userID]
+	utils.Logger.Info("Clients", clients, userID)
 	clientsMu.Unlock()
 
-	if exists {
+	if notificationType == "client" {
+		for _, conn := range clients {
+			err := conn.WriteMessage(websocket.TextMessage, []byte(message))
+			if err != nil {
+				utils.Logger.Info("Error sending message:", err)
+			}
+		}
+	} else if exists {
 		err := conn.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
 			utils.Logger.Info("Error sending message:", err)

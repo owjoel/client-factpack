@@ -14,8 +14,8 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/owjoel/client-factpack/apps/clients/config"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/repository"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/service"
-	"github.com/owjoel/client-factpack/apps/clients/pkg/storage"
 	"github.com/owjoel/client-factpack/apps/clients/pkg/web/handlers"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -26,32 +26,67 @@ type Router struct {
 }
 
 func NewRouter() *Router {
-	gin.SetMode(gin.ReleaseMode)
+	// gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
 	// enable CORS
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:5173"}, // Allow frontend origin
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Content-Type", "Authorization"},
+		AllowOrigins:     []string{"http://localhost:5173"}, // Allow frontend origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
-		ExposeHeaders: []string{"Content-Length"},
+		ExposeHeaders:    []string{"Content-Length"},
 	}))
-	
 
 	pprof.Register(router)
 
-	storage.Init()
-	clientStorage := storage.GetInstance().Client
-	clientService := service.NewClientService(clientStorage)
-	handler := handlers.New(clientService)
+	mongoDb := repository.InitMongo()
+
+	logRepository := repository.NewMongoLogRepository(mongoDb)
+	logService := service.NewLogService(logRepository)
+	logHandler := handlers.NewLogHandler(logService)
+
+	jobRepository := repository.NewMongoJobRepository(mongoDb)
+	jobService := service.NewJobService(jobRepository)
+	jobHandler := handlers.NewJobHandler(jobService)
+
+	clientRepository := repository.NewMongoClientRepository(mongoDb)
+	clientService := service.NewClientService(clientRepository, jobService, logService)
+	clientHandler := handlers.NewClientHandler(clientService)
+
+
+	v1API := router.Group("/api/v1/clients")
+	v1Logs := router.Group("/api/v1/logs")
+	v1Jobs := router.Group("/api/v1/jobs")
+	v1API.GET("/health", clientHandler.HealthCheck)
+
+	// enable auth
+	authEnabled := false 
+	if authEnabled {
+		v1API.Use(handlers.Authenticate)
+		v1Logs.Use(handlers.Authenticate)
+		v1Jobs.Use(handlers.Authenticate)
+	}
 
 	// Use RPC styling rather than REST
-	v1API := router.Group("/api/v1/clients")
-	v1API.GET("/health", handler.HealthCheck)
-	v1API.GET("/retrieveProfile/:id", handler.GetClient)
-	v1API.GET("/retrieveAllProfiles", handler.GetAllClients)
-	v1API.POST("/createProfile", handler.CreateClient)
+	// startregion Clients
+	v1API.GET("/:id", clientHandler.GetClient)
+	v1API.GET("/", clientHandler.GetAllClients)
+	v1API.PUT("/:id", clientHandler.UpdateClient)
+	v1API.POST("/scrape", clientHandler.CreateClientByName)
+	v1API.POST("/:id/scrape", clientHandler.RescrapeClient)
+	v1API.POST("/:id/match", clientHandler.MatchClient)
+	// endregion Clients
+
+	// startregion Jobs
+	v1Jobs.GET("/:id", jobHandler.GetJob)
+	v1Jobs.GET("/", jobHandler.GetAllJobs)
+	// endregion Jobs
+
+	// startregion Logs
+	v1Logs.GET("/", logHandler.GetLogs)
+	v1Logs.GET("/:id", logHandler.GetLog)
+	// endregion Logs
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
@@ -59,7 +94,7 @@ func NewRouter() *Router {
 }
 
 func (r *Router) Run() {
-	port := config.GetPort(8080)
+	port := config.GetPort(8081)
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%v", port),
 		Handler: r.Engine,

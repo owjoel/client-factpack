@@ -1,0 +1,149 @@
+{
+  "profile": {
+    "names": [
+      "Jeffrey Preston Bezos"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1964-01-12",
+    "description": "American businessman best known as the founder, executive chairman, and former president and CEO of Amazon.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Miami",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 197000000000,
+      "currency": "USD",
+      "source": "Forbes, Bloomberg Billionaires Index"
+    },
+    "industries": [
+      "Technology",
+      "E-commerce",
+      "Aerospace",
+      "Media"
+    ],
+    "occupations": [
+      "Founder of Amazon",
+      "Executive Chairman of Amazon",
+      "Former CEO of Amazon"
+    ],
+    "pastOccupations": [
+      "Product Manager at Bankers Trust",
+      "Senior Vice-President at D. E. Shaw & Co"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1986",
+        "event": "Graduated from Princeton University with BSE in Electrical Engineering and Computer Science."
+      },
+      {
+        "year": "1994",
+        "event": "Founded Amazon."
+      },
+      {
+        "year": "2000",
+        "event": "Founded Blue Origin."
+      },
+      {
+        "year": "2013",
+        "event": "Purchased The Washington Post."
+      },
+      {
+        "year": "2021",
+        "event": "Stepped down as CEO of Amazon."
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/jeffbezos"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Amazon",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Amazon Web Services",
+          "ownershipPercentage": null,
+          "industry": "Cloud Computing",
+          "links": []
+        }
+      ]
+    },
+    {
+      "name": "Blue Origin",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Aerospace",
+      "status": "Active",
+      "subsidiaries": []
+    },
+    {
+      "name": "The Washington Post",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Media",
+      "status": "Active",
+      "subsidiaries": []
+    },
+    {
+      "name": "Altos Labs",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Biotechnology",
+      "status": "Active",
+      "subsidiaries": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Google",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Technology",
+      "status": "Exited"
+    }
+  ],
+  "family": [
+    {
+      "name": "Jacklyn Gise",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Ted Jorgensen",
+      "relationship": "Biological Father"
+    },
+    {
+      "name": "Miguel \"Mike\" Bezos",
+      "relationship": "Adoptive Father"
+    },
+    {
+      "name": "MacKenzie Scott",
+      "relationship": "Ex-wife"
+    },
+    {
+      "name": "Lauren S\u00e1nchez",
+      "relationship": "Fianc\u00e9"
+    }
+  ],
+  "associates": [],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 0.9
+    },
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": 0.9
+    }
+  ]
+}

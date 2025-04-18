@@ -1,0 +1,183 @@
+{
+  "profile": {
+    "names": [
+      "Larry Ellison",
+      "Lawrence Joseph Ellison"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1944-08-17",
+    "description": "American businessman and entrepreneur co-founder of Oracle Corporation.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "L\u0101na\u02bbi",
+      "country": "USA"
+    },
+    "netWorth": {
+      "estimatedValue": 211000000000,
+      "currency": "USD",
+      "source": "Forbes 2025"
+    },
+    "industries": [
+      "Technology",
+      "Real Estate",
+      "Pharmaceutical",
+      "Aerospace"
+    ],
+    "occupations": [
+      "Businessman",
+      "Entrepreneur",
+      "Philanthropist"
+    ],
+    "pastOccupations": [
+      "Chief Executive Officer"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1977",
+        "event": "Founded Oracle Corporation"
+      },
+      {
+        "year": "1979",
+        "event": "Oracle Database version 2 released"
+      },
+      {
+        "year": "1997",
+        "event": "Appointed director of Apple Computer"
+      },
+      {
+        "year": "2009",
+        "event": "Purchased Indian Wells Tennis Garden"
+      },
+      {
+        "year": "2010",
+        "event": "Oracle acquired Sun Microsystems"
+      },
+      {
+        "year": "2018",
+        "event": "Became a director on the board of Tesla, Inc."
+      },
+      {
+        "year": "2022",
+        "event": "Moves residence to L\u0101na\u02bbi"
+      },
+      {
+        "year": "2023",
+        "event": "Closed Project Ronin startup"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "LinkedIn",
+        "link": "https://www.linkedin.com/in/lawrenceellison"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Oracle Corporation",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 42.9,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": [
+        {
+          "label": "Official Website",
+          "url": "https://www.oracle.com"
+        }
+      ]
+    },
+    {
+      "name": "L\u0101na\u02bbi Properties",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 98,
+      "industry": "Real Estate",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Tesla, Inc.",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Automotive",
+      "status": "Active"
+    },
+    {
+      "name": "NetSuite",
+      "type": "Equity",
+      "value": {
+        "value": 9300000000,
+        "currency": "USD"
+      },
+      "industry": "Technology",
+      "status": "Active"
+    },
+    {
+      "name": "Salesforce.com",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Technology",
+      "status": "Active"
+    },
+    {
+      "name": "Astex Pharmaceuticals",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Pharmaceutical",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Florence Spellman",
+      "relationship": "Biological Mother"
+    },
+    {
+      "name": "Lillian Spellman Ellison",
+      "relationship": "Adoptive Mother"
+    },
+    {
+      "name": "Louis Ellison",
+      "relationship": "Adoptive Father"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Steve Jobs",
+      "relationship": "Former Colleague at Apple",
+      "associatedCompanies": [
+        "Apple Inc."
+      ]
+    },
+    {
+      "name": "Mark Hurd",
+      "relationship": "Friend and Colleague",
+      "associatedCompanies": [
+        "Oracle Corporation"
+      ]
+    }
+  ],
+  "_": {},
+  "sources": [
+    {
+      "source": "Forbes 2025 Billionaires List",
+      "confidence": 0.95
+    },
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": 0.9
+    }
+  ]
+}

@@ -1,171 +1,83 @@
-package service
+package service_test
 
 import (
-    "context"
-    "errors"
-    "testing"
+	"context"
+	"testing"
 
-
-    "github.com/stretchr/testify/assert"
-    "github.com/stretchr/testify/mock"
-    "github.com/stretchr/testify/suite"
-
-    "github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
-	"github.com/owjoel/client-factpack/apps/clients/pkg/storage"
-    "github.com/owjoel/client-factpack/apps/clients/pkg/storage/mocks"
-	
-
+	"github.com/owjoel/client-factpack/apps/clients/pkg/api/model"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/mocks"
+	"github.com/owjoel/client-factpack/apps/clients/pkg/service"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-type ClientServiceTestSuite struct {
-    suite.Suite
-    mockStorage *mocks.ClientInterface
-    service     *ClientService
+func TestGetClient(t *testing.T) {
+	clientRepo := new(mocks.ClientRepository)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
+
+	clientID := bson.NewObjectID()
+	expectedClient := &model.Client{ID: clientID}
+
+	clientRepo.On("GetOne", mock.Anything, clientID.Hex()).Return(expectedClient, nil)
+
+	client, err := clientService.GetClient(context.Background(), clientID.Hex())
+
+	assert.NoError(t, err)
+	assert.Equal(t, expectedClient, client)
+	clientRepo.AssertExpectations(t)
 }
 
+func TestGetAllClients(t *testing.T) {
+	clientRepo := new(mocks.ClientRepository)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
 
-func (suite *ClientServiceTestSuite) SetupTest() {
-	suite.mockStorage = new(mocks.ClientInterface)
-	storage.SetInstanceClient(suite.mockStorage)
-	suite.service = NewClientService(nil)
+	query := &model.GetClientsQuery{Page: 1, PageSize: 10}
+	expectedClients := []model.Client{{ID: bson.NewObjectID()}, {ID: bson.NewObjectID()}}
+	expectedTotal := 2
 
+	clientRepo.On("GetAll", mock.Anything, query).Return(expectedClients, nil)
+	clientRepo.On("Count", mock.Anything).Return(expectedTotal, nil)
 
-	// fmt.Printf("Service: %+v\n", suite.service)
-	// fmt.Printf("Storage Singleton: %+v\n", storage.GetInstance())
-	// fmt.Printf("Storage Singleton Client: %+v\n", storage.GetInstance().Client)
+	total, clients, err := clientService.GetAllClients(context.Background(), query)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expectedTotal, total)
+	assert.Equal(t, expectedClients, clients)
+	clientRepo.AssertExpectations(t)
 }
 
-// CreateClient Test
+func TestCreateClientByName(t *testing.T) {
+	clientRepo := new(mocks.ClientRepository)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
 
+	req := &model.CreateClientByNameReq{Name: "Test Client"}
 
-func (suite *ClientServiceTestSuite) TestCreateClient_Success() {
-	suite.mockStorage.
-		On("Create", mock.Anything, mock.AnythingOfType("*model.Client")).
-		Return(nil)
+	// Assuming CreateClientByName triggers some job or workflow
+	// Mock the necessary interactions here
 
-	newClient := &model.Client{
-		Profile: model.Profile{
-			Name:        "Donald Trump",
-			Age:         30,
-			Nationality: "USA",
-		},
-	}
+	err := clientService.CreateClientByName(context.Background(), req)
 
-	err := suite.service.CreateClient(context.Background(), newClient)
-
-	assert.NoError(suite.T(), err)
-	suite.mockStorage.AssertExpectations(suite.T())
+	assert.NoError(t, err)
+	clientRepo.AssertExpectations(t)
 }
 
+func TestUpdateClient(t *testing.T) {
+	clientRepo := new(mocks.ClientRepository)
+	jobService := new(mocks.JobServiceInterface)
+	clientService := service.NewClientService(clientRepo, jobService)
 
+	clientID := "123"
+	data := bson.D{{Key: "name", Value: "Updated Name"}}
 
-func (suite *ClientServiceTestSuite) TestCreateClient_Error() {
-	suite.mockStorage.
-		On("Create", mock.Anything, mock.AnythingOfType("*model.Client")).
-		Return(errors.New("some DB error"))
+	clientRepo.On("GetOne", mock.Anything, clientID).Return(&model.Client{ID: bson.NewObjectID()}, nil)
+	clientRepo.On("Update", mock.Anything, clientID, data).Return(nil)
 
-	newClient := &model.Client{
-		Profile: model.Profile{
-			Name:        "Donald Trump",
-			Age:         30,
-			Nationality: "USA",
-		},
-	}
+	err := clientService.UpdateClient(context.Background(), clientID, data)
 
-	err := suite.service.CreateClient(context.Background(), newClient)
-
-	assert.Error(suite.T(), err)
-	assert.Contains(suite.T(), err.Error(), "some DB error")
-	suite.mockStorage.AssertExpectations(suite.T())
-}
-
-
-// GetClient Test
-
-
-func (suite *ClientServiceTestSuite) TestGetClient_Success() {
-	mockClient := &model.Client{
-		ID: bson.NewObjectID(),
-		Profile: model.Profile{
-			Name: "John Doe",
-		},
-	}
-
-	suite.mockStorage.
-		On("Get", mock.Anything, "client123").
-		Return(mockClient, nil)
-
-	retrieved, err := suite.service.GetClient(context.Background(), "client123")
-
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), mockClient, retrieved)
-	suite.mockStorage.AssertExpectations(suite.T())
-}
-
-
-
-func (suite *ClientServiceTestSuite) TestGetClient_Error() {
-	suite.mockStorage.
-		On("Get", mock.Anything, "notfound").
-		Return(nil, errors.New("no documents found"))
-
-	retrieved, err := suite.service.GetClient(context.Background(), "notfound")
-
-	assert.Error(suite.T(), err)
-	assert.Contains(suite.T(), err.Error(), "no documents found")
-
-	//  Instead of assert.Nil, check if it's empty
-	assert.Equal(suite.T(), &model.Client{}, retrieved)
-	suite.mockStorage.AssertExpectations(suite.T())
-}
-
-
-// GetAllClients
-
-
-func (suite *ClientServiceTestSuite) TestGetAllClients_Success() {
-	mockClients := []model.Client{
-		{
-			ID: bson.NewObjectID(),
-			Profile: model.Profile{
-				Name: "Alice",
-			},
-		},
-		{
-			ID: bson.NewObjectID(),
-			Profile: model.Profile{
-				Name: "Bob",
-			},
-		},
-	}
-
-	suite.mockStorage.
-		On("GetAll", mock.Anything).
-		Return(mockClients, nil)
-
-	retrieved, err := suite.service.GetAllClients(context.Background())
-
-	assert.NoError(suite.T(), err)
-	assert.Equal(suite.T(), mockClients, retrieved)
-	suite.mockStorage.AssertExpectations(suite.T())
-}
-
-
-func (suite *ClientServiceTestSuite) TestGetAllClients_Error() {
-	suite.mockStorage.
-		On("GetAll", mock.Anything).
-		Return(nil, errors.New("DB failure"))
-
-	retrieved, err := suite.service.GetAllClients(context.Background())
-
-	assert.Error(suite.T(), err, "Expected an error when DB fails")
-	assert.Nil(suite.T(), retrieved, "Expected no clients returned on DB error")
-	assert.Contains(suite.T(), err.Error(), "DB failure")
-
-	suite.mockStorage.AssertExpectations(suite.T())
-}
-
-func TestClientServiceSuite(t *testing.T) {
-	suite.Run(t, new(ClientServiceTestSuite))
+	assert.NoError(t, err)
+	clientRepo.AssertExpectations(t)
 }

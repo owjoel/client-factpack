@@ -1,0 +1,117 @@
+{
+  "profile": {
+    "names": [
+      "Steven Anthony Ballmer"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1956-03-24",
+    "description": "",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Hunts Point",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 136,
+      "currency": "USD",
+      "source": "Bloomberg Billionaires Index"
+    },
+    "industries": [
+      "Technology",
+      "Sport"
+    ],
+    "occupations": [
+      "Businessman",
+      "Investor"
+    ],
+    "pastOccupations": [
+      "CEO of Microsoft",
+      "Assistant Product Manager at Procter & Gamble"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1980",
+        "event": "Joined Microsoft, left Stanford MBA program"
+      },
+      {
+        "year": "1998",
+        "event": "Became President of Microsoft"
+      },
+      {
+        "year": "2000",
+        "event": "Became CEO of Microsoft"
+      },
+      {
+        "year": "2014",
+        "event": "Retired as CEO; left Microsoft board"
+      },
+      {
+        "year": "2014",
+        "event": "Acquired Los Angeles Clippers"
+      }
+    ],
+    "socials": [],
+    "ownedCompanies": [
+      {
+        "name": "Los Angeles Clippers",
+        "ownershipType": "Direct",
+        "ownershipPercentage": null,
+        "industry": "Sport",
+        "status": "Active",
+        "subsidiaries": [],
+        "links": []
+      },
+      {
+        "name": "Ballmer Group",
+        "ownershipType": "Direct",
+        "ownershipPercentage": null,
+        "industry": "Philanthropic Investment",
+        "status": "Active",
+        "subsidiaries": [],
+        "links": []
+      }
+    ],
+    "investments": [],
+    "family": [
+      {
+        "name": "Connie Snyder",
+        "relationship": "Spouse"
+      },
+      {
+        "name": "Gilda Radner",
+        "relationship": "Second Cousin"
+      }
+    ],
+    "associates": [
+      {
+        "name": "Bill Gates",
+        "relationship": "Business Partner",
+        "associatedCompanies": [
+          "Microsoft"
+        ]
+      },
+      {
+        "name": "Paul Allen",
+        "relationship": "Business Partner",
+        "associatedCompanies": [
+          "Microsoft"
+        ]
+      }
+    ],
+    "sources": []
+  },
+  "sources": [
+    {
+      "source": "Forbes Real-Time Billionaires List",
+      "confidence": 95
+    },
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": 95
+    },
+    {
+      "source": "CNN",
+      "confidence": 90
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "profile": {
+    "names": [
+      "Lei Jun"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1969-12-16",
+    "description": "Chinese billionaire entrepreneur, computer engineer, and nonpartisan congressman.",
+    "nationality": "Chinese",
+    "currentResidence": {
+      "city": "Beijing",
+      "country": "China"
+    },
+    "netWorth": {
+      "estimatedValue": 44600000000,
+      "currency": "USD",
+      "source": "Forbes"
+    },
+    "industries": [
+      "Technology",
+      "Consumer Electronics",
+      "Investment"
+    ],
+    "occupations": [
+      "Founder, Chairman and CEO of Xiaomi",
+      "Chairman of Kingsoft",
+      "Congressman",
+      "Chairman of Shunwei Capital"
+    ],
+    "pastOccupations": [
+      "Engineer at Kingsoft",
+      "CEO of Kingsoft"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1992",
+        "event": "Joined Kingsoft as an engineer."
+      },
+      {
+        "year": "1998",
+        "event": "Became CEO of Kingsoft."
+      },
+      {
+        "year": "2000",
+        "event": "Founded Joyo.com."
+      },
+      {
+        "year": "2007",
+        "event": "Resigned as CEO of Kingsoft."
+      },
+      {
+        "year": "2008",
+        "event": "Became chairman of UCWeb."
+      },
+      {
+        "year": "2010",
+        "event": "Founded Xiaomi."
+      },
+      {
+        "year": "2011",
+        "event": "Co-founded Shunwei Capital."
+      },
+      {
+        "year": "2013",
+        "event": "Elected as a Congressman of the National People's Congress."
+      },
+      {
+        "year": "2018",
+        "event": "Led Xiaomi's IPO in Hong Kong."
+      },
+      {
+        "year": "2021",
+        "event": "Announced Xiaomi's entry into the electric vehicle industry."
+      },
+      {
+        "year": "2024",
+        "event": "Launched first Xiaomi electric vehicle."
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Wikipedia",
+        "link": "https://en.wikipedia.org/wiki/Lei_Jun"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Xiaomi",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Beijing Xiaomi Payment Technology Co., Ltd.",
+          "ownershipPercentage": null,
+          "industry": "Financial Services",
+          "links": [
+            {
+              "label": "Company Profile",
+              "url": ""
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": "Xiaomi Profile",
+          "url": "https://www.mi.com/"
+        }
+      ]
+    },
+    {
+      "name": "Shunwei Capital",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Investment",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": [
+        {
+          "label": "Shunwei Capital Profile",
+          "url": ""
+        }
+      ]
+    },
+    {
+      "name": "Kingsoft",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Software",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "YY",
+      "type": "Equity",
+      "value": {
+        "value": 129000000,
+        "currency": "USD"
+      },
+      "industry": "Social Networking",
+      "status": "Exited"
+    }
+  ],
+  "family": [
+    {
+      "name": "Zhang Tong",
+      "relationship": "Wife"
+    },
+    {
+      "name": "-",
+      "relationship": "Child"
+    },
+    {
+      "name": "-",
+      "relationship": "Child"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Lin Bin",
+      "relationship": "Business Partner",
+      "associatedCompanies": [
+        "Xiaomi"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": null
+    }
+  ]
+}

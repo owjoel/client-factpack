@@ -1,0 +1,98 @@
+{
+  "profile": {
+    "names": [
+      "Tadashi Yanai",
+      "\u67f3\u4e95 \u6b63",
+      "Yanai Tadashi"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1949-02-07",
+    "description": "Tadashi Yanai is a Japanese billionaire businessman and the founder and president of Fast Retailing, the parent company of Uniqlo.",
+    "nationality": "Japanese",
+    "currentResidence": {
+      "city": "Tokyo",
+      "country": "Japan"
+    },
+    "netWorth": {
+      "estimatedValue": 50300000000,
+      "currency": "USD",
+      "source": "Bloomberg Billionaires Index"
+    },
+    "industries": [
+      "Retail"
+    ],
+    "occupations": [
+      "Businessman",
+      "Founder",
+      "President"
+    ],
+    "pastOccupations": [
+      "Independent director at Softbank"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1971",
+        "event": "Started selling kitchenware and men's clothing at a JUSCO supermarket"
+      },
+      {
+        "year": "1984",
+        "event": "Opened first Uniqlo store in Hiroshima"
+      },
+      {
+        "year": "1991",
+        "event": "Changed company's name to Fast Retailing"
+      },
+      {
+        "year": "2019",
+        "event": "Stepped down from the board of Softbank"
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Fast Retailing",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Retail",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Uniqlo",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Retail",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Kanichi Yanai",
+      "relationship": "Father"
+    },
+    {
+      "name": "Hisako Mori Yanai",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Kazumi Yanai",
+      "relationship": "Son"
+    },
+    {
+      "name": "Koji Yanai",
+      "relationship": "Son"
+    }
+  ],
+  "associates": [],
+  "sources": [
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": null
+    }
+  ]
+}

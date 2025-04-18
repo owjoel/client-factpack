@@ -1,0 +1,321 @@
+{
+	"name": "client_profile",
+	"schema": {
+		"type": "object",
+		"properties": {
+			"profile": {
+				"type": "object",
+				"properties": {
+					"names": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"gender": {
+						"type": "string",
+						"enum": ["Male", "Female", "Non-binary", "Unknown"]
+					},
+					"dateOfBirth": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"nationality": {
+						"type": "string"
+					},
+					"currentResidence": {
+						"type": "object",
+						"properties": {
+							"city": {
+								"type": "string"
+							},
+							"country": {
+								"type": "string"
+							}
+						},
+						"required": ["city", "country"],
+						"additionalProperties": false
+					},
+					"netWorth": {
+						"type": "object",
+						"properties": {
+							"estimatedValue": {
+								"type": ["number", "null"]
+							},
+							"currency": {
+								"type": "string"
+							},
+							"source": {
+								"type": "string"
+							}
+						},
+						"required": ["estimatedValue", "currency", "source"],
+						"additionalProperties": false
+					},
+					"industries": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"occupations": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"pastOccupations": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"careerTimeline": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"year": {
+									"type": "string"
+								},
+								"event": {
+									"type": "string"
+								}
+							},
+							"required": ["year", "event"],
+							"additionalProperties": false
+						}
+					},
+					"socials": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"platform": {
+									"type": "string"
+								},
+								"link": {
+									"type": "string"
+								}
+							},
+							"required": ["platform", "link"],
+							"additionalProperties": false
+						}
+					}
+				},
+				"required": [
+					"names",
+					"gender",
+					"dateOfBirth",
+					"description",
+					"nationality",
+					"currentResidence",
+					"netWorth",
+					"industries",
+					"occupations",
+					"pastOccupations",
+					"careerTimeline",
+					"socials"
+				],
+				"additionalProperties": false
+			},
+			"ownedCompanies": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"ownershipType": {
+							"type": "string",
+							"enum": [
+								"Direct",
+								"Holding Group",
+								"Minority Stake"
+							]
+						},
+						"ownershipPercentage": {
+							"type": ["number", "null"]
+						},
+						"industry": {
+							"type": "string"
+						},
+						"status": {
+							"type": "string",
+							"enum": ["Active", "Defunct", "Merged", "Unknown"]
+						},
+						"subsidiaries": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"ownershipPercentage": {
+										"type": ["number", "null"]
+									},
+									"industry": {
+										"type": "string"
+									},
+									"links": {
+										"type": "array",
+										"items": {
+											"type": "object",
+											"properties": {
+												"label": {
+													"type": "string"
+												},
+												"url": {
+													"type": "string"
+												}
+											},
+											"required": ["label", "url"],
+											"additionalProperties": false
+										}
+									}
+								},
+								"required": [
+									"name",
+									"ownershipPercentage",
+									"industry",
+									"links"
+								],
+								"additionalProperties": false
+							}
+						},
+						"links": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"label": {
+										"type": "string"
+									},
+									"url": {
+										"type": "string"
+									}
+								},
+								"required": ["label", "url"],
+								"additionalProperties": false
+							}
+						}
+					},
+					"required": [
+						"name",
+						"ownershipType",
+						"ownershipPercentage",
+						"industry",
+						"status",
+						"subsidiaries",
+						"links"
+					],
+					"additionalProperties": false
+				}
+			},
+			"investments": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"type": {
+							"type": "string",
+							"enum": ["Equity", "Debt", "Other"]
+						},
+						"value": {
+							"type": "object",
+							"properties": {
+								"value": {
+									"type": ["number", "null"]
+								},
+								"currency": {
+									"type": "string"
+								}
+							},
+							"required": ["value", "currency"],
+							"additionalProperties": false
+						},
+						"industry": {
+							"type": "string"
+						},
+						"status": {
+							"type": "string",
+							"enum": ["Active", "Exited", "Unknown"]
+						}
+					},
+					"required": ["name", "type", "value", "industry", "status"],
+					"additionalProperties": false
+				}
+			},
+			"family": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"relationship": {
+							"type": "string"
+						}
+					},
+					"required": ["name", "relationship"],
+					"additionalProperties": false
+				}
+			},
+			"associates": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"name": {
+							"type": "string"
+						},
+						"relationship": {
+							"type": "string"
+						},
+						"associatedCompanies": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					"required": ["name", "relationship", "associatedCompanies"],
+					"additionalProperties": false
+				}
+			},
+			"sources": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"source": {
+							"type": "string"
+						},
+						"confidence": {
+							"type": ["number", "null"]
+						}
+					},
+					"required": ["source", "confidence"],
+					"additionalProperties": false
+				}
+			}
+		},
+		"required": [
+			"profile",
+			"ownedCompanies",
+			"investments",
+			"family",
+			"associates",
+			"sources"
+		],
+		"additionalProperties": false
+	}
+}

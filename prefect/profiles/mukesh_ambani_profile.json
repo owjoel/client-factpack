@@ -1,0 +1,179 @@
+{
+  "profile": {
+    "names": [
+      "Mukesh Dhirubhai Ambani"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1957-04-19",
+    "description": "Indian billionaire and businessman",
+    "nationality": "Indian",
+    "currentResidence": {
+      "city": "Mumbai",
+      "country": "India"
+    },
+    "netWorth": {
+      "estimatedValue": 119.5,
+      "currency": "USD",
+      "source": "Forbes list 2024"
+    },
+    "industries": [
+      "Oil & Gas",
+      "Telecommunications",
+      "Retail"
+    ],
+    "occupations": [
+      "Chairman and Managing Director, Reliance Industries"
+    ],
+    "pastOccupations": [],
+    "careerTimeline": [
+      {
+        "year": "1980",
+        "event": "Withdrew from Stanford MBA to help in Reliance's growth"
+      },
+      {
+        "year": "2004",
+        "event": "Ranked richest in Asia"
+      },
+      {
+        "year": "2008",
+        "event": "Purchased Mumbai Indians IPL team"
+      },
+      {
+        "year": "2010",
+        "event": "Built world's largest grassroots petroleum refinery in Jamnagar, India"
+      },
+      {
+        "year": "2012",
+        "event": "Forgoes pay from RIL to cap salary at \u20b9150 million"
+      },
+      {
+        "year": "2013",
+        "event": "Announced possible collaboration with Bharti Airtel"
+      },
+      {
+        "year": "2016",
+        "event": "Ranked 36th richest person globally"
+      },
+      {
+        "year": "2018",
+        "event": "Surpassed Jack Ma, became Asia's richest person"
+      },
+      {
+        "year": "2024",
+        "event": "Ranked 1st on Forbes list of India's richest tycoons"
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Reliance Industries",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 50.4,
+      "industry": "Conglomerate",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Reliance Infocomm Limited",
+          "ownershipPercentage": null,
+          "industry": "Telecommunications",
+          "links": []
+        },
+        {
+          "name": "Reliance Petroleum Limited",
+          "ownershipPercentage": null,
+          "industry": "Oil & Gas",
+          "links": []
+        }
+      ],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Mumbai Indians",
+      "type": "Equity",
+      "value": {
+        "value": 111.9,
+        "currency": "USD"
+      },
+      "industry": "Sports",
+      "status": "Active"
+    },
+    {
+      "name": "Indian Super League",
+      "type": "Other",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Sports",
+      "status": "Active"
+    },
+    {
+      "name": "Boeing 737 Max 9 Aircraft",
+      "type": "Equity",
+      "value": {
+        "value": 1000,
+        "currency": "INR"
+      },
+      "industry": "Aviation",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Nita Ambani",
+      "relationship": "Spouse"
+    },
+    {
+      "name": "Akash Ambani",
+      "relationship": "Son"
+    },
+    {
+      "name": "Anant Ambani",
+      "relationship": "Son"
+    },
+    {
+      "name": "Isha Ambani",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Dhirubhai Ambani",
+      "relationship": "Father"
+    },
+    {
+      "name": "Kokilaben Ambani",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Anil Ambani",
+      "relationship": "Brother"
+    },
+    {
+      "name": "Nina Bhadrashyam Kothari",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Dipti Dattaraj Salgaonkar",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Radhika Merchant",
+      "relationship": "Daughter-in-law"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Anand Jain",
+      "relationship": "Close associate",
+      "associatedCompanies": []
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": null
+    }
+  ]
+}
