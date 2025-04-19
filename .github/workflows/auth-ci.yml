@@ -51,29 +51,70 @@ jobs:
         run: echo "Running dummy tests..."
 
   # Build Job (Push Docker Image to GitHub Container Registry)
-  build:
-    name: Build and Push Docker Image to GHCR
+  deploy:
+    needs: [lint, test]
     runs-on: ubuntu-latest
-    needs: test  # Runs only after tests succeed
+    env:
+      SERVICE_DIR: apps/auth
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
+      - uses: actions/checkout@v4.2.2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+        
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with: 
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubCI
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
+      - name: Login to Amazon ECR Public
+        run: |
+          aws ecr-public get-login-password --region us-east-1 | \
+            docker login --username AWS --password-stdin public.ecr.aws
+
+      - name: Get Latest Service Tag
+        id: service-tag
+        run: |
+          git fetch --tags
+          SEARCH="auth-v[0-9]*.[0-9]*.[0-9]*"
+          LATEST_TAG=$(git tag --list "auth-v[0-9]*.[0-9]*.[0-9]*" | sort -V | tail -n 1)
+          echo $LATEST_TAG
+          SEMVER=$(echo "$LATEST_TAG" | sed "s/auth-//")
+          COMMIT_SHA=$(git rev-parse --short HEAD)
+          VERSION="${SEMVER}-${COMMIT_SHA}"
+          echo "Combined version with SHA: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build, Tag, Push to ECR Public
+        id: build-publish
+        shell: bash
+        env:
+          IMAGE_TAG: ${{ steps.service-tag.outputs.version }}
+          ECR_PUBLIC_REPO: public.ecr.aws/c1r0g2t1/cs480/auth
+        run: |
+          echo "Tag: $IMAGE_TAG"
+          docker build -t "$ECR_PUBLIC_REPO:$IMAGE_TAG" .
+          docker tag "$ECR_PUBLIC_REPO:$IMAGE_TAG" "$ECR_PUBLIC_REPO:latest"
+          docker push "$ECR_PUBLIC_REPO:$IMAGE_TAG"
+          docker push "$ECR_PUBLIC_REPO:latest"
+          echo "image=$ECR_PUBLIC_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "IMAGE $IMAGE_TAG is pushed to $ECR_PUBLIC_REPO"
+        working-directory: ${{ env.SERVICE_DIR }}
+
+      - name: Create Task Definition Revision
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          context: ./apps/auth
-          push: true
-          tags: ghcr.io/${{ github.repository }}/apps/auth:latest
-          labels: |
-            org.opencontainers.image.source=${{ github.repositoryUrl }}
+          task-definition: apps/auth/task-definition.json
+          container-name: auth-ecs-container
+          image: ${{ steps.build-publish.outputs.image }}
+      
+      - name: Amazon ECS Deployment
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: auth
+          cluster: ${{ secrets.AWS_ECS_CLUSTER }}
+          wait-for-service-stability: true
