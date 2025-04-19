@@ -114,7 +114,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: apps/auth/task-definition.json
-          container-name: auth-ecs-container
+          container-name: auth
           image: ${{ steps.build-publish.outputs.image }}
       
       - name: Amazon ECS Deployment
