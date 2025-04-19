@@ -38,7 +38,7 @@
                 },
                 "secretOptions": []
             },
-            "systemControls": [],
+            "systemControls": []
         }
     ],
     "family": "auth",
