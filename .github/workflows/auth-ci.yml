@@ -124,3 +124,4 @@ jobs:
           service: auth-service
           cluster: ${{ secrets.AWS_ECS_CLUSTER }}
           wait-for-service-stability: true
+          aws-region: ${{ secrets.AWS_REGION }}
