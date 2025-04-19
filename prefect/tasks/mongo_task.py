@@ -6,7 +6,8 @@ from bson import ObjectId
 from datetime import datetime, timezone
 
 load_dotenv()
-MONGO_URI=os.getenv("MONGO_URI")
+MONGO_URI = os.getenv("MONGO_URI")
+
 
 @task
 def update_job_status(job_id: str, status: str, log_message: str = None):
@@ -63,6 +64,7 @@ def add_job_log(job_id: str, log_message: str):
 
         if result.matched_count == 0:
             raise ValueError(f"Job with ID {job_id} not found")
+
 
 @task
 def update_job_match_results(job_id: str, match_results: list):
