@@ -282,6 +282,7 @@ func (s *ClientService) MatchClient(ctx context.Context, req *model.MatchClientR
 			"file_name":  req.FileName,
 			"file_bytes": req.FileBytes,
 			"target_id": clientID,
+			"username":  GetUsername(ctx),
 		},
 	)
 	if err != nil {

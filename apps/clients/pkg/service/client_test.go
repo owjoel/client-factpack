@@ -680,7 +680,8 @@ func (suite *ClientServiceTestSuite) TestMatchClient() {
 		return params["job_id"] == "job-id" &&
 			params["file_name"] == "test-file-name" &&
 			params["file_bytes"] == "test-file-bytes" &&
-			params["target_id"] == clientID
+			params["target_id"] == clientID &&
+			params["username"] == username
 	})).Return(nil)
 
 	jobID, err := suite.clientService.MatchClient(ctx, &model.MatchClientReq{
@@ -741,7 +742,8 @@ func (suite *ClientServiceTestSuite) TestMatchClient_TriggerError() {
 		return params["job_id"] == "job-id" &&
 			params["file_name"] == "test-file-name" &&
 			params["file_bytes"] == "test-file-bytes" &&
-			params["target_id"] == clientID
+			params["target_id"] == clientID &&
+			params["username"] == username
 	})).Return(assert.AnError)
 
 	jobID, err := suite.clientService.MatchClient(ctx, &model.MatchClientReq{
