@@ -121,7 +121,7 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: auth-service
+          service: auth
           cluster: ${{ secrets.AWS_ECS_CLUSTER }}
           wait-for-service-stability: true
           aws-region: ${{ secrets.AWS_REGION }}
