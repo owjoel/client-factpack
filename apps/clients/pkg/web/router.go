@@ -63,11 +63,11 @@ func NewRouter() *Router {
 	v1API.GET("/health", clientHandler.HealthCheck)
 
 	// enable auth
-	authEnabled := false 
+	authEnabled := true 
 	if authEnabled {
-		v1API.Use(handlers.Authenticate)
-		v1Logs.Use(handlers.Authenticate)
-		v1Jobs.Use(handlers.Authenticate)
+		v1API.Use(handlers.Authenticate(handlers.GetJWKS))
+		v1Logs.Use(handlers.Authenticate(handlers.GetJWKS))
+		v1Jobs.Use(handlers.Authenticate(handlers.GetJWKS))
 	}
 
 	// Use RPC styling rather than REST

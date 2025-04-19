@@ -137,6 +137,24 @@ func (_m *ClientServiceInterface) MatchClient(ctx context.Context, req *model.Ma
 	return r0, r1
 }
 
+// RescrapeClient provides a mock function with given fields: ctx, clientID
+func (_m *ClientServiceInterface) RescrapeClient(ctx context.Context, clientID string) error {
+	ret := _m.Called(ctx, clientID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RescrapeClient")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) error); ok {
+		r0 = rf(ctx, clientID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // UpdateClient provides a mock function with given fields: ctx, clientID, changes
 func (_m *ClientServiceInterface) UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error {
 	ret := _m.Called(ctx, clientID, changes)

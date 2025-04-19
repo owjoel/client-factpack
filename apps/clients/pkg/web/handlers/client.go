@@ -12,10 +12,10 @@ import (
 )
 
 type ClientHandler struct {
-	service *service.ClientService
+	service service.ClientServiceInterface
 }
 
-func NewClientHandler(service *service.ClientService) *ClientHandler {
+func NewClientHandler(service service.ClientServiceInterface) *ClientHandler {
 	return &ClientHandler{service: service}
 }
 

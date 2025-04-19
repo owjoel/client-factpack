@@ -26,6 +26,7 @@ type ClientServiceInterface interface {
 	GetAllClients(ctx context.Context, query *model.GetClientsQuery) (total int, clients []model.Client, err error)
 	CreateClientByName(ctx context.Context, req *model.CreateClientByNameReq) (string, error)
 	UpdateClient(ctx context.Context, clientID string, changes []model.SimpleChanges) error
+	RescrapeClient(ctx context.Context, clientID string) error
 	MatchClient(ctx context.Context, req *model.MatchClientReq, clientID string) (string, error)
 }
 
