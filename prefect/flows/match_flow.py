@@ -81,7 +81,6 @@ def match_client_flow(
         else:
             update_job_match_results(job_id, [])
 
-
         if job_id:
             update_job_status(job_id, "completed", "Client matching job completed")
 
