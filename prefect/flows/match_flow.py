@@ -17,6 +17,7 @@ from tasks.notification_task import (
     Notification,
     NotificationType,
 )
+from bson import ObjectId
 
 
 # for text matching
@@ -57,6 +58,7 @@ def match_client_flow(
 
         if matches:
             dedupe_match = dedupe_against_mongo(profile_json, matches)
+            print(dedupe_match)
             if dedupe_match:
                 print(f"[DEDUPLICATION] Matched existing profile:\n{dedupe_match}")
                 add_job_log(job_id, f"Matched existing profile:\n{dedupe_match}")
@@ -74,13 +76,19 @@ def match_client_flow(
                         4,
                     )
                     break
+            print(dedupe_match)
+            print(weighted_avg)
             update_job_match_results(
                 job_id,
-                [{"id": dedupe_match["matched_id"], "confidenceScore": weighted_avg}],
+                [
+                    {
+                        "_id": ObjectId(dedupe_match["matched_id"]),
+                        "confidenceScore": weighted_avg,
+                    }
+                ],
             )
         else:
             update_job_match_results(job_id, [])
-
 
         if job_id:
             update_job_status(job_id, "completed", "Client matching job completed")
