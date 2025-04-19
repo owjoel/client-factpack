@@ -17,9 +17,9 @@ type ClientRepository struct {
 	mock.Mock
 }
 
-// Count provides a mock function with given fields: ctx
-func (_m *ClientRepository) Count(ctx context.Context) (int, error) {
-	ret := _m.Called(ctx)
+// Count provides a mock function with given fields: ctx, query
+func (_m *ClientRepository) Count(ctx context.Context, query *model.GetClientsQuery) (int, error) {
+	ret := _m.Called(ctx, query)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Count")
@@ -27,17 +27,45 @@ func (_m *ClientRepository) Count(ctx context.Context) (int, error) {
 
 	var r0 int
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) (int, error)); ok {
-		return rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.GetClientsQuery) (int, error)); ok {
+		return rf(ctx, query)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) int); ok {
-		r0 = rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.GetClientsQuery) int); ok {
+		r0 = rf(ctx, query)
 	} else {
 		r0 = ret.Get(0).(int)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = rf(ctx)
+	if rf, ok := ret.Get(1).(func(context.Context, *model.GetClientsQuery) error); ok {
+		r1 = rf(ctx, query)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Create provides a mock function with given fields: ctx, c
+func (_m *ClientRepository) Create(ctx context.Context, c *model.Client) (string, error) {
+	ret := _m.Called(ctx, c)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Create")
+	}
+
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Client) (string, error)); ok {
+		return rf(ctx, c)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *model.Client) string); ok {
+		r0 = rf(ctx, c)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *model.Client) error); ok {
+		r1 = rf(ctx, c)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -75,6 +103,34 @@ func (_m *ClientRepository) GetAll(ctx context.Context, query *model.GetClientsQ
 	return r0, r1
 }
 
+// GetClientNameByID provides a mock function with given fields: ctx, clientID
+func (_m *ClientRepository) GetClientNameByID(ctx context.Context, clientID string) (string, error) {
+	ret := _m.Called(ctx, clientID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetClientNameByID")
+	}
+
+	var r0 string
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (string, error)); ok {
+		return rf(ctx, clientID)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) string); ok {
+		r0 = rf(ctx, clientID)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, clientID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetOne provides a mock function with given fields: ctx, clientID
 func (_m *ClientRepository) GetOne(ctx context.Context, clientID string) (*model.Client, error) {
 	ret := _m.Called(ctx, clientID)
@@ -105,9 +161,9 @@ func (_m *ClientRepository) GetOne(ctx context.Context, clientID string) (*model
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, clientID, data
-func (_m *ClientRepository) Update(ctx context.Context, clientID string, data bson.D) error {
-	ret := _m.Called(ctx, clientID, data)
+// Update provides a mock function with given fields: ctx, clientID, update
+func (_m *ClientRepository) Update(ctx context.Context, clientID string, update bson.D) error {
+	ret := _m.Called(ctx, clientID, update)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Update")
@@ -115,7 +171,7 @@ func (_m *ClientRepository) Update(ctx context.Context, clientID string, data bs
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, string, bson.D) error); ok {
-		r0 = rf(ctx, clientID, data)
+		r0 = rf(ctx, clientID, update)
 	} else {
 		r0 = ret.Error(0)
 	}

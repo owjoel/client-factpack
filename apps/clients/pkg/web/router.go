@@ -50,8 +50,10 @@ func NewRouter() *Router {
 	jobService := service.NewJobService(jobRepository)
 	jobHandler := handlers.NewJobHandler(jobService)
 
+	prefectFlowRunner := service.NewPrefectFlowRunner(config.PrefectAPIURL, config.PrefectAPIKey, &http.Client{})
+
 	clientRepository := repository.NewMongoClientRepository(mongoDb)
-	clientService := service.NewClientService(clientRepository, jobService, logService)
+	clientService := service.NewClientService(clientRepository, jobService, logService, prefectFlowRunner)
 	clientHandler := handlers.NewClientHandler(clientService)
 
 
