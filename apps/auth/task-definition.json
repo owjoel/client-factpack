@@ -19,7 +19,7 @@
             "environment": [],
             "environmentFiles": [
                 {
-                    "value": "arn:aws:s3:::davids-secret-stuff/auth/.env",
+                    "value": "arn:aws:s3:::davids-cool-stuff/auth/.env",
                     "type": "s3"
                 }
             ],
