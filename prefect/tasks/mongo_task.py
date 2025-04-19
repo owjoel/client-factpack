@@ -64,7 +64,6 @@ def add_job_log(job_id: str, log_message: str):
         if result.matched_count == 0:
             raise ValueError(f"Job with ID {job_id} not found")
 
-
 @task
 def update_job_match_results(job_id: str, match_results: list):
     with MongoClient(MONGO_URI) as client:
