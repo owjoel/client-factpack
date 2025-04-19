@@ -63,7 +63,7 @@ func NewRouter() *Router {
 	v1API.GET("/health", clientHandler.HealthCheck)
 
 	// enable auth
-	authEnabled := true 
+	authEnabled := false 
 	if authEnabled {
 		v1API.Use(handlers.Authenticate(handlers.GetJWKS))
 		v1Logs.Use(handlers.Authenticate(handlers.GetJWKS))

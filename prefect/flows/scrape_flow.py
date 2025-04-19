@@ -67,7 +67,7 @@ def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
             status=JobStatus.COMPLETED,
             type=JobType.SCRAPE,
             clientId=client_id,
-            clientName=target_clean,
+            clientName=[target_clean],
             priority=Priority.LOW,
         )
 
@@ -86,7 +86,7 @@ def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
             status=JobStatus.FAILED,
             type=JobType.SCRAPE,
             clientId=client_id,
-            clientName=target_clean,
+            clientName=[target_clean],
             priority=Priority.LOW,
         )
 

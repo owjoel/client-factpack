@@ -100,7 +100,7 @@ def match_client_flow(
             status=JobStatus.COMPLETED,
             type=JobType.MATCH,
             clientId=target_id,
-            clientName=names[0],
+            clientName=names,
             priority=Priority.LOW,
         )
 
@@ -121,7 +121,7 @@ def match_client_flow(
             status=JobStatus.FAILED,
             type=JobType.MATCH,
             clientId=target_id,
-            clientName=names[0],
+            clientName=names,
             priority=Priority.MEDIUM,
         )
 
