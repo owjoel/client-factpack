@@ -78,9 +78,6 @@
             "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
         }
     ],
-    "compatibilities": [
-        "EC2"
-    ],
     "requiresCompatibilities": [
         "EC2"
     ],
