@@ -68,7 +68,7 @@ def dedupe_against_mongo(new_record: Dict, qdrant_matches: list) -> str | None:
             config_name="dedupe_dataframe",
             update_model=False,
             threshold=0.4,
-            sample_size=0.3,
+            sample_size=0.5,
             canonicalize=True,
         )
     except Exception as e:
@@ -83,7 +83,7 @@ def dedupe_against_mongo(new_record: Dict, qdrant_matches: list) -> str | None:
     # print(deduped_df[["Name", "_is_existing", "cluster id", "confidence"]])
 
     print("[DEBUG] Deduped dataframe")
-    print(deduped_df[["Name", "_is_existing", "cluster id", "confidence"]])
+    print(deduped_df[["Name", "cluster id", "confidence"]])
 
     deduped_df["_is_existing"] = deduped_df["_is_existing"].map(
         lambda x: str(x).lower() == "true"
