@@ -6,69 +6,55 @@
     ],
     "gender": "Male",
     "dateOfBirth": "1944-08-17",
-    "description": "American businessman and entrepreneur co-founder of Oracle Corporation.",
+    "description": "American businessman and entrepreneur",
     "nationality": "American",
     "currentResidence": {
-      "city": "L\u0101na\u02bbi",
+      "city": "",
       "country": "USA"
     },
     "netWorth": {
       "estimatedValue": 211000000000,
       "currency": "USD",
-      "source": "Forbes 2025"
+      "source": "Bloomberg Billionaires Index, Forbes"
     },
     "industries": [
       "Technology",
-      "Real Estate",
-      "Pharmaceutical",
-      "Aerospace"
+      "Software"
     ],
     "occupations": [
-      "Businessman",
-      "Entrepreneur",
-      "Philanthropist"
+      "Co-founder of Oracle Corporation",
+      "Executive Chairman of Oracle",
+      "Chief Technology Officer"
     ],
     "pastOccupations": [
-      "Chief Executive Officer"
+      "CEO of Oracle Corporation"
     ],
     "careerTimeline": [
       {
         "year": "1977",
-        "event": "Founded Oracle Corporation"
-      },
-      {
-        "year": "1979",
-        "event": "Oracle Database version 2 released"
-      },
-      {
-        "year": "1997",
-        "event": "Appointed director of Apple Computer"
-      },
-      {
-        "year": "2009",
-        "event": "Purchased Indian Wells Tennis Garden"
+        "event": "Co-founded Oracle Corporation"
       },
       {
         "year": "2010",
-        "event": "Oracle acquired Sun Microsystems"
+        "event": "Became Executive Chairman and CTO of Oracle"
+      },
+      {
+        "year": "2016",
+        "event": "Owner of 35% of NetSuite"
       },
       {
         "year": "2018",
-        "event": "Became a director on the board of Tesla, Inc."
-      },
-      {
-        "year": "2022",
-        "event": "Moves residence to L\u0101na\u02bbi"
-      },
-      {
-        "year": "2023",
-        "event": "Closed Project Ronin startup"
+        "event": "Director of Tesla, Inc. (until August 2022)"
       }
     ],
     "socials": [
       {
         "platform": "LinkedIn",
-        "link": "https://www.linkedin.com/in/lawrenceellison"
+        "link": "https://www.linkedin.com/in/larryellison"
+      },
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/LarryEllison"
       }
     ]
   },
@@ -79,64 +65,68 @@
       "ownershipPercentage": 42.9,
       "industry": "Technology",
       "status": "Active",
-      "subsidiaries": [],
+      "subsidiaries": [
+        {
+          "name": "Solaris",
+          "ownershipPercentage": 100,
+          "industry": "Software",
+          "links": [
+            {
+              "label": "Oracle Solaris",
+              "url": "https://www.oracle.com/solaris/"
+            },
+            {
+              "label": "Oracle Solaris Wiki",
+              "url": "https://en.wikipedia.org/wiki/Oracle_Solaris"
+            }
+          ]
+        }
+      ],
       "links": [
         {
-          "label": "Official Website",
-          "url": "https://www.oracle.com"
+          "label": "Oracle Corporation Official Website",
+          "url": "https://www.oracle.com/"
         }
       ]
     },
     {
-      "name": "L\u0101na\u02bbi Properties",
+      "name": "Lanai Island",
       "ownershipType": "Direct",
       "ownershipPercentage": 98,
       "industry": "Real Estate",
-      "status": "Active",
-      "subsidiaries": [],
-      "links": []
+      "status": "Active"
     }
   ],
   "investments": [
     {
-      "name": "Tesla, Inc.",
+      "name": "Salesforce.com",
       "type": "Equity",
       "value": {
-        "value": null,
+        "value": 0,
         "currency": "USD"
       },
-      "industry": "Automotive",
+      "industry": "Technology",
       "status": "Active"
     },
     {
       "name": "NetSuite",
       "type": "Equity",
       "value": {
-        "value": 9300000000,
+        "value": 0,
         "currency": "USD"
       },
       "industry": "Technology",
-      "status": "Active"
+      "status": "Exited"
     },
     {
-      "name": "Salesforce.com",
+      "name": "Tesla, Inc.",
       "type": "Equity",
       "value": {
-        "value": null,
+        "value": 0,
         "currency": "USD"
       },
-      "industry": "Technology",
-      "status": "Active"
-    },
-    {
-      "name": "Astex Pharmaceuticals",
-      "type": "Equity",
-      "value": {
-        "value": null,
-        "currency": "USD"
-      },
-      "industry": "Pharmaceutical",
-      "status": "Active"
+      "industry": "Automotive",
+      "status": "Exited"
     }
   ],
   "family": [
@@ -155,29 +145,32 @@
   ],
   "associates": [
     {
-      "name": "Steve Jobs",
-      "relationship": "Former Colleague at Apple",
-      "associatedCompanies": [
-        "Apple Inc."
-      ]
-    },
-    {
       "name": "Mark Hurd",
-      "relationship": "Friend and Colleague",
+      "relationship": "Friend; Co-President of Oracle",
       "associatedCompanies": [
         "Oracle Corporation"
       ]
+    },
+    {
+      "name": "Steve Jobs",
+      "relationship": "Friend; Director of Apple",
+      "associatedCompanies": [
+        "Apple Inc."
+      ]
     }
   ],
-  "_": {},
   "sources": [
     {
-      "source": "Forbes 2025 Billionaires List",
-      "confidence": 0.95
+      "source": "Wikipedia",
+      "confidence": 0.9
+    },
+    {
+      "source": "Forbes Billionaire's list",
+      "confidence": 1.0
     },
     {
       "source": "Bloomberg Billionaires Index",
-      "confidence": 0.9
+      "confidence": 1.0
     }
   ]
 }

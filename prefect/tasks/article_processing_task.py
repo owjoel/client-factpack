@@ -132,7 +132,7 @@ def extract_client_info(text: str) -> ClientProfile:
                 "role": "system",
                 "content": "Extract relevant infomation out of the user raw text in a JSON object."
                 "Ensure that all key fields are filled if they can be reasonably inferred — especially the "
-                "'ownedCompanies' field. Ensure that the name is the full name.",
+                "'ownedCompanies' and the 'nationality' field. Ensure that the name is the full name.",
             },
             {"role": "user", "content": text},
         ],

@@ -1,7 +1,7 @@
 {
   "profile": {
     "names": [
-      "Sergey Mikhailovich Brin"
+      "Sergey Brin"
     ],
     "gender": "Male",
     "dateOfBirth": "1973-08-21",
@@ -9,10 +9,10 @@
     "nationality": "American",
     "currentResidence": {
       "city": "",
-      "country": ""
+      "country": "United States"
     },
     "netWorth": {
-      "estimatedValue": 164000000000,
+      "estimatedValue": 164,
       "currency": "USD",
       "source": "Bloomberg Billionaires Index and Forbes"
     },
@@ -20,24 +20,24 @@
       "Technology"
     ],
     "occupations": [
-      "Co-founder of Google",
-      "President of Alphabet Inc."
+      "Computer Scientist",
+      "Businessman"
     ],
     "pastOccupations": [
-      "PhD student"
+      "President of Alphabet Inc."
     ],
     "careerTimeline": [
       {
-        "year": "1979-10-25",
-        "event": "Immigrated to the United States"
+        "year": "1993",
+        "event": "Graduated from the University of Maryland with a B.Sc. in Computer Science and Mathematics."
       },
       {
-        "year": "1993",
-        "event": "Enrolled in Stanford University to acquire a PhD in computer science"
+        "year": "1995",
+        "event": "Obtained an M.S. in Computer Science from Stanford University."
       },
       {
         "year": "1998",
-        "event": "Co-founded Google"
+        "event": "Co-founded Google with Larry Page."
       },
       {
         "year": "2019-12-03",
@@ -46,15 +46,34 @@
     ],
     "socials": []
   },
-  "ownedCompanies": [],
+  "ownedCompanies": [
+    {
+      "name": "Google",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "LTA Research & Exploration LLC",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Aerospace",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
   "investments": [
     {
       "name": "Space Adventures",
       "type": "Equity",
       "value": {
-        "value": 4500000
+        "value": 4.5,
+        "currency": "USD"
       },
-      "currency": "USD",
       "industry": "Space Tourism",
       "status": "Active"
     }
@@ -70,30 +89,43 @@
     },
     {
       "name": "Anne Wojcicki",
-      "relationship": "Ex-spouse"
+      "relationship": "Former Spouse"
     },
     {
       "name": "Nicole Shanahan",
-      "relationship": "Ex-spouse"
+      "relationship": "Former Spouse"
+    },
+    {
+      "name": "",
+      "relationship": "Son"
+    },
+    {
+      "name": "",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "",
+      "relationship": "Daughter"
     }
   ],
   "associates": [
     {
       "name": "Larry Page",
-      "relationship": "Business Associate",
+      "relationship": "Business Partner",
       "associatedCompanies": [
-        "Google"
+        "Google",
+        "Alphabet Inc."
       ]
     }
   ],
   "sources": [
     {
-      "source": "Forbes",
-      "confidence": 0.95
+      "source": "Bloomberg Billionaires Index",
+      "confidence": null
     },
     {
-      "source": "Bloomberg Billionaires Index",
-      "confidence": 0.9
+      "source": "Forbes",
+      "confidence": null
     }
   ]
 }

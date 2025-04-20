@@ -1,7 +1,7 @@
 {
   "profile": {
     "names": [
-      "Amancio Ortega Gaona"
+      "Amancio Ortega"
     ],
     "gender": "Male",
     "dateOfBirth": "1936-03-28",
@@ -12,50 +12,43 @@
       "country": "Spain"
     },
     "netWorth": {
-      "estimatedValue": 103000000000,
+      "estimatedValue": 134.3,
       "currency": "USD",
-      "source": "Forbes 2024"
+      "source": "September 2024 net worth report"
     },
     "industries": [
       "Fashion",
-      "Retail",
       "Real Estate"
     ],
     "occupations": [
-      "Founder",
-      "Chairman"
+      "Founder of Inditex",
+      "Executive Chairman of Pontegadea"
     ],
-    "pastOccupations": [
-      "Shop Hand"
-    ],
+    "pastOccupations": [],
     "careerTimeline": [
       {
         "year": "1963",
-        "event": "Founded Confecciones Goa"
+        "event": "Founded Confecciones Goa to sell quilted bathrobes."
       },
       {
         "year": "1975",
-        "event": "Opened first Zara store"
+        "event": "Opened first Zara store with wife Rosal\u00eda Mera."
       },
       {
-        "year": "2001",
-        "event": "Inditex went public"
+        "year": "2000",
+        "event": "Public appearance prior to Inditex's IPO."
       },
       {
         "year": "2009",
-        "event": "Appointed Knight Grand Cross of the Order of Civil Merit"
+        "event": "Appointed Knight Grand Cross of the Order of Civil Merit."
       },
       {
         "year": "2011",
-        "event": "Announced retirement from Inditex"
+        "event": "Announced retirement from Inditex."
       },
       {
         "year": "2012",
-        "event": "Donated about \u20ac20 million to Caritas Internationalis"
-      },
-      {
-        "year": "2017",
-        "event": "Received award from Spanish Association of Foundations"
+        "event": "Donated \u20ac20 million to Caritas Internationalis."
       }
     ],
     "socials": []
@@ -70,26 +63,56 @@
       "subsidiaries": [
         {
           "name": "Zara",
-          "ownershipPercentage": null,
-          "industry": "Fashion",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
           "links": []
         },
         {
           "name": "Massimo Dutti",
-          "ownershipPercentage": null,
-          "industry": "Fashion",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Oysho",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Zara Home",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Kiddy's Class",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Tempe",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Stradivarius",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
           "links": []
         },
         {
           "name": "Pull and Bear",
-          "ownershipPercentage": null,
-          "industry": "Fashion",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
           "links": []
         },
         {
           "name": "Bershka",
-          "ownershipPercentage": null,
-          "industry": "Fashion",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
           "links": []
         }
       ],
@@ -98,7 +121,7 @@
     {
       "name": "Pontegadea",
       "ownershipType": "Direct",
-      "ownershipPercentage": null,
+      "ownershipPercentage": 100,
       "industry": "Real Estate",
       "status": "Active",
       "subsidiaries": [],
@@ -107,10 +130,50 @@
   ],
   "investments": [
     {
+      "name": "Torre Picasso",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "EUR"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
+      "name": "Epic Residences and Hotel",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
+      "name": "Troy Block complex",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
+      "name": "Property holdings through Pontegadea",
+      "type": "Equity",
+      "value": {
+        "value": 17.2,
+        "currency": "USD"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
       "name": "Enag\u00e1s",
       "type": "Equity",
       "value": {
-        "value": 281640000,
+        "value": 281.64,
         "currency": "EUR"
       },
       "industry": "Energy",
@@ -121,7 +184,7 @@
       "type": "Equity",
       "value": {
         "value": null,
-        "currency": ""
+        "currency": "EUR"
       },
       "industry": "Energy",
       "status": "Active"
@@ -131,7 +194,7 @@
       "type": "Equity",
       "value": {
         "value": null,
-        "currency": ""
+        "currency": "EUR"
       },
       "industry": "Energy",
       "status": "Active"
@@ -140,30 +203,25 @@
   "family": [
     {
       "name": "Rosal\u00eda Mera Goyenechea",
-      "relationship": "Former Spouse"
+      "relationship": "Ex-wife"
     },
     {
       "name": "Marcos Ortega Mera",
-      "relationship": "Child"
+      "relationship": "Son"
     },
     {
       "name": "Sandra Ortega Mera",
-      "relationship": "Child"
+      "relationship": "Daughter"
     },
     {
       "name": "Flora P\u00e9rez Marcote",
-      "relationship": "Spouse"
+      "relationship": "Wife"
     },
     {
       "name": "Marta Ortega P\u00e9rez",
-      "relationship": "Child"
+      "relationship": "Daughter"
     }
   ],
   "associates": [],
-  "sources": [
-    {
-      "source": "Forbes",
-      "confidence": null
-    }
-  ]
+  "sources": []
 }

@@ -1,0 +1,198 @@
+{
+  "profile": {
+    "names": [
+      "Elon Musk"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1971-06-28",
+    "description": "Elon Reeve Musk is a prominent entrepreneur and business magnate. He is the CEO and chief engineer at SpaceX, early investor and CEO of Tesla, owner of Twitter (rebranded as X), and a senior advisor to the U.S. President in the Department of Government Efficiency.",
+    "nationality": "South African",
+    "currentResidence": {
+      "city": "Cameron County",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 345,
+      "currency": "USD",
+      "source": "Forbes"
+    },
+    "industries": [
+      "Transportation",
+      "Automotive",
+      "Aerospace",
+      "Technology",
+      "Energy"
+    ],
+    "occupations": [
+      "CEO of SpaceX",
+      "CEO of Tesla",
+      "Owner of X (formerly Twitter)",
+      "Senior Advisor at DOGE"
+    ],
+    "pastOccupations": [
+      "CEO of X.com",
+      "CEO of PayPal",
+      "Owner of Tesla Chairmanship"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1995",
+        "event": "Co-founded Zip2"
+      },
+      {
+        "year": "1999",
+        "event": "Co-founded X.com (later PayPal)"
+      },
+      {
+        "year": "2002",
+        "event": "Founded SpaceX"
+      },
+      {
+        "year": "2004",
+        "event": "Joined Tesla as an investor"
+      },
+      {
+        "year": "2008",
+        "event": "Became CEO of Tesla"
+      },
+      {
+        "year": "2015",
+        "event": "Co-founded OpenAI"
+      },
+      {
+        "year": "2016",
+        "event": "Co-founded Neuralink"
+      },
+      {
+        "year": "2017",
+        "event": "Founded The Boring Company"
+      },
+      {
+        "year": "2022",
+        "event": "Acquired Twitter (rebranded as X)"
+      },
+      {
+        "year": "2025",
+        "event": "Appointed senior advisor to President Trump at DOGE"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/elonmusk"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "SpaceX",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Aerospace",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Tesla, Inc.",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Automotive",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "X (formerly Twitter)",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "OpenAI",
+      "type": "Other",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Artificial Intelligence",
+      "status": "Exited"
+    },
+    {
+      "name": "Neuralink",
+      "type": "Equity",
+      "value": {
+        "value": 100,
+        "currency": "USD"
+      },
+      "industry": "Neurotechnology",
+      "status": "Active"
+    },
+    {
+      "name": "The Boring Company",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Tunneling",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Maye Musk",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Errol Musk",
+      "relationship": "Father"
+    },
+    {
+      "name": "Kimbal Musk",
+      "relationship": "Brother"
+    },
+    {
+      "name": "Tosca Musk",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Vivian Jenna Wilson",
+      "relationship": "Daughter"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Donald Trump",
+      "relationship": "President of the United States",
+      "associatedCompanies": []
+    },
+    {
+      "name": "Grimes",
+      "relationship": "Mother of children",
+      "associatedCompanies": []
+    },
+    {
+      "name": "Kimbal Musk",
+      "relationship": "Brother and business partner",
+      "associatedCompanies": [
+        "Tesla"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 0.95
+    },
+    {
+      "source": "Wikipedia",
+      "confidence": 0.85
+    }
+  ]
+}

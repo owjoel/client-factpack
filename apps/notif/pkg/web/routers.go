@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"net/http"
 
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger"
-	swaggerFiles "github.com/swaggo/files"
 	_ "github.com/owjoel/client-factpack/apps/notif/docs"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/rest"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Initializes Gin router
@@ -22,7 +21,7 @@ func InitRouter() {
 	// enable CORS
 	router.Use(
 		cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost:5173"},
+			AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173"},
 			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			AllowHeaders:     []string{"Content-Type", "Authorization"},
 			AllowCredentials: true,

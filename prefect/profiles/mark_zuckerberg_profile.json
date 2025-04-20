@@ -1,20 +1,21 @@
 {
   "profile": {
     "names": [
+      "Mark Zuckerberg",
       "Mark Elliot Zuckerberg"
     ],
     "gender": "Male",
     "dateOfBirth": "1984-05-14",
-    "description": "",
+    "description": "American businessman co-founder of Facebook now Meta Platforms.",
     "nationality": "American",
     "currentResidence": {
       "city": "Palo Alto",
       "country": "USA"
     },
     "netWorth": {
-      "estimatedValue": 219,
+      "estimatedValue": 214.1,
       "currency": "USD",
-      "source": "Forbes"
+      "source": "Forbes, March 2025"
     },
     "industries": [
       "Technology"
@@ -24,104 +25,101 @@
       "CEO",
       "Controlling Shareholder"
     ],
-    "pastOccupations": [],
+    "pastOccupations": [
+      "Software Developer"
+    ],
     "careerTimeline": [
       {
-        "year": "1984",
-        "event": "Born in White Plains, New York"
+        "year": "2002",
+        "event": "Attended Harvard College and gained reputation as a programming prodigy."
       },
       {
-        "year": "2004",
-        "event": "Launched Facebook"
+        "year": "2004-02-04",
+        "event": "Launched 'Thefacebook' with roommates."
       },
       {
         "year": "2008",
-        "event": "Became the world's youngest self-made billionaire"
+        "event": "Became youngest self-made billionaire."
       },
       {
-        "year": "2010",
-        "event": "The Social Network film released"
+        "year": "2012-05",
+        "event": "Took company public with majority shares."
       },
       {
-        "year": "2013",
-        "event": "Launched Internet.org"
+        "year": "2015-12",
+        "event": "Established Chan Zuckerberg Initiative with wife."
       },
       {
-        "year": "2016",
-        "event": "Signed The Giving Pledge"
+        "year": "2025-03",
+        "event": "Net worth of USD 214.1 billion, becoming the second richest."
       },
       {
-        "year": "2018",
-        "event": "Testified before the U.S. Senate regarding Facebook-Cambridge Analytica scandal"
+        "year": "2025",
+        "event": "Engaged with Trump administration for competition settlement."
       }
     ],
     "socials": [
       {
         "platform": "Facebook",
-        "link": "https://www.facebook.com/zuck"
+        "link": "https://facebook.com/zuck"
       }
     ]
   },
   "ownedCompanies": [
     {
-      "name": "Meta Platforms",
+      "name": "Facebook (now Meta Platforms)",
       "ownershipType": "Direct",
       "ownershipPercentage": null,
       "industry": "Technology",
       "status": "Active",
       "subsidiaries": [
         {
-          "name": "Facebook",
-          "ownershipPercentage": null,
-          "industry": "Technology",
-          "links": []
-        },
-        {
           "name": "Instagram",
           "ownershipPercentage": null,
-          "industry": "Technology",
-          "links": []
+          "industry": "Social Media",
+          "links": [
+            {
+              "label": "Subsidiary Information",
+              "url": "https://about.instagram.com/"
+            }
+          ]
         },
         {
           "name": "WhatsApp",
           "ownershipPercentage": null,
-          "industry": "Technology",
-          "links": []
+          "industry": "Messenger",
+          "links": [
+            {
+              "label": "Subsidiary Information",
+              "url": "https://www.whatsapp.com/"
+            }
+          ]
         }
       ],
       "links": [
         {
-          "label": "Official Website",
-          "url": "https://about.fb.com"
+          "label": "Corporate Website",
+          "url": "https://www.meta.com"
         }
       ]
     }
   ],
-  "investments": [],
+  "investments": [
+    {
+      "name": "Chan Zuckerberg Initiative",
+      "type": "Other",
+      "value": {
+        "value": 45,
+        "currency": "USD"
+      },
+      "industry": "Philanthropy",
+      "status": "Active"
+    }
+  ],
   "family": [
     {
       "name": "Priscilla Chan",
       "relationship": "Wife"
-    },
-    {
-      "name": "Maxima Chan Zuckerberg",
-      "relationship": "Daughter"
-    },
-    {
-      "name": "August Chan Zuckerberg",
-      "relationship": "Daughter"
-    },
-    {
-      "name": "Aurelia Chan Zuckerberg",
-      "relationship": "Daughter"
-    },
-    {
-      "name": "Karen Kempner",
-      "relationship": "Mother"
-    },
-    {
-      "name": "Edward Zuckerberg",
-      "relationship": "Father"
     },
     {
       "name": "Arielle Zuckerberg",
@@ -137,6 +135,13 @@
     }
   ],
   "associates": [
+    {
+      "name": "Elon Musk",
+      "relationship": "Competition",
+      "associatedCompanies": [
+        "Tesla"
+      ]
+    },
     {
       "name": "Eduardo Saverin",
       "relationship": "Co-founder",
@@ -168,12 +173,16 @@
   ],
   "sources": [
     {
-      "source": "Forbes",
-      "confidence": null
+      "source": "Forbes, March 2025",
+      "confidence": 0.9
+    },
+    {
+      "source": "New York Times",
+      "confidence": 0.8
     },
     {
       "source": "The Social Network Film",
-      "confidence": null
+      "confidence": 0.5
     }
   ]
 }
