@@ -7,9 +7,9 @@ import (
 )
 
 type Client struct {
-	ID       bson.ObjectID  `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
-	Data     bson.D         `bson:"data" json:"data"`
-	Metadata ClientMetadata `bson:"metadata" json:"metadata"`
+	ID       bson.ObjectID   `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
+	Data     bson.D          `bson:"data" json:"data"`
+	Metadata ClientMetadata  `bson:"metadata" json:"metadata"`
 	Articles []bson.ObjectID `json:"articles"`
 }
 
@@ -71,11 +71,9 @@ type MatchClientReq struct {
 	FileBytes string
 }
 
-
 type JobIDRes struct {
 	JobID string `json:"jobId"`
 }
-
 // // Client contains all information for a particular client
 // type Client struct {
 // 	// gorm.Model

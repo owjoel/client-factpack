@@ -56,14 +56,18 @@ func NewRouter() *Router {
 	clientService := service.NewClientService(clientRepository, jobService, logService, prefectFlowRunner)
 	clientHandler := handlers.NewClientHandler(clientService)
 
+	articleRepository := repository.NewMongoArticleRepository(mongoDb)
+	articleService := service.NewArticleService(articleRepository)
+	articleHandler := handlers.NewArticleHandler(articleService)
 
 	v1API := router.Group("/api/v1/clients")
 	v1Logs := router.Group("/api/v1/logs")
 	v1Jobs := router.Group("/api/v1/jobs")
+	v1Articles := router.Group("/api/v1/articles")
 	v1API.GET("/health", clientHandler.HealthCheck)
 
 	// enable auth
-	authEnabled := false 
+	authEnabled := false
 	if authEnabled {
 		v1API.Use(handlers.Authenticate(handlers.GetJWKS))
 		v1Logs.Use(handlers.Authenticate(handlers.GetJWKS))
@@ -89,6 +93,10 @@ func NewRouter() *Router {
 	v1Logs.GET("/", logHandler.GetLogs)
 	v1Logs.GET("/:id", logHandler.GetLog)
 	// endregion Logs
+
+	// startregion Articles
+	v1Articles.POST("/", articleHandler.GetAllArticles)
+	// endregion Articles
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
