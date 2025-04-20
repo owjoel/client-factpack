@@ -39,7 +39,7 @@ def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
         profile_json = parse_openai_response(response)
         print(f"[{target}] OpenAI response parsed, saving files...")
         add_job_log(job_id, f"[{target}] OpenAI response parsed, saving files...")
-        
+
         save_files(target_clean, wiki_text, profile_json)
         print(f"[{target}] Files saved, updating client profile...")
         add_job_log(job_id, f"[{target}] Files saved, updating client profile...")

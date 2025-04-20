@@ -84,6 +84,7 @@ def update_client_profile(client_id: str, profile_json: dict):
                     "metadata.updatedAt": datetime.now(timezone.utc),
                     "metadata.scraped": True,
                     "metadata.sources": ["wikipedia"],
+                    "articles": [],
                 }
             },
         )

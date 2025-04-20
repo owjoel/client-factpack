@@ -1,62 +1,53 @@
 {
   "profile": {
     "names": [
-      "Michael Rubens Bloomberg"
+      "Michael Bloomberg"
     ],
     "gender": "Male",
     "dateOfBirth": "1942-02-14",
-    "description": "Michael Rubens Bloomberg is an American businessman and politician. He is the majority owner and co-founder of Bloomberg L.P. and served as the 108th mayor of New York City for three terms from 2002 to 2013. Bloomberg was also a candidate for the 2020 Democratic nomination for president of the United States. He is widely recognized for his philanthropic contributions and influence on New York City's development and policies.",
+    "description": "Michael Rubens Bloomberg is an American businessman, politician, philanthropist, and co-founder and majority owner of Bloomberg L.P.",
     "nationality": "American",
     "currentResidence": {
-      "city": "New York",
+      "city": "New York City",
       "country": "United States"
     },
     "netWorth": {
-      "estimatedValue": 104.7,
+      "estimatedValue": 104700000000,
       "currency": "USD",
-      "source": "Forbes, 2025"
+      "source": "Forbes (2025)"
     },
     "industries": [
       "Finance",
-      "Media",
       "Technology",
-      "Politics"
+      "Media"
     ],
     "occupations": [
       "Businessman",
-      "Politician"
+      "Politician",
+      "Philanthropist"
     ],
     "pastOccupations": [
-      "Mayor of New York City",
       "CEO of Bloomberg L.P.",
-      "Candidate for Presidential Nomination"
+      "Mayor of New York City"
     ],
     "careerTimeline": [
-      {
-        "year": "1966",
-        "event": "Started career at Salomon Brothers"
-      },
       {
         "year": "1981",
         "event": "Co-founded Bloomberg L.P."
       },
       {
         "year": "2002",
-        "event": "Became mayor of New York City"
+        "event": "Became Mayor of New York City"
       },
       {
-        "year": "2019",
-        "event": "Announced presidential campaign"
-      },
-      {
-        "year": "2024",
-        "event": "Received Presidential Medal of Freedom"
+        "year": "2020",
+        "event": "Ran for Democratic Presidential Nomination"
       }
     ],
     "socials": [
       {
-        "platform": "None",
-        "link": ""
+        "platform": "Twitter",
+        "link": "https://twitter.com/MikeBloomberg"
       }
     ]
   },
@@ -65,7 +56,7 @@
       "name": "Bloomberg L.P.",
       "ownershipType": "Direct",
       "ownershipPercentage": 88,
-      "industry": "Media",
+      "industry": "Finance",
       "status": "Active",
       "subsidiaries": [
         {
@@ -81,19 +72,23 @@
           "links": []
         },
         {
-          "name": "Bloomberg Message",
-          "ownershipPercentage": null,
-          "industry": "Media",
-          "links": []
-        },
-        {
-          "name": "Bloomberg Tradebook",
+          "name": "Bloomberg LP",
           "ownershipPercentage": null,
           "industry": "Finance",
-          "links": []
+          "links": [
+            {
+              "label": "Official Site",
+              "url": "https://www.bloomberg.com/"
+            }
+          ]
         }
       ],
-      "links": []
+      "links": [
+        {
+          "label": "Official Site",
+          "url": "https://www.bloomberg.com/"
+        }
+      ]
     }
   ],
   "investments": [
@@ -110,16 +105,12 @@
   ],
   "family": [
     {
-      "name": "Charlotte Rubens Bloomberg",
+      "name": "Charlotte Bloomberg",
       "relationship": "Mother"
     },
     {
       "name": "William Henry Bloomberg",
       "relationship": "Father"
-    },
-    {
-      "name": "Susan Elizabeth Barbara Brown",
-      "relationship": "Ex-Wife"
     },
     {
       "name": "Emma Beth Bloomberg",
@@ -143,59 +134,21 @@
       ]
     },
     {
-      "name": "Daniel L. Doctoroff",
+      "name": "Daniel Doctoroff",
       "relationship": "Former CEO of Bloomberg L.P.",
       "associatedCompanies": [
         "Bloomberg L.P."
-      ]
-    },
-    {
-      "name": "John P. Angelos",
-      "relationship": "Business Associate",
-      "associatedCompanies": [
-        "Baltimore Orioles"
-      ]
-    },
-    {
-      "name": "David Rubenstein",
-      "relationship": "Business Associate",
-      "associatedCompanies": [
-        "Baltimore Orioles"
-      ]
-    },
-    {
-      "name": "Kurt Schmoke",
-      "relationship": "Business Associate",
-      "associatedCompanies": [
-        "Baltimore Orioles"
-      ]
-    },
-    {
-      "name": "Cal Ripken",
-      "relationship": "Business Associate",
-      "associatedCompanies": [
-        "Baltimore Orioles"
-      ]
-    },
-    {
-      "name": "Michael Arougheti",
-      "relationship": "Business Associate",
-      "associatedCompanies": [
-        "Baltimore Orioles"
-      ]
-    },
-    {
-      "name": "Grant Hill",
-      "relationship": "Business Associate",
-      "associatedCompanies": [
-        "Baltimore Orioles"
       ]
     }
   ],
   "sources": [
     {
       "source": "Forbes",
-      "confidence": 0.9
+      "confidence": 1
+    },
+    {
+      "source": "New York Times",
+      "confidence": 1
     }
   ]
 }

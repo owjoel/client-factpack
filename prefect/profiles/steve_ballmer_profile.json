@@ -1,6 +1,7 @@
 {
   "profile": {
     "names": [
+      "Steve Ballmer",
       "Steven Anthony Ballmer"
     ],
     "gender": "Male",
@@ -18,100 +19,93 @@
     },
     "industries": [
       "Technology",
-      "Sport"
+      "Sports",
+      "Philanthropy"
     ],
     "occupations": [
       "Businessman",
       "Investor"
     ],
     "pastOccupations": [
-      "CEO of Microsoft",
-      "Assistant Product Manager at Procter & Gamble"
+      "CEO of Microsoft"
     ],
     "careerTimeline": [
       {
         "year": "1980",
-        "event": "Joined Microsoft, left Stanford MBA program"
+        "event": "Joined Microsoft as the first business manager."
+      },
+      {
+        "year": "1992",
+        "event": "Became Executive Vice President for Sales and Support at Microsoft."
       },
       {
         "year": "1998",
-        "event": "Became President of Microsoft"
+        "event": "Became President of Microsoft."
       },
       {
         "year": "2000",
-        "event": "Became CEO of Microsoft"
+        "event": "Named CEO of Microsoft."
       },
       {
         "year": "2014",
-        "event": "Retired as CEO; left Microsoft board"
-      },
-      {
-        "year": "2014",
-        "event": "Acquired Los Angeles Clippers"
+        "event": "Retired as CEO of Microsoft"
       }
     ],
-    "socials": [],
-    "ownedCompanies": [
+    "socials": [
       {
-        "name": "Los Angeles Clippers",
-        "ownershipType": "Direct",
-        "ownershipPercentage": null,
-        "industry": "Sport",
-        "status": "Active",
-        "subsidiaries": [],
-        "links": []
-      },
-      {
-        "name": "Ballmer Group",
-        "ownershipType": "Direct",
-        "ownershipPercentage": null,
-        "industry": "Philanthropic Investment",
-        "status": "Active",
-        "subsidiaries": [],
-        "links": []
+        "platform": "Twitter",
+        "link": "https://twitter.com/clippersteveb"
       }
-    ],
-    "investments": [],
-    "family": [
-      {
-        "name": "Connie Snyder",
-        "relationship": "Spouse"
-      },
-      {
-        "name": "Gilda Radner",
-        "relationship": "Second Cousin"
-      }
-    ],
-    "associates": [
-      {
-        "name": "Bill Gates",
-        "relationship": "Business Partner",
-        "associatedCompanies": [
-          "Microsoft"
-        ]
-      },
-      {
-        "name": "Paul Allen",
-        "relationship": "Business Partner",
-        "associatedCompanies": [
-          "Microsoft"
-        ]
-      }
-    ],
-    "sources": []
+    ]
   },
+  "ownedCompanies": [
+    {
+      "name": "Los Angeles Clippers",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 100,
+      "industry": "Sports",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Ballmer Group",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Philanthropy",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Connie Snyder",
+      "relationship": "Spouse"
+    },
+    {
+      "name": "Gilda Radner",
+      "relationship": "Cousin"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Bill Gates",
+      "relationship": "Former colleague and friend",
+      "associatedCompanies": [
+        "Microsoft"
+      ]
+    }
+  ],
   "sources": [
     {
-      "source": "Forbes Real-Time Billionaires List",
-      "confidence": 95
-    },
-    {
       "source": "Bloomberg Billionaires Index",
-      "confidence": 95
+      "confidence": null
     },
     {
-      "source": "CNN",
-      "confidence": 90
+      "source": "Forbes Real-Time Billionaires List",
+      "confidence": null
     }
   ]
 }
