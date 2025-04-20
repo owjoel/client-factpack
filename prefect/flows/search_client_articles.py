@@ -63,7 +63,7 @@ def search_client(c: str):
 
         # upload article, update client, and send to queue
         article_id = put_article(obj)
-        names = update_client_article(client_id, article_id)
+        names = update_client_article(client_id["matched_id"], article_id)
         message = {
             "notificationType": "client",
             "title": obj.title,
