@@ -34,12 +34,15 @@ def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
 
         response = generate_openai_response(wiki_text, target, [target])
         print(f"[{target}] OpenAI response generated, parsing...")
+        add_job_log(job_id, f"[{target}] OpenAI response generated, parsing...")
 
         profile_json = parse_openai_response(response)
         print(f"[{target}] OpenAI response parsed, saving files...")
-
+        add_job_log(job_id, f"[{target}] OpenAI response parsed, saving files...")
+        
         save_files(target_clean, wiki_text, profile_json)
         print(f"[{target}] Files saved, updating client profile...")
+        add_job_log(job_id, f"[{target}] Files saved, updating client profile...")
 
         # inserted_id = insert_into_mongo(profile_json, target_clean)
         update_client_profile(client_id, profile_json)
@@ -64,7 +67,7 @@ def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
             status=JobStatus.COMPLETED,
             type=JobType.SCRAPE,
             clientId=client_id,
-            clientName=target_clean,
+            clientName=[target_clean],
             priority=Priority.LOW,
         )
 
@@ -83,7 +86,7 @@ def scrape_client_flow(job_id: str, target: str, client_id: str, username: str):
             status=JobStatus.FAILED,
             type=JobType.SCRAPE,
             clientId=client_id,
-            clientName=target_clean,
+            clientName=[target_clean],
             priority=Priority.LOW,
         )
 

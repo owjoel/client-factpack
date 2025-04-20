@@ -2,8 +2,9 @@ package storage
 
 import (
 	"encoding/json"
+	"log"
 	"strings"
-  
+
 	"github.com/owjoel/client-factpack/apps/notif/config"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api"
 	"github.com/owjoel/client-factpack/apps/notif/pkg/api/model"
@@ -21,7 +22,7 @@ type NotificationMessage struct {
 	Status           model.JobStatus        `json:"status,omitempty"`
 	Type             model.JobType          `json:"type,omitempty"`
 	ClientID         string                 `json:"clientId,omitempty"`
-	ClientName       []string                 `json:"clientName,omitempty"`
+	ClientName       []string               `json:"clientName,omitempty"`
 	Priority         model.Priority         `json:"priority,omitempty"`
 }
 
@@ -79,6 +80,7 @@ func InitMessageQueue(db *gorm.DB) {
 
 			// Forward to WebSocket
 			msgBytes, _ := json.Marshal(notification)
+			log.Printf("Received notification: %+v\n", notification)
 			api.SendNotification(notification.Username, string(msgBytes), string(notification.NotificationType))
 		}
 	}()

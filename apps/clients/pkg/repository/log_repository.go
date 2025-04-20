@@ -113,7 +113,7 @@ func (r *mongoLogRepository) GetOne(ctx context.Context, logID string) (*model.L
 func (r *mongoLogRepository) Count(ctx context.Context) (int, error) {
 	count, err := r.logCollection.CountDocuments(ctx, bson.M{})
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("%w: mongo count error", errorx.ErrDependencyFailed)
 	}
 	return int(count), nil
 }

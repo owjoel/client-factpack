@@ -6,7 +6,8 @@ from bson import ObjectId
 from datetime import datetime, timezone
 
 load_dotenv()
-MONGO_URI=os.getenv("MONGO_URI")
+MONGO_URI = os.getenv("MONGO_URI")
+
 
 @task
 def update_job_status(job_id: str, status: str, log_message: str = None):
@@ -104,3 +105,35 @@ def get_client_names(id: str) -> list[str]:
         if result and "data" in result and "profile" in result["data"]:
             return result["data"]["profile"].get("names", [])
         return []
+
+@task
+def get_client_profile(id: str) -> dict:
+    with MongoClient(MONGO_URI) as client:
+        db = client["client-factpack"]
+        collection = db["clients"]
+
+        # Get entire "data" field
+        result = collection.find_one({"_id": ObjectId(id)}, {"data": 1})
+
+        if result and "data" in result:
+            return result["data"]
+        return None
+
+
+@task
+def update_mongo_client_profile(id: str, profile: dict):
+    with MongoClient(MONGO_URI) as client:
+        db = client["client-factpack"]
+        collection = db["clients"]
+        result = collection.update_one(
+            {"_id": ObjectId(id)},
+            {
+                "$set": {
+                    "data": profile,
+                    "metadata.updatedAt": datetime.now(timezone.utc),
+                }
+            },
+        )
+
+        if result.matched_count == 0:
+            raise ValueError(f"Client with ID {id} not found")

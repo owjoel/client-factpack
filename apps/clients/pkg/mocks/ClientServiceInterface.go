@@ -109,9 +109,9 @@ func (_m *ClientServiceInterface) GetClient(ctx context.Context, clientID string
 	return r0, r1
 }
 
-// MatchClient provides a mock function with given fields: ctx, req
-func (_m *ClientServiceInterface) MatchClient(ctx context.Context, req *model.MatchClientReq) (string, error) {
-	ret := _m.Called(ctx, req)
+// MatchClient provides a mock function with given fields: ctx, req, clientID
+func (_m *ClientServiceInterface) MatchClient(ctx context.Context, req *model.MatchClientReq, clientID string) (string, error) {
+	ret := _m.Called(ctx, req, clientID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for MatchClient")
@@ -119,22 +119,40 @@ func (_m *ClientServiceInterface) MatchClient(ctx context.Context, req *model.Ma
 
 	var r0 string
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *model.MatchClientReq) (string, error)); ok {
-		return rf(ctx, req)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.MatchClientReq, string) (string, error)); ok {
+		return rf(ctx, req, clientID)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *model.MatchClientReq) string); ok {
-		r0 = rf(ctx, req)
+	if rf, ok := ret.Get(0).(func(context.Context, *model.MatchClientReq, string) string); ok {
+		r0 = rf(ctx, req, clientID)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *model.MatchClientReq) error); ok {
-		r1 = rf(ctx, req)
+	if rf, ok := ret.Get(1).(func(context.Context, *model.MatchClientReq, string) error); ok {
+		r1 = rf(ctx, req, clientID)
 	} else {
 		r1 = ret.Error(1)
 	}
 
 	return r0, r1
+}
+
+// RescrapeClient provides a mock function with given fields: ctx, clientID
+func (_m *ClientServiceInterface) RescrapeClient(ctx context.Context, clientID string) error {
+	ret := _m.Called(ctx, clientID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RescrapeClient")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) error); ok {
+		r0 = rf(ctx, clientID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // UpdateClient provides a mock function with given fields: ctx, clientID, changes

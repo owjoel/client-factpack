@@ -18,14 +18,11 @@ from utils.mongo_utils import (
     put_article,
     update_client_article,
 )
-import datetime
 
 
 @flow(task_runner=ThreadPoolTaskRunner(max_workers=3), log_prints=True)
 def search_client(c: str):
-    articles = get_articles.submit(
-        kw=c, date=datetime.now().strftime("%Y-%m-%d")
-    ).result()
+    articles = get_articles.submit(kw=c).result()
     if not articles:
         print(f"No articles for client: {c}")
         return

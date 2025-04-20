@@ -41,7 +41,7 @@ type JobLog struct {
 
 type MatchResult struct {
 	ID         bson.ObjectID `bson:"_id,omitempty" json:"id" swaggerignore:"true"`
-	SimilarityScore      float64       `bson:"similarityScore" json:"similarityScore"`
+	ConfidenceScore      float64       `bson:"confidenceScore" json:"confidenceScore"`
 }
 
 type GetJobsQuery struct {

@@ -4,7 +4,7 @@ import pika
 from dotenv import load_dotenv
 from prefect import task
 import os
-from typing import Optional
+from typing import List, Optional
 
 
 load_dotenv()
@@ -41,7 +41,7 @@ class Notification(BaseModel):
     status: Optional[JobStatus] = None
     type: Optional[JobType] = None
     clientId: Optional[str] = None
-    clientName: Optional[str] = None
+    clientName: Optional[List[str]] = None
     priority: Optional[Priority] = None
 
 

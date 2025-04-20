@@ -128,3 +128,34 @@ def create_clients_collection_in_qdrant():
         print("[Qdrant] 'clients' collection created successfully.")
     except Exception as e:
         print(f"[❌] Failed to create collection: {e}")
+
+
+@task
+def update_qdrant_client_profile(id: str, profile: dict):
+    """
+    Updates the vector and profile payload in Qdrant for the client with given mongo_id.
+    Assumes the point ID in Qdrant is based on: uuid5(NAMESPACE_DNS, mongo_id)
+    """
+    try:
+        if not profile or not id:
+            raise ValueError("Profile and ID must be provided.")
+
+        client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
+
+        point_id = str(uuid5(NAMESPACE_DNS, id))
+
+        text = json.dumps(profile, sort_keys=True)
+        vector = transform_into_vector(text)
+
+        point = PointStruct(
+            id=point_id, vector=vector, payload={"mongo_id": id, "profile": profile}
+        )
+
+        client.upsert(collection_name="clients", points=[point])
+
+        print(f"[Qdrant] Successfully updated vector and profile for Mongo ID: {id}")
+
+    except Exception as e:
+        print(f"[ERROR] Failed to update Qdrant profile for Mongo ID {id}: {e}")
+        traceback.print_exc()
+        raise

@@ -104,7 +104,14 @@ def dedupe_against_mongo(new_record: Dict, qdrant_matches: list) -> str | None:
     print("[DEBUG] Match found:")
     print(matched_row.to_dict())
 
-    return matched_row["_id"]
+    new_record_confidence = deduped_df[~deduped_df["_is_existing"]]["confidence"].iloc[
+        0
+    ]
+
+    return {
+        "matched_id": matched_row["_id"],
+        "confidence": round(float(new_record_confidence), 4),
+    }
 
 
 def extract_dedupe_fields(doc: dict) -> dict:

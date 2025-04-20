@@ -10,6 +10,7 @@ import (
 
 const (
 	database   = "client-factpack"
+	article    = "articles"
 	collection = "clients"
 	templates  = "templates"
 	jobs       = "jobs"
@@ -18,10 +19,10 @@ const (
 
 type MongoStorage struct {
 	*mongo.Database
-	clientCollection *mongo.Collection
-	templateCollection *mongo.Collection
-	jobCollection *mongo.Collection
-	logCollection *mongo.Collection
+	articleCollection *mongo.Collection
+	clientCollection  *mongo.Collection
+	jobCollection     *mongo.Collection
+	logCollection     *mongo.Collection
 }
 
 func InitMongo() *MongoStorage {
@@ -35,9 +36,9 @@ func InitMongo() *MongoStorage {
 	}
 
 	db := client.Database(database)
+	articleColl := db.Collection(article)
 	clientColl := db.Collection(collection)
-	templateColl := db.Collection(templates)
 	jobColl := db.Collection(jobs)
 	logColl := db.Collection(logs)
-	return &MongoStorage{db, clientColl, templateColl, jobColl, logColl} 
+	return &MongoStorage{db, articleColl, clientColl, jobColl, logColl}
 }

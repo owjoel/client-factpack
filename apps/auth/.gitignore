@@ -18,3 +18,5 @@ go.work.sum
 # env file
 *.env
 *.sh
+
+.DS_Store

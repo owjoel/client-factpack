@@ -6,6 +6,7 @@ from bson import ObjectId
 from model.client_article import ClientArticle
 from dotenv import load_dotenv
 
+load_dotenv()
 
 mongo_client = MongoClient(os.getenv("MONGO_URI"))
 db_name = "client-factpack"
@@ -43,7 +44,6 @@ def update_client_article(client_id: str, article_id: ObjectId):
 
 
 def fetch_mongo_records_by_ids(ids: list):
-    load_dotenv()
     mongo_uri = os.getenv("MONGO_URI")
     db_name = os.getenv("DB_NAME")
     collection_name = os.getenv("CLIENT_COLLECTION_NAME")
