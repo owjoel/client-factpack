@@ -38,7 +38,7 @@ def build_prompt_no_schema(text: str, target: str, known_names: list[str]):
         9. **For nested fields, preserve hierarchy and structure.**
         10. **Exclude any additional commentary or explanations.**
         12. **Ensure that all key fields are filled if they can be reasonably inferred — especially the "
-        "'ownedCompanies' field**
+        "'ownedCompanies' field and the 'Primary Citizenship' field**
 
     """
 
