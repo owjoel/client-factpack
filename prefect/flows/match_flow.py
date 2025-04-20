@@ -1,12 +1,14 @@
 from prefect import flow
 from tasks.scrape_task import generate_openai_response, parse_openai_response
-from tasks.qdrant_task import search_profiles_by_json
+from tasks.qdrant_task import search_profiles_by_json, update_qdrant_client_profile
 from tasks.dedupe_task import dedupe_against_mongo
 from tasks.mongo_task import (
     update_job_status,
     update_job_match_results,
     get_client_names,
     add_job_log,
+    get_client_profile,
+    update_mongo_client_profile,
 )
 from tasks.pdf_task import decode_file, extract_text
 from tasks.notification_task import (
@@ -17,6 +19,7 @@ from tasks.notification_task import (
     Notification,
     NotificationType,
 )
+from tasks.merge_task import merge_profiles, review_with_openai
 from bson import ObjectId
 
 
@@ -58,7 +61,6 @@ def match_client_flow(
 
         if matches:
             dedupe_match = dedupe_against_mongo(profile_json, matches)
-            print(dedupe_match)
             if dedupe_match:
                 print(f"[DEDUPLICATION] Matched existing profile:\n{dedupe_match}")
                 add_job_log(job_id, f"Matched existing profile:\n{dedupe_match}")
@@ -76,8 +78,6 @@ def match_client_flow(
                         4,
                     )
                     break
-            print(dedupe_match)
-            print(weighted_avg)
             update_job_match_results(
                 job_id,
                 [
@@ -87,6 +87,14 @@ def match_client_flow(
                     }
                 ],
             )
+
+            # merge profile
+            existing_profile = get_client_profile(dedupe_match["matched_id"])
+            merged_profile = merge_profiles(profile_json, existing_profile)
+            cleaned_profile = review_with_openai(profile_json, existing_profile, merged_profile)
+            update_mongo_client_profile(dedupe_match["matched_id"], cleaned_profile)
+            update_qdrant_client_profile(dedupe_match["matched_id"], cleaned_profile)
+
         else:
             update_job_match_results(job_id, [])
 

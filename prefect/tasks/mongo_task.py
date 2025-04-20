@@ -105,3 +105,26 @@ def get_client_names(id: str) -> list[str]:
         if result and "data" in result and "profile" in result["data"]:
             return result["data"]["profile"].get("names", [])
         return []
+
+@task
+def get_client_profile(id: str) -> dict:
+    with MongoClient(MONGO_URI) as client:
+        db = client["client-factpack"]
+        collection = db["clients"]
+
+        result = collection.find_one({"_id": ObjectId(id)}, {"data.profile": 1})
+
+        if result and "data" in result:
+            return result["data"]
+        return None
+
+
+@task
+def update_mongo_client_profile(id: str, profile: dict):
+    with MongoClient(MONGO_URI) as client:
+        db = client["client-factpack"]
+        collection = db["clients"]
+        result = collection.update_one({"_id": ObjectId(id)}, {"$set": {"data": profile}})
+
+        if result.matched_count == 0:
+            raise ValueError(f"Client with ID {id} not found")

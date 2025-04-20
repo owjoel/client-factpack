@@ -1,3 +1,6 @@
+import json
+
+
 def build_prompt_no_schema(text: str, target: str, known_names: list[str]):
     known_names_formatted = ", ".join(f'"{name}"' for name in known_names)
 
@@ -38,3 +41,31 @@ def build_prompt_no_schema(text: str, target: str, known_names: list[str]):
         "'ownedCompanies' field**
 
     """
+
+
+def build_merge_review_prompt(existing: dict, incoming: dict, merged: dict) -> str:
+    return f"""
+        You are a structured data expert. You are reviewing a merged client profile based on two inputs.
+
+        Each profile is represented as structured JSON under the same schema.
+
+        Your task:
+        1. Compare the incoming data with the existing data.
+        2. Review the merged profile.
+        3. Deduplicate entries (especially for names, companies, occupations, etc.).
+        4. Fix semantic duplicates (e.g., "Amazon.com, Inc." vs "Amazon").
+        5. Preserve all unique and valuable information.
+        6. Return ONLY the final cleaned and deduplicated merged profile, following the exact schema.
+
+        --- EXISTING PROFILE ---
+        {json.dumps(existing, indent=2)}
+
+        --- INCOMING PROFILE ---
+        {json.dumps(incoming, indent=2)}
+
+        --- MERGED PROFILE ---
+        {json.dumps(merged, indent=2)}
+
+        ### Output:
+        Cleaned merged profile in JSON only, using the provided schema.
+        """

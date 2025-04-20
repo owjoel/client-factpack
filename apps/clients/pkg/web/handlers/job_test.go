@@ -14,7 +14,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -43,7 +42,7 @@ func (suite *JobHandlerTestSuite) TestGetJob_MissingID() {
 }
 
 func (suite *JobHandlerTestSuite) TestGetJob_Success() {
-	id := primitive.NewObjectID()
+	id := bson.NewObjectID()
 	job := &model.Job{
 		PrefectFlowID: "prefect-flow-id-123",
 		Type:          model.Scrape,

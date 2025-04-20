@@ -134,7 +134,7 @@ func (s *mongoClientRepository) Update(ctx context.Context, clientID string, upd
 
 	result, err := s.clientCollection.UpdateOne(ctx, filter, updateDoc)
 	if err != nil {
-		return fmt.Errorf("%w: mongo update error", errorx.ErrDependencyFailed)
+		return fmt.Errorf("mongo update error: %w", err)
 	}
 
 	if result.MatchedCount == 0 {
@@ -150,7 +150,7 @@ func (s *mongoClientRepository) Update(ctx context.Context, clientID string, upd
 func (s *mongoClientRepository) GetClientNameByID(ctx context.Context, clientID string) (string, error) {
 	objID, err := bson.ObjectIDFromHex(clientID)
 	if err != nil {
-		return "", fmt.Errorf("%w: invalid client ID", errorx.ErrInvalidInput)
+		return "", fmt.Errorf("invalid client ID: %w", err)
 	}
 
 	filter := bson.D{{Key: "_id", Value: objID}}
@@ -166,11 +166,11 @@ func (s *mongoClientRepository) GetClientNameByID(ctx context.Context, clientID 
 
 	err = s.clientCollection.FindOne(ctx, filter, options.FindOne().SetProjection(projection)).Decode(&result)
 	if err != nil {
-		return "", fmt.Errorf("%w: failed to fetch client name", errorx.ErrDependencyFailed)
+		return "", fmt.Errorf("failed to fetch client name: %w", err)
 	}
 
 	if len(result.Data.Profile.Names) == 0 {
-		return "", fmt.Errorf("%w: client has no names", errorx.ErrNotFound)
+		return "", fmt.Errorf("client has no names")
 	}
 
 	return result.Data.Profile.Names[0], nil

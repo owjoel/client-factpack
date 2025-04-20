@@ -19,9 +19,8 @@ const (
 type MongoStorage struct {
 	*mongo.Database
 	clientCollection *mongo.Collection
-	templateCollection *mongo.Collection
-	jobCollection *mongo.Collection
-	logCollection *mongo.Collection
+	jobCollection    *mongo.Collection
+	logCollection    *mongo.Collection
 }
 
 func InitMongo() *MongoStorage {
@@ -36,8 +35,7 @@ func InitMongo() *MongoStorage {
 
 	db := client.Database(database)
 	clientColl := db.Collection(collection)
-	templateColl := db.Collection(templates)
 	jobColl := db.Collection(jobs)
 	logColl := db.Collection(logs)
-	return &MongoStorage{db, clientColl, templateColl, jobColl, logColl} 
+	return &MongoStorage{db, clientColl, jobColl, logColl}
 }

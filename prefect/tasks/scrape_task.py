@@ -5,7 +5,12 @@ import json
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from bson import ObjectId
-from utils import wiki_utils, openai_utils, prompt_utils, file_utils
+from utils import (
+    wiki_utils,
+    openai_utils,
+    prompt_utils,
+    file_utils,
+)
 
 load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
