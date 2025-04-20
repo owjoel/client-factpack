@@ -1,3 +1,4 @@
+import json
 from prefect import flow
 from tasks.scrape_task import generate_openai_response, parse_openai_response
 from tasks.qdrant_task import search_profiles_by_json, update_qdrant_client_profile
@@ -60,7 +61,7 @@ def match_client_flow(
         add_job_log(job_id, "Matches found, updating job results...")
 
         if matches:
-            dedupe_match = dedupe_against_mongo(profile_json, matches)
+            dedupe_match = dedupe_against_mongo(profile_json, matches)?
             if dedupe_match:
                 print(f"[DEDUPLICATION] Matched existing profile:\n{dedupe_match}")
                 add_job_log(job_id, f"Matched existing profile:\n{dedupe_match}")
