@@ -1,61 +1,54 @@
 {
   "profile": {
     "names": [
-      "Jeffrey Preston Bezos"
+      "Jeff Bezos",
+      "Jeffrey Preston Bezos",
+      "Jorgensen"
     ],
     "gender": "Male",
     "dateOfBirth": "1964-01-12",
     "description": "American businessman best known as the founder, executive chairman, and former president and CEO of Amazon.",
     "nationality": "American",
     "currentResidence": {
-      "city": "Miami",
+      "city": "Indian Creek",
       "country": "United States"
     },
     "netWorth": {
-      "estimatedValue": 197000000000,
+      "estimatedValue": 209.5,
       "currency": "USD",
-      "source": "Forbes, Bloomberg Billionaires Index"
+      "source": "Forbes, March 12, 2025"
     },
     "industries": [
       "Technology",
       "E-commerce",
-      "Aerospace",
-      "Media"
+      "Aerospace"
     ],
     "occupations": [
       "Founder of Amazon",
       "Executive Chairman of Amazon",
-      "Former CEO of Amazon"
+      "Founder of Blue Origin"
     ],
     "pastOccupations": [
-      "Product Manager at Bankers Trust",
-      "Senior Vice-President at D. E. Shaw & Co"
+      "CEO of Amazon",
+      "President of Amazon"
     ],
     "careerTimeline": [
       {
-        "year": "1986",
-        "event": "Graduated from Princeton University with BSE in Electrical Engineering and Computer Science."
-      },
-      {
         "year": "1994",
-        "event": "Founded Amazon."
+        "event": "Founded Amazon"
       },
       {
         "year": "2000",
-        "event": "Founded Blue Origin."
+        "event": "Founded Blue Origin"
       },
       {
         "year": "2013",
-        "event": "Purchased The Washington Post."
-      },
-      {
-        "year": "2021",
-        "event": "Stepped down as CEO of Amazon."
+        "event": "Purchased The Washington Post"
       }
     ],
     "socials": [
       {
-        "platform": "Twitter",
+        "platform": "X",
         "link": "https://twitter.com/jeffbezos"
       }
     ]
@@ -72,7 +65,12 @@
           "name": "Amazon Web Services",
           "ownershipPercentage": null,
           "industry": "Cloud Computing",
-          "links": []
+          "links": [
+            {
+              "label": "Official Website",
+              "url": "https://aws.amazon.com"
+            }
+          ]
         }
       ]
     },
@@ -91,14 +89,6 @@
       "industry": "Media",
       "status": "Active",
       "subsidiaries": []
-    },
-    {
-      "name": "Altos Labs",
-      "ownershipType": "Direct",
-      "ownershipPercentage": null,
-      "industry": "Biotechnology",
-      "status": "Active",
-      "subsidiaries": []
     }
   ],
   "investments": [
@@ -106,43 +96,43 @@
       "name": "Google",
       "type": "Equity",
       "value": {
-        "value": null,
+        "value": 3.1,
         "currency": "USD"
       },
       "industry": "Technology",
-      "status": "Exited"
+      "status": "Active"
     }
   ],
   "family": [
-    {
-      "name": "Jacklyn Gise",
-      "relationship": "Mother"
-    },
-    {
-      "name": "Ted Jorgensen",
-      "relationship": "Biological Father"
-    },
-    {
-      "name": "Miguel \"Mike\" Bezos",
-      "relationship": "Adoptive Father"
-    },
     {
       "name": "MacKenzie Scott",
       "relationship": "Ex-wife"
     },
     {
       "name": "Lauren S\u00e1nchez",
-      "relationship": "Fianc\u00e9"
+      "relationship": "Fianc\u00e9e"
+    },
+    {
+      "name": "Jacklyn Jorgensen",
+      "relationship": "Mother"
     }
   ],
-  "associates": [],
+  "associates": [
+    {
+      "name": "Andy Jassy",
+      "relationship": "Successor as Amazon CEO",
+      "associatedCompanies": [
+        "Amazon"
+      ]
+    }
+  ],
   "sources": [
     {
       "source": "Forbes",
-      "confidence": 0.9
+      "confidence": 0.95
     },
     {
-      "source": "Bloomberg Billionaires Index",
+      "source": "Bloomberg",
       "confidence": 0.9
     }
   ]

@@ -112,7 +112,8 @@ def get_client_profile(id: str) -> dict:
         db = client["client-factpack"]
         collection = db["clients"]
 
-        result = collection.find_one({"_id": ObjectId(id)}, {"data.profile": 1})
+        # Get entire "data" field
+        result = collection.find_one({"_id": ObjectId(id)}, {"data": 1})
 
         if result and "data" in result:
             return result["data"]
@@ -124,7 +125,15 @@ def update_mongo_client_profile(id: str, profile: dict):
     with MongoClient(MONGO_URI) as client:
         db = client["client-factpack"]
         collection = db["clients"]
-        result = collection.update_one({"_id": ObjectId(id)}, {"$set": {"data": profile}})
+        result = collection.update_one(
+            {"_id": ObjectId(id)},
+            {
+                "$set": {
+                    "data": profile,
+                    "metadata.updatedAt": datetime.now(timezone.utc),
+                }
+            },
+        )
 
         if result.matched_count == 0:
             raise ValueError(f"Client with ID {id} not found")

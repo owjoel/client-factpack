@@ -27,7 +27,6 @@ def normalize_name(name: str) -> str:
 def fuzzy_match(s1, s2, threshold=85):
     s1_clean = normalize_name(s1)
     s2_clean = normalize_name(s2)
-    print(s1_clean, s2_clean)
     return fuzz.ratio(s1_clean, s2_clean) >= threshold
 
 
