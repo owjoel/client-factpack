@@ -37,7 +37,7 @@ func (suite *ClientHandlerTestSuite) SetupTest() {
 	suite.router.POST("/scrape", suite.handler.CreateClientByName)
 	suite.router.PUT("/:id", suite.handler.UpdateClient)
 	suite.router.POST("/:id/match", suite.handler.MatchClient)
-	suite.router.POST("/:id/rescrape", suite.handler.RescrapeClient)
+	suite.router.POST("/:id/scrape", suite.handler.RescrapeClient)
 }
 
 func (suite *ClientHandlerTestSuite) TestHealthCheck() {
@@ -72,7 +72,7 @@ func (suite *ClientHandlerTestSuite) TestGetClient_ServiceError() {
 
 	suite.handler.GetClient(c)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+	assert.Equal(suite.T(), http.StatusInternalServerError, w.Code)
 	assert.Contains(suite.T(), w.Body.String(), "Could not retrieve client")
 }
 
@@ -122,7 +122,7 @@ func (suite *ClientHandlerTestSuite) TestCreateClientByName_ServiceError() {
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+	assert.Equal(suite.T(), http.StatusInternalServerError, w.Code)
 	assert.Contains(suite.T(), w.Body.String(), "Could not create client")
 }
 
@@ -155,7 +155,7 @@ func (suite *ClientHandlerTestSuite) TestGetAllClients_ServiceError() {
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+	assert.Equal(suite.T(), http.StatusInternalServerError, w.Code)
 	assert.Contains(suite.T(), w.Body.String(), "Could not retrieve clients")
 }
 
@@ -254,7 +254,7 @@ func (suite *ClientHandlerTestSuite) TestMatchClient_ServiceError() {
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+	assert.Equal(suite.T(), http.StatusInternalServerError, w.Code)
 	assert.Contains(suite.T(), w.Body.String(), "Could not match client")
 }
 
@@ -288,7 +288,6 @@ func (suite *ClientHandlerTestSuite) TestUpdateClient_BindError() {
 	assert.Contains(suite.T(), w.Body.String(), "Invalid request")
 }
 
-
 func (suite *ClientHandlerTestSuite) TestUpdateClient_ServiceError() {
 	suite.mockSvc.On("UpdateClient", mock.Anything, "abc", mock.Anything).Return(assert.AnError)
 
@@ -298,7 +297,7 @@ func (suite *ClientHandlerTestSuite) TestUpdateClient_ServiceError() {
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+	assert.Equal(suite.T(), http.StatusInternalServerError, w.Code)
 	assert.Contains(suite.T(), w.Body.String(), "Could not update client")
 }
 
@@ -331,25 +330,24 @@ func (suite *ClientHandlerTestSuite) TestRescrapeClient_MissingID() {
 func (suite *ClientHandlerTestSuite) TestRescrapeClient_ServiceError() {
 	suite.mockSvc.On("RescrapeClient", mock.Anything, "abc").Return(assert.AnError)
 
-	req, _ := http.NewRequest("POST", "/abc/rescrape", nil)
+	req, _ := http.NewRequest("POST", "/abc/scrape", nil)
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 
-	assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
+	assert.Equal(suite.T(), http.StatusInternalServerError, w.Code)
 	assert.Contains(suite.T(), w.Body.String(), "Could not rescrape client")
 }
 
 func (suite *ClientHandlerTestSuite) TestRescrapeClient_Success() {
 	suite.mockSvc.On("RescrapeClient", mock.Anything, "abc").Return(nil)
 
-	req, _ := http.NewRequest("POST", "/abc/rescrape", nil)
+	req, _ := http.NewRequest("POST", "/abc/scrape", nil)
 	w := httptest.NewRecorder()
 	suite.router.ServeHTTP(w, req)
 
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 	assert.Contains(suite.T(), w.Body.String(), "Client rescraped")
 }
-
 
 func TestClientHandlerTestSuite(t *testing.T) {
 	suite.Run(t, new(ClientHandlerTestSuite))

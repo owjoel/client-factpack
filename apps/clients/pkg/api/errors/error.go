@@ -1,6 +1,8 @@
 package errorx
 
-import "errors"
+import (
+	"errors"
+)
 
 var (
 	// 400 errors

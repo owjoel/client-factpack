@@ -31,7 +31,6 @@ func (h *ClientHandler) HealthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, model.StatusRes{Status: "Connection successful"})
 }
 
-
 // GetClient retrieves the profile of the client by id
 //
 // In this case, mongo's object id string
@@ -43,20 +42,22 @@ func (h *ClientHandler) HealthCheck(c *gin.Context) {
 //	@Param			id	query		string	true	"Hex id used to identify client"
 //	@Success		200	{object}	handlers.Response{data=model.Client}
 //	@Failure		400	{object}	handlers.Response
+//	@Failure		404	{object}	handlers.Response
 //	@Failure		500	{object}	handlers.Response
+//	@Failure		502	{object}	handlers.Response
 //	@Router			/:id [get]
 func (h *ClientHandler) GetClient(c *gin.Context) {
 	id := c.Param("id")
 
 	if id == "" {
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Missing id"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Missing id"})
 		return
 	}
 
 	client, err := h.service.GetClient(c.Request.Context(), id)
 	if err != nil {
 		log.Printf("Failed to retrieve client (ID: %s): %v", id, err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve client"})
+		ErrorHandler(c, err, "Could not retrieve client")
 		return
 	}
 
@@ -69,23 +70,29 @@ func (h *ClientHandler) GetClient(c *gin.Context) {
 //	@Description	Retrieve all client data
 //	@Tags			clients
 //	@Produce		json
+//	@Param			id	query		string	false	"Client id"
+//	@Param			name	query		string	false	"Client name"
+//	@Param			page	query		int		true	"Page number"
+//	@Param			pageSize	query		int		true	"Page size"
+//	@Param			sort	query		bool	false	"Sort by name"
 //	@Success		200	{object}	handlers.Response{data=[]model.Client}
 //	@Failure		400	{object}	handlers.Response
 //	@Failure		500	{object}	handlers.Response
+//	@Failure		502	{object}	handlers.Response
 //	@Router			/ [get]
 func (h *ClientHandler) GetAllClients(c *gin.Context) {
 	query := &model.GetClientsQuery{}
 
 	if err := c.ShouldBindQuery(query); err != nil {
 		log.Printf("Failed to bind query: %v", err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Invalid request parameters"})
+		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Invalid request parameters"})
 		return
 	}
 
 	total, clients, err := h.service.GetAllClients(c.Request.Context(), query)
 	if err != nil {
 		log.Printf("Failed to retrieve clients: %v", err)
-		c.JSON(http.StatusBadRequest, model.StatusRes{Status: "Could not retrieve clients"})
+		ErrorHandler(c, err, "Could not retrieve clients")
 		return
 	}
 
@@ -105,6 +112,8 @@ func (h *ClientHandler) GetAllClients(c *gin.Context) {
 //	@Param			name	body		model.CreateClientByNameReq	true	"Client name"
 //	@Success		200	{object}	handlers.Response{data=model.CreateClientByNameRes}
 //	@Failure		400	{object}	handlers.Response
+//	@Failure		500	{object}	handlers.Response
+//	@Failure		502	{object}	handlers.Response
 //	@Router			/scrape [post]
 func (h *ClientHandler) CreateClientByName(c *gin.Context) {
 	req := &model.CreateClientByNameReq{}
@@ -123,7 +132,7 @@ func (h *ClientHandler) CreateClientByName(c *gin.Context) {
 	id, err := h.service.CreateClientByName(c.Request.Context(), req)
 	if err != nil {
 		log.Printf("Failed to create client: %v", err)
-		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not create client"})
+		ErrorHandler(c, err, "Could not create client")
 		return
 	}
 
@@ -141,6 +150,8 @@ func (h *ClientHandler) CreateClientByName(c *gin.Context) {
 //	@Param			client	body		model.Client	true "Client data"
 //	@Success		200	{object}	handlers.Response
 //	@Failure		400	{object}	handlers.Response
+//	@Failure		500	{object}	handlers.Response
+//	@Failure		502	{object}	handlers.Response
 //	@Router			/:id [put]
 func (h *ClientHandler) UpdateClient(c *gin.Context) {
 	clientID := c.Param("id")
@@ -159,12 +170,25 @@ func (h *ClientHandler) UpdateClient(c *gin.Context) {
 	err := h.service.UpdateClient(c.Request.Context(), clientID, req.Changes)
 	if err != nil {
 		log.Printf("Failed to update client: %v", err)
-		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not update client"})
+		ErrorHandler(c, err, "Could not update client")
 		return
 	}
 
 	resp(c, http.StatusOK, model.StatusRes{Status: "Client updated"})
 }
+
+// RescrapeClient rescrapes a client profile
+//
+//	@Summary		Rescrape Client
+//	@Description	Rescrape a client profile
+//	@Tags			clients
+//	@Produce		json
+//	@Param			id	query		string	true	"Hex id used to identify client"
+//	@Success		200	{object}	handlers.Response
+//	@Failure		400	{object}	handlers.Response
+//	@Failure		500	{object}	handlers.Response
+//	@Failure		502	{object}	handlers.Response
+//	@Router			/:id/scrape [post]
 
 func (h *ClientHandler) RescrapeClient(c *gin.Context) {
 	clientID := c.Param("id")
@@ -176,13 +200,28 @@ func (h *ClientHandler) RescrapeClient(c *gin.Context) {
 	err := h.service.RescrapeClient(c.Request.Context(), clientID)
 	if err != nil {
 		log.Printf("Failed to rescrape client: %v", err)
-		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not rescrape client"})
+		ErrorHandler(c, err, "Could not rescrape client")
 		return
 	}
 
 	resp(c, http.StatusOK, model.StatusRes{Status: "Client rescraped"})
 }
 
+// MatchClient matches a client profile
+//
+//	@Summary		Match Client
+//	@Description	Match a client profile
+//	@Tags			clients
+//	@Produce		json
+//	@Param			id	query		string	true	"Hex id used to identify client"
+//	@Param			fileName	formData		string	false	"File name"
+//	@Param			file	formData		file	false	"File to match"
+//	@Param			text	formData		string	false	"Raw text to match"
+//	@Success		200	{object}	handlers.Response{data=model.JobIDRes}
+//	@Failure		400	{object}	handlers.Response
+//	@Failure		500	{object}	handlers.Response
+//	@Failure		502	{object}	handlers.Response
+//	@Router			/:id/match [post]
 func (h *ClientHandler) MatchClient(c *gin.Context) {
 	clientID := c.Param("id")
 	if clientID == "" {
@@ -229,7 +268,7 @@ func (h *ClientHandler) MatchClient(c *gin.Context) {
 	id, err := h.service.MatchClient(c.Request.Context(), req, clientID)
 	if err != nil {
 		log.Printf("Failed to match client: %v", err)
-		resp(c, http.StatusBadRequest, model.ErrorResponse{Message: "Could not match client"})
+		ErrorHandler(c, err, "Could not match client")
 		return
 	}
 
