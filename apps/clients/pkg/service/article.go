@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	errorx "github.com/owjoel/client-factpack/apps/clients/pkg/api/errors"
@@ -24,6 +25,9 @@ func NewArticleService(articleRepository repository.ArticleRepository) *ArticleS
 func (s *ArticleService) GetAllArticles(ctx context.Context, query *model.GetArticlesReq) (articles []model.Article, err error) {
 	articles, err = s.articleRepository.GetAll(ctx, query)
 	if err != nil {
+		if errors.Is(err, errorx.ErrInvalidInput) {
+			return nil, err
+		}
 		return nil, fmt.Errorf("%w: error getting articles", errorx.ErrInternal)
 	}
 
