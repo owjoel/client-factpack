@@ -68,7 +68,7 @@ def search_client(c: str):
             "notificationType": "client",
             "title": obj.title,
             "source": obj.source,
-            "clientId": client_id,
+            "clientId": client_id["matched_id"],
             "clientName": names,
             "priority": getPriority(sentiment.label),
         }
