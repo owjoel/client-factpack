@@ -1,60 +1,52 @@
 {
   "profile": {
     "names": [
+      "Michael Dell",
       "Michael Saul Dell"
     ],
     "gender": "Male",
     "dateOfBirth": "1965-02-23",
-    "description": "Founder, chairman, and CEO of Dell Technologies",
+    "description": "American billionaire businessman and investor.",
     "nationality": "American",
     "currentResidence": {
       "city": "Austin",
-      "country": "USA"
+      "country": "United States"
     },
     "netWorth": {
-      "estimatedValue": 130,
-      "currency": "billion",
-      "source": "Forbes Bloomberg Billionaires Index, December 2024"
+      "estimatedValue": 130000000000,
+      "currency": "USD",
+      "source": "Forbes, Bloomberg Billionaires Index"
     },
     "industries": [
       "Technology",
-      "Investment"
+      "Finance"
     ],
     "occupations": [
-      "Businessman",
+      "Founder",
+      "Chairman",
+      "CEO",
       "Investor"
     ],
     "pastOccupations": [
-      "CEO of Dell Technologies"
+      "Pre-med Student",
+      "Entrepreneur"
     ],
     "careerTimeline": [
       {
         "year": "1984",
-        "event": "Founded Dell Technologies"
+        "event": "Founded PC's Limited, later Dell Computer Corporation."
       },
       {
         "year": "1992",
-        "event": "Became the youngest CEO of a Fortune 500 company"
-      },
-      {
-        "year": "1996",
-        "event": "Started selling computers over the web"
-      },
-      {
-        "year": "2004-03-04",
-        "event": "Stepped down as CEO of Dell Inc."
-      },
-      {
-        "year": "2007-01-31",
-        "event": "Returned as CEO of Dell Inc."
+        "event": "Became the youngest CEO of a Fortune 500 company."
       },
       {
         "year": "2013",
-        "event": "Took Dell, Inc. private"
+        "event": "Took Dell Inc. private with Silver Lake Partners."
       },
       {
-        "year": "2016-09-07",
-        "event": "Finalized the acquisition of EMC Corporation"
+        "year": "2015",
+        "event": "Announced and later completed acquisition of EMC Corporation."
       }
     ],
     "socials": []
@@ -70,10 +62,10 @@
       "links": []
     },
     {
-      "name": "VMware",
+      "name": "DFO Management",
       "ownershipType": "Direct",
-      "ownershipPercentage": 40,
-      "industry": "Technology",
+      "ownershipPercentage": null,
+      "industry": "Finance",
       "status": "Active",
       "subsidiaries": [],
       "links": []
@@ -81,13 +73,13 @@
   ],
   "investments": [
     {
-      "name": "DFO Management",
+      "name": "VMware",
       "type": "Equity",
       "value": {
         "value": null,
         "currency": "USD"
       },
-      "industry": "Investment",
+      "industry": "Technology",
       "status": "Active"
     }
   ],
@@ -97,7 +89,7 @@
       "relationship": "Spouse"
     },
     {
-      "name": "Lorraine Charlotte (n\u00e9e Langfan)",
+      "name": "Lorraine Charlotte",
       "relationship": "Mother"
     },
     {
@@ -112,23 +104,7 @@
       "associatedCompanies": [
         "Dell Technologies"
       ]
-    },
-    {
-      "name": "Kevin Rollins",
-      "relationship": "Former CEO of Dell Inc.",
-      "associatedCompanies": [
-        "Dell Technologies"
-      ]
     }
   ],
-  "sources": [
-    {
-      "source": "Forbes",
-      "confidence": null
-    },
-    {
-      "source": "Bloomberg",
-      "confidence": null
-    }
-  ]
+  "sources": []
 }
