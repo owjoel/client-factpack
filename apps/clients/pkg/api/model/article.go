@@ -11,7 +11,7 @@ type GetArticlesRes struct {
 }
 
 type Article struct {
-	ID      bson.ObjectID `bson:"_id" json:"id"`
+	ID      bson.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Source  string        `bson:"source" json:"source"`
 	Title   string        `bson:"title" json:"title"`
 	URL     string        `bson:"url" json:"url"`

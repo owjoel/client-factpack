@@ -42,3 +42,15 @@ func InitMongo() *MongoStorage {
 	logColl := db.Collection(logs)
 	return &MongoStorage{db, articleColl, clientColl, jobColl, logColl}
 }
+
+func (s *MongoStorage) JobCollection() *mongo.Collection {
+	return s.jobCollection
+}
+
+func (s *MongoStorage) ArticleCollection() *mongo.Collection {
+	return s.articleCollection
+}
+
+func (s *MongoStorage) ClientCollection() *mongo.Collection {
+	return s.clientCollection
+}

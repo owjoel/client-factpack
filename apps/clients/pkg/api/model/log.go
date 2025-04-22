@@ -11,7 +11,7 @@ type Log struct {
 	ClientID  string        `bson:"clientId" json:"clientId"`
 	Actor     string        `bson:"actor" json:"actor"`
 	Operation Operation     `bson:"operation" json:"operation"`
-	Details   string        `bson:"details" json:"details"`
+	Details   string        `bson:"details" json:"details,omitempty"`
 	Timestamp time.Time     `bson:"timestamp" json:"timestamp"`
 }
 
