@@ -92,7 +92,9 @@ def match_client_flow(
             # merge profile
             existing_profile = get_client_profile(dedupe_match["matched_id"])
             merged_profile = merge_profiles(profile_json, existing_profile)
-            cleaned_profile = review_with_openai(profile_json, existing_profile, merged_profile)
+            cleaned_profile = review_with_openai(
+                profile_json, existing_profile, merged_profile
+            )
             update_mongo_client_profile(dedupe_match["matched_id"], cleaned_profile)
             update_qdrant_client_profile(dedupe_match["matched_id"], cleaned_profile)
 
