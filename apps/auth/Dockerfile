@@ -1,4 +1,4 @@
-FROM golang:1.23.6-alpine3.21 AS build
+FROM golang:1.24.2-alpine3.21 AS build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN go build -o auth ./cmd
 
 # ------------------------------------------
 
-FROM alpine:3.18
+FROM alpine:latest
 
 WORKDIR /app
 

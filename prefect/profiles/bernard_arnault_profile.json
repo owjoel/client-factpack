@@ -1,0 +1,175 @@
+{
+  "profile": {
+    "names": [
+      "Bernard Jean \u00c9tienne Arnault",
+      "Bernard Arnault"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1949-03-05",
+    "description": "Businessman, investor, and art collector",
+    "nationality": "French",
+    "currentResidence": {
+      "city": "Paris",
+      "country": "France"
+    },
+    "netWorth": {
+      "estimatedValue": 186800000000,
+      "currency": "USD",
+      "source": "Forbes, Bloomberg Billionaires Index"
+    },
+    "industries": [
+      "Luxury Goods",
+      "Real Estate"
+    ],
+    "occupations": [
+      "Businessman",
+      "Investor",
+      "Art Collector"
+    ],
+    "pastOccupations": [
+      "President of Ferret-Savinel"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1971",
+        "event": "Started career at Ferret-Savinel"
+      },
+      {
+        "year": "1984",
+        "event": "Acquired Boussac Saint-Fr\u00e8res"
+      },
+      {
+        "year": "1987",
+        "event": "Co-founded LVMH through mergers"
+      },
+      {
+        "year": "1989",
+        "event": "Became chairman of LVMH"
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "LVMH",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Luxury Goods",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Christian Dior",
+          "ownershipPercentage": null,
+          "industry": "Fashion",
+          "links": []
+        },
+        {
+          "name": "Louis Vuitton",
+          "ownershipPercentage": null,
+          "industry": "Fashion",
+          "links": []
+        },
+        {
+          "name": "Mo\u00ebt Hennessy",
+          "ownershipPercentage": null,
+          "industry": "Wine & Spirits",
+          "links": []
+        }
+      ],
+      "links": []
+    },
+    {
+      "name": "Ch\u00e2teau Cheval Blanc",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Wine",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Tiffany & Co.",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Jewelry",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Carrefour",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "EUR"
+      },
+      "industry": "Retail",
+      "status": "Unknown"
+    },
+    {
+      "name": "Princess Yachts",
+      "type": "Equity",
+      "value": {
+        "value": 253000000,
+        "currency": "EUR"
+      },
+      "industry": "Marine",
+      "status": "Unknown"
+    }
+  ],
+  "family": [
+    {
+      "name": "Anne Dewavrin",
+      "relationship": "Ex-wife"
+    },
+    {
+      "name": "H\u00e9l\u00e8ne Mercier",
+      "relationship": "Wife"
+    },
+    {
+      "name": "Delphine Arnault",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Antoine Arnault",
+      "relationship": "Son"
+    },
+    {
+      "name": "Alexandre Arnault",
+      "relationship": "Son"
+    },
+    {
+      "name": "Fr\u00e9d\u00e9ric Arnault",
+      "relationship": "Son"
+    },
+    {
+      "name": "Jean Arnault",
+      "relationship": "Son"
+    },
+    {
+      "name": "Stephanie Watine Arnault",
+      "relationship": "Niece"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Antoine Bernheim",
+      "relationship": "Business Partner",
+      "associatedCompanies": [
+        "Lazard Fr\u00e8res"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": null
+    },
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": null
+    }
+  ]
+}

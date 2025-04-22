@@ -1,0 +1,154 @@
+{
+  "profile": {
+    "names": [
+      "Michael Bloomberg"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1942-02-14",
+    "description": "Michael Rubens Bloomberg is an American businessman, politician, philanthropist, and co-founder and majority owner of Bloomberg L.P.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "New York City",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 104700000000,
+      "currency": "USD",
+      "source": "Forbes (2025)"
+    },
+    "industries": [
+      "Finance",
+      "Technology",
+      "Media"
+    ],
+    "occupations": [
+      "Businessman",
+      "Politician",
+      "Philanthropist"
+    ],
+    "pastOccupations": [
+      "CEO of Bloomberg L.P.",
+      "Mayor of New York City"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1981",
+        "event": "Co-founded Bloomberg L.P."
+      },
+      {
+        "year": "2002",
+        "event": "Became Mayor of New York City"
+      },
+      {
+        "year": "2020",
+        "event": "Ran for Democratic Presidential Nomination"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/MikeBloomberg"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Bloomberg L.P.",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 88,
+      "industry": "Finance",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Bloomberg News",
+          "ownershipPercentage": null,
+          "industry": "Media",
+          "links": []
+        },
+        {
+          "name": "Bloomberg Radio",
+          "ownershipPercentage": null,
+          "industry": "Media",
+          "links": []
+        },
+        {
+          "name": "Bloomberg LP",
+          "ownershipPercentage": null,
+          "industry": "Finance",
+          "links": [
+            {
+              "label": "Official Site",
+              "url": "https://www.bloomberg.com/"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": "Official Site",
+          "url": "https://www.bloomberg.com/"
+        }
+      ]
+    }
+  ],
+  "investments": [
+    {
+      "name": "Baltimore Orioles",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Sports",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Charlotte Bloomberg",
+      "relationship": "Mother"
+    },
+    {
+      "name": "William Henry Bloomberg",
+      "relationship": "Father"
+    },
+    {
+      "name": "Emma Beth Bloomberg",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Georgina Leigh Bloomberg",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Marjorie Tiven",
+      "relationship": "Sister"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Lex Fenwick",
+      "relationship": "Former CEO of Bloomberg L.P.",
+      "associatedCompanies": [
+        "Bloomberg L.P."
+      ]
+    },
+    {
+      "name": "Daniel Doctoroff",
+      "relationship": "Former CEO of Bloomberg L.P.",
+      "associatedCompanies": [
+        "Bloomberg L.P."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 1
+    },
+    {
+      "source": "New York Times",
+      "confidence": 1
+    }
+  ]
+}

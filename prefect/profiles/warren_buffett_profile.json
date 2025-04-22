@@ -1,0 +1,174 @@
+{
+  "profile": {
+    "names": [
+      "Warren Buffett",
+      "Warren Edward Buffett"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1930-08-30",
+    "description": "An American investor and philanthropist known as the \"Oracle of Omaha\", chairman and CEO of Berkshire Hathaway.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Omaha",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 154.4,
+      "currency": "USD",
+      "source": "Forbes April 2025"
+    },
+    "industries": [
+      "Finance",
+      "Insurance",
+      "Textile",
+      "Media"
+    ],
+    "occupations": [
+      "Investor",
+      "Businessman",
+      "Philanthropist"
+    ],
+    "pastOccupations": [
+      "Stockbroker",
+      "Investment Salesman",
+      "Securities Analyst"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1947",
+        "event": "Entered the Wharton School of the University of Pennsylvania."
+      },
+      {
+        "year": "1951",
+        "event": "Graduated with a Bachelor of Science in Business Administration from University of Nebraska."
+      },
+      {
+        "year": "1951",
+        "event": "Started working at Buffett-Falk & Co."
+      },
+      {
+        "year": "1956",
+        "event": "Founded Buffett Partnership Ltd."
+      },
+      {
+        "year": "1962",
+        "event": "Became a millionaire with partnerships."
+      },
+      {
+        "year": "1965",
+        "event": "Took control of Berkshire Hathaway."
+      },
+      {
+        "year": "1970",
+        "event": "Became chairman and CEO of Berkshire Hathaway."
+      },
+      {
+        "year": "1973",
+        "event": "Acquired stock in the Washington Post Company."
+      },
+      {
+        "year": "1987",
+        "event": "Became largest shareholder of Salomon Inc."
+      },
+      {
+        "year": "1988",
+        "event": "Began buying The Coca-Cola Company stock."
+      },
+      {
+        "year": "2008",
+        "event": "Named richest person in the world by Forbes."
+      },
+      {
+        "year": "2013",
+        "event": "Invested heavily in International Business Machine Corp (IBM)."
+      },
+      {
+        "year": "2023",
+        "event": "Faced allegations in equity trades."
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Wikipedia",
+        "link": "https://en.wikipedia.org/wiki/Warren_Buffett"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Berkshire Hathaway",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Finance",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": [
+        {
+          "label": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Berkshire_Hathaway"
+        }
+      ]
+    }
+  ],
+  "investments": [
+    {
+      "name": "The Coca-Cola Company",
+      "type": "Equity",
+      "value": {
+        "value": 1020,
+        "currency": "USD"
+      },
+      "industry": "Beverages",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Howard Buffett",
+      "relationship": "Father"
+    },
+    {
+      "name": "Leila Buffett",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Susan Thompson Buffett",
+      "relationship": "Former Wife"
+    },
+    {
+      "name": "Susan Alice Buffett",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Howard Graham Buffett",
+      "relationship": "Son"
+    },
+    {
+      "name": "Peter Buffett",
+      "relationship": "Son"
+    },
+    {
+      "name": "Astrid Menks",
+      "relationship": "Wife"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Charlie Munger",
+      "relationship": "Business Partner",
+      "associatedCompanies": [
+        "Berkshire Hathaway"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 0.95
+    },
+    {
+      "source": "Wikipedia",
+      "confidence": 0.85
+    }
+  ]
+}

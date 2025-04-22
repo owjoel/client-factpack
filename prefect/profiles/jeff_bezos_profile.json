@@ -1,0 +1,225 @@
+{
+  "profile": {
+    "names": [
+      "Jeff Bezos",
+      "Jeffrey Preston Bezos",
+      "Jeffrey Preston Jorgensen"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1964-01-12",
+    "description": "American businessman best known as the founder, executive chairman, and former president and CEO of Amazon.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Indian Creek",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 197000000000,
+      "currency": "USD",
+      "source": "Amazon stock and various ventures including Blue Origin and The Washington Post."
+    },
+    "industries": [
+      "E-commerce",
+      "Cloud Computing",
+      "Aerospace",
+      "Media",
+      "Venture Capital"
+    ],
+    "occupations": [
+      "Founder",
+      "Executive Chairman",
+      "Former CEO"
+    ],
+    "pastOccupations": [
+      "CEO",
+      "Wall Street Financier"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1994",
+        "event": "Founded Amazon."
+      },
+      {
+        "year": "2000",
+        "event": "Founded Blue Origin."
+      },
+      {
+        "year": "2013",
+        "event": "Purchased The Washington Post."
+      },
+      {
+        "year": "2018",
+        "event": "Designated wealthiest person in the world by Forbes."
+      },
+      {
+        "year": "2021",
+        "event": "Stepped down as CEO of Amazon."
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/jeffbezos"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Amazon",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 0,
+      "industry": "E-commerce",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Amazon Web Services",
+          "ownershipPercentage": null,
+          "industry": "Cloud Computing",
+          "links": [
+            {
+              "label": "AWS Website",
+              "url": "https://aws.amazon.com"
+            }
+          ]
+        },
+        {
+          "name": "Whole Foods",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": [
+            {
+              "label": "Whole Foods Website",
+              "url": "https://www.wholefoodsmarket.com"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": "Amazon Website",
+          "url": "https://www.amazon.com"
+        }
+      ]
+    },
+    {
+      "name": "Blue Origin",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 0,
+      "industry": "Aerospace",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": [
+        {
+          "label": "Blue Origin Website",
+          "url": "https://www.blueorigin.com"
+        }
+      ]
+    },
+    {
+      "name": "The Washington Post",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 100,
+      "industry": "Media",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": [
+        {
+          "label": "The Washington Post Website",
+          "url": "https://www.washingtonpost.com"
+        }
+      ]
+    },
+    {
+      "name": "Bezos Expeditions",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 0,
+      "industry": "Venture Capital",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Altos Labs",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 0,
+      "industry": "Biotechnology",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Google",
+      "type": "Equity",
+      "value": {
+        "value": 3100000000,
+        "currency": "USD"
+      },
+      "industry": "Technology",
+      "status": "Exited"
+    },
+    {
+      "name": "Unity Biotechnology",
+      "type": "Other",
+      "value": {
+        "value": null,
+        "currency": ""
+      },
+      "industry": "Biotechnology",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "MacKenzie Scott",
+      "relationship": "Ex-Wife"
+    },
+    {
+      "name": "Lauren S\u00e1nchez",
+      "relationship": "Fianc\u00e9"
+    },
+    {
+      "name": "Miguel \"Mike\" Bezos",
+      "relationship": "Father"
+    },
+    {
+      "name": "Jacklyn Gise Bezos",
+      "relationship": "Mother"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Andy Jassy",
+      "relationship": "Successor at Amazon",
+      "associatedCompanies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Yuri Milner",
+      "relationship": "Co-founder of Altos Labs",
+      "associatedCompanies": [
+        "Altos Labs"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes Real Time Billionaires Index",
+      "confidence": 0.9
+    },
+    {
+      "source": "The Washington Post",
+      "confidence": 0.8
+    },
+    {
+      "source": "Amazon Press Releases",
+      "confidence": 0.85
+    },
+    {
+      "source": "Blue Origin Media Kit",
+      "confidence": 0.75
+    }
+  ]
+}

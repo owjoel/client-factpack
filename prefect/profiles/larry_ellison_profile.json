@@ -1,0 +1,176 @@
+{
+  "profile": {
+    "names": [
+      "Larry Ellison",
+      "Lawrence Joseph Ellison"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1944-08-17",
+    "description": "American businessman and entrepreneur",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "",
+      "country": "USA"
+    },
+    "netWorth": {
+      "estimatedValue": 211000000000,
+      "currency": "USD",
+      "source": "Bloomberg Billionaires Index, Forbes"
+    },
+    "industries": [
+      "Technology",
+      "Software"
+    ],
+    "occupations": [
+      "Co-founder of Oracle Corporation",
+      "Executive Chairman of Oracle",
+      "Chief Technology Officer"
+    ],
+    "pastOccupations": [
+      "CEO of Oracle Corporation"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1977",
+        "event": "Co-founded Oracle Corporation"
+      },
+      {
+        "year": "2010",
+        "event": "Became Executive Chairman and CTO of Oracle"
+      },
+      {
+        "year": "2016",
+        "event": "Owner of 35% of NetSuite"
+      },
+      {
+        "year": "2018",
+        "event": "Director of Tesla, Inc. (until August 2022)"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "LinkedIn",
+        "link": "https://www.linkedin.com/in/larryellison"
+      },
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/LarryEllison"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Oracle Corporation",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 42.9,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Solaris",
+          "ownershipPercentage": 100,
+          "industry": "Software",
+          "links": [
+            {
+              "label": "Oracle Solaris",
+              "url": "https://www.oracle.com/solaris/"
+            },
+            {
+              "label": "Oracle Solaris Wiki",
+              "url": "https://en.wikipedia.org/wiki/Oracle_Solaris"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": "Oracle Corporation Official Website",
+          "url": "https://www.oracle.com/"
+        }
+      ]
+    },
+    {
+      "name": "Lanai Island",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 98,
+      "industry": "Real Estate",
+      "status": "Active"
+    }
+  ],
+  "investments": [
+    {
+      "name": "Salesforce.com",
+      "type": "Equity",
+      "value": {
+        "value": 0,
+        "currency": "USD"
+      },
+      "industry": "Technology",
+      "status": "Active"
+    },
+    {
+      "name": "NetSuite",
+      "type": "Equity",
+      "value": {
+        "value": 0,
+        "currency": "USD"
+      },
+      "industry": "Technology",
+      "status": "Exited"
+    },
+    {
+      "name": "Tesla, Inc.",
+      "type": "Equity",
+      "value": {
+        "value": 0,
+        "currency": "USD"
+      },
+      "industry": "Automotive",
+      "status": "Exited"
+    }
+  ],
+  "family": [
+    {
+      "name": "Florence Spellman",
+      "relationship": "Biological Mother"
+    },
+    {
+      "name": "Lillian Spellman Ellison",
+      "relationship": "Adoptive Mother"
+    },
+    {
+      "name": "Louis Ellison",
+      "relationship": "Adoptive Father"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Mark Hurd",
+      "relationship": "Friend; Co-President of Oracle",
+      "associatedCompanies": [
+        "Oracle Corporation"
+      ]
+    },
+    {
+      "name": "Steve Jobs",
+      "relationship": "Friend; Director of Apple",
+      "associatedCompanies": [
+        "Apple Inc."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Wikipedia",
+      "confidence": 0.9
+    },
+    {
+      "source": "Forbes Billionaire's list",
+      "confidence": 1.0
+    },
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": 1.0
+    }
+  ]
+}

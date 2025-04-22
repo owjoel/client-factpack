@@ -1,0 +1,159 @@
+{
+  "profile": {
+    "names": [
+      "Bill Gates",
+      "William Henry Gates III"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1955-10-28",
+    "description": "",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Medina",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 108.8,
+      "currency": "USD",
+      "source": ""
+    },
+    "industries": [
+      "Technology",
+      "Philanthropy"
+    ],
+    "occupations": [
+      "Co-founder of Microsoft",
+      "Philanthropist"
+    ],
+    "pastOccupations": [
+      "CEO of Microsoft"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1975",
+        "event": "Co-founded Microsoft with Paul Allen."
+      },
+      {
+        "year": "1987",
+        "event": "Became the world's youngest-ever billionaire."
+      },
+      {
+        "year": "2000",
+        "event": "Transitioned to Chief Software Architect at Microsoft."
+      },
+      {
+        "year": "2014",
+        "event": "Stepped down as Chairman of Microsoft."
+      },
+      {
+        "year": "2020",
+        "event": "Resigned from Microsoft's board."
+      },
+      {
+        "year": "2023",
+        "event": "Published \"Source Code: My Beginnings.\""
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/BillGates"
+      },
+      {
+        "platform": "LinkedIn",
+        "link": "https://www.linkedin.com/in/williamhgates"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Microsoft",
+      "ownershipType": "Holding Group",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "GitHub",
+          "ownershipPercentage": 100,
+          "industry": "Technology",
+          "links": [
+            {
+              "label": "GitHub Official Website",
+              "url": "https://github.com"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": "Microsoft Official Website",
+          "url": "https://www.microsoft.com"
+        }
+      ]
+    },
+    {
+      "name": "Cascade Investment",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Finance",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "TerraPower",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Renewable Energy",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Melinda French Gates",
+      "relationship": "Ex-wife"
+    },
+    {
+      "name": "Jennifer Katherine Gates",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Rory John Gates",
+      "relationship": "Son"
+    },
+    {
+      "name": "Phoebe Adele Gates",
+      "relationship": "Daughter"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Paul Allen",
+      "relationship": "Business Partner",
+      "associatedCompanies": [
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Warren Buffett",
+      "relationship": "Friend",
+      "associatedCompanies": [
+        "Berkshire Hathaway"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 0.8
+    },
+    {
+      "source": "Microsoft Official Website",
+      "confidence": 0.9
+    }
+  ]
+}

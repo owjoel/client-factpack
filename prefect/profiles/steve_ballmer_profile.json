@@ -1,0 +1,111 @@
+{
+  "profile": {
+    "names": [
+      "Steve Ballmer",
+      "Steven Anthony Ballmer"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1956-03-24",
+    "description": "",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Hunts Point",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 136,
+      "currency": "USD",
+      "source": "Bloomberg Billionaires Index"
+    },
+    "industries": [
+      "Technology",
+      "Sports",
+      "Philanthropy"
+    ],
+    "occupations": [
+      "Businessman",
+      "Investor"
+    ],
+    "pastOccupations": [
+      "CEO of Microsoft"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1980",
+        "event": "Joined Microsoft as the first business manager."
+      },
+      {
+        "year": "1992",
+        "event": "Became Executive Vice President for Sales and Support at Microsoft."
+      },
+      {
+        "year": "1998",
+        "event": "Became President of Microsoft."
+      },
+      {
+        "year": "2000",
+        "event": "Named CEO of Microsoft."
+      },
+      {
+        "year": "2014",
+        "event": "Retired as CEO of Microsoft"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Twitter",
+        "link": "https://twitter.com/clippersteveb"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Los Angeles Clippers",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 100,
+      "industry": "Sports",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Ballmer Group",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Philanthropy",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Connie Snyder",
+      "relationship": "Spouse"
+    },
+    {
+      "name": "Gilda Radner",
+      "relationship": "Cousin"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Bill Gates",
+      "relationship": "Former colleague and friend",
+      "associatedCompanies": [
+        "Microsoft"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": null
+    },
+    {
+      "source": "Forbes Real-Time Billionaires List",
+      "confidence": null
+    }
+  ]
+}

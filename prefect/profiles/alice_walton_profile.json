@@ -1,0 +1,89 @@
+{
+  "profile": {
+    "names": [
+      "Alice Walton"
+    ],
+    "gender": "Female",
+    "dateOfBirth": "1949-10-07",
+    "description": "American heiress and philanthropist",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Bentonville",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 121,
+      "currency": "USD",
+      "source": "Bloomberg Billionaires Index"
+    },
+    "industries": [
+      "Retail",
+      "Finance",
+      "Art"
+    ],
+    "occupations": [
+      "Heiress",
+      "Philanthropist",
+      "Art Enthusiast",
+      "Investor"
+    ],
+    "pastOccupations": [
+      "Equity Analyst",
+      "Money Manager",
+      "Investment Banker"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1988",
+        "event": "Founded Llama Company"
+      },
+      {
+        "year": "1998",
+        "event": "Closed Llama Company"
+      },
+      {
+        "year": "2011",
+        "event": "Opened Crystal Bridges Museum of American Art"
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Walmart",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Retail",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "Crystal Bridges Museum of American Art",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 100,
+      "industry": "Art and Culture",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Sam Walton",
+      "relationship": "Father"
+    }
+  ],
+  "associates": [],
+  "sources": [
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": 0.9
+    },
+    {
+      "source": "Forbes",
+      "confidence": 0.8
+    }
+  ]
+}

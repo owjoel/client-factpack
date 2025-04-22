@@ -10,6 +10,8 @@ import (
 	"syscall"
 	"time"
 
+	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	cip "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
@@ -18,8 +20,6 @@ import (
 	"github.com/owjoel/client-factpack/apps/auth/pkg/web/handlers"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	cip "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
-	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 )
 
 // Router represents the router for the web service.
@@ -35,7 +35,7 @@ func NewRouter() *Router {
 	// enable CORS
 	router.Use(
 		cors.New(cors.Config{
-			AllowOrigins:     []string{"http://localhost:5173"},
+			AllowOrigins:     []string{"http://localhost:5173", "http://localhost:4173"},
 			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 			AllowHeaders:     []string{"Content-Type", "Authorization"},
 			AllowCredentials: true,

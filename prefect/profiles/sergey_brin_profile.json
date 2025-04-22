@@ -1,0 +1,131 @@
+{
+  "profile": {
+    "names": [
+      "Sergey Brin"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1973-08-21",
+    "description": "",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 164,
+      "currency": "USD",
+      "source": "Bloomberg Billionaires Index and Forbes"
+    },
+    "industries": [
+      "Technology"
+    ],
+    "occupations": [
+      "Computer Scientist",
+      "Businessman"
+    ],
+    "pastOccupations": [
+      "President of Alphabet Inc."
+    ],
+    "careerTimeline": [
+      {
+        "year": "1993",
+        "event": "Graduated from the University of Maryland with a B.Sc. in Computer Science and Mathematics."
+      },
+      {
+        "year": "1995",
+        "event": "Obtained an M.S. in Computer Science from Stanford University."
+      },
+      {
+        "year": "1998",
+        "event": "Co-founded Google with Larry Page."
+      },
+      {
+        "year": "2019-12-03",
+        "event": "Stepped down as president of Alphabet Inc."
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Google",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    },
+    {
+      "name": "LTA Research & Exploration LLC",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Aerospace",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Space Adventures",
+      "type": "Equity",
+      "value": {
+        "value": 4.5,
+        "currency": "USD"
+      },
+      "industry": "Space Tourism",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Mikhail Brin",
+      "relationship": "Father"
+    },
+    {
+      "name": "Eugenia Brin",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Anne Wojcicki",
+      "relationship": "Former Spouse"
+    },
+    {
+      "name": "Nicole Shanahan",
+      "relationship": "Former Spouse"
+    },
+    {
+      "name": "",
+      "relationship": "Son"
+    },
+    {
+      "name": "",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "",
+      "relationship": "Daughter"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Larry Page",
+      "relationship": "Business Partner",
+      "associatedCompanies": [
+        "Google",
+        "Alphabet Inc."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": null
+    },
+    {
+      "source": "Forbes",
+      "confidence": null
+    }
+  ]
+}

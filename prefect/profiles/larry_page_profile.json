@@ -1,0 +1,130 @@
+{
+  "profile": {
+    "names": [
+      "Larry Page",
+      "Lawrence Page",
+      "Lawrence Edward Page"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1973-03-26",
+    "description": "Co-founder of Google and Alphabet, pioneer in search technology.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Palo Alto",
+      "country": "USA"
+    },
+    "netWorth": {
+      "estimatedValue": 162.2,
+      "currency": "USD",
+      "source": "Forbes"
+    },
+    "industries": [
+      "Technology",
+      "Search Engines"
+    ],
+    "occupations": [
+      "Business Executive",
+      "Engineer",
+      "Scientist"
+    ],
+    "pastOccupations": [
+      "Google CEO"
+    ],
+    "careerTimeline": [
+      {
+        "year": "1998",
+        "event": "Co-founded Google."
+      },
+      {
+        "year": "2001",
+        "event": "Stepped down as Google CEO."
+      },
+      {
+        "year": "2011",
+        "event": "Became CEO of Google again."
+      },
+      {
+        "year": "2015",
+        "event": "Became CEO of Alphabet, Inc."
+      },
+      {
+        "year": "2019",
+        "event": "Stepped down from executive roles at Alphabet."
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Google+",
+        "link": "https://plus.google.com/+LarryPage"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Alphabet Inc.",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": [
+        {
+          "label": "Alphabet Website",
+          "url": "https://abc.xyz"
+        }
+      ]
+    }
+  ],
+  "investments": [
+    {
+      "name": "Kitty Hawk",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Aviation",
+      "status": "Merged into Wisk Aero"
+    },
+    {
+      "name": "Opener",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Aviation",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Lucinda Southworth",
+      "relationship": "Spouse"
+    },
+    {
+      "name": "Carl Victor Page Jr.",
+      "relationship": "Brother"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Sergey Brin",
+      "relationship": "Co-founder of Google",
+      "associatedCompanies": [
+        "Google",
+        "Alphabet"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Bloomberg Billionaires Index",
+      "confidence": 0.9
+    },
+    {
+      "source": "Forbes",
+      "confidence": 0.8
+    }
+  ]
+}

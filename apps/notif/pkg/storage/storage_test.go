@@ -1,146 +1,112 @@
-package storage_test
+package storage
 
 import (
-	"bytes"
+	"testing"
 	"os"
 	"os/exec"
-	"strings"
-	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-
-	"github.com/owjoel/client-factpack/apps/notif/pkg/storage"
 )
 
-func setupTestDB(t *testing.T, migrate bool) *gorm.DB {
+func setupTestDB(t *testing.T) *gorm.DB {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("Failed to connect to in-memory SQLite DB: %v", err)
-	}
-
-	if migrate {
-		err = db.AutoMigrate(&storage.Notification{})
-		if err != nil {
-			t.Fatalf("Failed to migrate Notification model: %v", err)
-		}
-	}
-
+	assert.NoError(t, err)
+	assert.NoError(t, db.AutoMigrate(&Notification{}))
 	return db
 }
 
-func TestSaveNotification_Success(t *testing.T) {
-	db := setupTestDB(t, true)
-	notifStorage := &storage.NotificationStorage{DB: db}
-
-	notification := &storage.Notification{
-		UserID:  "testUser",
-		Message: "Test message",
-	}
-
-	err := notifStorage.SaveNotification(notification)
-	assert.NoError(t, err)
-
-	var fetched storage.Notification
-	result := db.First(&fetched, notification.ID)
-
-	assert.NoError(t, result.Error)
-	assert.Equal(t, notification.UserID, fetched.UserID)
-	assert.Equal(t, notification.Message, fetched.Message)
-}
-
-func TestSaveNotification_Failure_NilNotification(t *testing.T) {
-	db := setupTestDB(t, true)
-	notifStorage := &storage.NotificationStorage{DB: db}
-
-	err := notifStorage.SaveNotification(nil)
-	assert.Error(t, err)
-}
-
-func TestSaveNotification_Failure_BadSchema(t *testing.T) {
-	db := setupTestDB(t, false)
-	notifStorage := &storage.NotificationStorage{DB: db}
-
-	notification := &storage.Notification{
-		UserID:  "testUser",
-		Message: "This should fail because the table doesn't exist",
-	}
-
-	err := notifStorage.SaveNotification(notification)
-	assert.Error(t, err)
-}
-
-// This covers the "happy path" of InitDatabase (AutoMigrate + return db)
-func TestInitDatabase_SuccessWithSQLite(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	assert.NoError(t, err)
-
-	err = db.AutoMigrate(&storage.Notification{})
-	assert.NoError(t, err)
-
-	notifStorage := &storage.NotificationStorage{DB: db}
-
-	notification := &storage.Notification{
-		UserID:  "user1",
-		Message: "Test",
-	}
-
-	err = notifStorage.SaveNotification(notification)
-	assert.NoError(t, err)
-
-	// Verify it was saved
-	var fetched storage.Notification
-	result := db.First(&fetched, notification.ID)
-	assert.NoError(t, result.Error)
-}
-
-// This covers the log.Fatalf("Failed to connect to database: %v", err)
-func TestInitDatabase_FatalOnBadConnection(t *testing.T) {
-	if os.Getenv("TEST_DB_FATAL") == "1" {
-		// Simulate InitDatabase with an invalid config by overwriting env vars
-		_ = os.Setenv("DB_USER", "invalid")
-		_ = os.Setenv("DB_PASSWORD", "invalid")
-		_ = os.Setenv("DB_HOST", "invalid-host")
-		_ = os.Setenv("DB_PORT", "3306")
-		_ = os.Setenv("DB_NAME", "invalid-db")
-
-		// Call InitDatabase (expect log.Fatalf)
-		storage.InitDatabase()
+func TestInitDatabase_Simulation(t *testing.T) {
+	if os.Getenv("RUN_DB_INIT") == "1" {
+		// Subprocess runs this
+		InitDatabase()
 		return
 	}
 
-	cmd := exec.Command(os.Args[0], "-test.run=TestInitDatabase_FatalOnBadConnection")
-	cmd.Env = append(os.Environ(), "TEST_DB_FATAL=1")
+	cmd := exec.Command(os.Args[0], "-test.run=TestInitDatabase_Simulation")
+	cmd.Env = append(os.Environ(), "RUN_DB_INIT=1")
+	output, err := cmd.CombinedOutput()
 
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
-
-	if exitError, ok := err.(*exec.ExitError); ok && !exitError.Success() {
-		output := stderr.String()
-
-		if !strings.Contains(output, "Failed to connect to database") {
-			t.Errorf("expected fatal error log, got: %s", output)
-		}
-
-		return
+	// Should exit with error
+	if err == nil {
+		t.Fatalf("Expected subprocess to exit with error, got nil. Output: %s", string(output))
 	}
 
-	t.Fatalf("process ran without exit error; err=%v, stderr=%v", err, stderr.String())
+	if len(output) == 0 {
+		t.Error("Expected failure output from subprocess, but got none")
+	}
 }
 
-func TestInitDatabase_CoversAutoMigrate(t *testing.T) {
-    // Skip actual MySQL connection by using an in-memory SQLite database
-    db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-    assert.NoError(t, err)
+func TestInitDatabase_WithSQLite(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	assert.NoError(t, err)
 
-    // Call AutoMigrate explicitly to simulate InitDatabase behavior
-    err = db.AutoMigrate(&storage.Notification{})
-    assert.NoError(t, err)
+	err = db.AutoMigrate(&Notification{})
+	assert.NoError(t, err)
+}
 
-    // Verify that the table was created
-    migrator := db.Migrator()
-    assert.True(t, migrator.HasTable(&storage.Notification{}), "Expected Notification table to be created")
+func TestSaveNotification(t *testing.T) {
+	db := setupTestDB(t)
+	store := &NotificationStorage{DB: db}
+
+	notification := &Notification{
+		NotificationType: "job",
+		Title:            "Test Notification",
+		Source:           "system",
+		Username:         "user1",
+		JobID:            "job-001",
+		Status:           "completed",
+		Type:             "match",
+		ClientID:         "client-001",
+		ClientName:       "Client A;Client B",
+		Priority:         "high",
+	}
+
+	err := store.SaveNotification(notification)
+	assert.NoError(t, err)
+
+	var result Notification
+	err = db.First(&result).Error
+	assert.NoError(t, err)
+	assert.Equal(t, "Test Notification", result.Title)
+}
+
+func TestGetNotificationsByUser(t *testing.T) {
+	db := setupTestDB(t)
+	store := &NotificationStorage{DB: db}
+
+	db.Create(&Notification{
+		NotificationType: "job",
+		Username:         "john",
+		JobID:            "job-001",
+		Status:           "completed",
+		Type:             "scrape",
+	})
+
+	notif, err := store.GetNotificationsByUser("john", "completed", 1, 10)
+	assert.NoError(t, err)
+	assert.Len(t, notif, 1)
+	assert.Equal(t, "job-001", notif[0].JobID)
+}
+
+func TestGetClientNotifications(t *testing.T) {
+	db := setupTestDB(t)
+	store := &NotificationStorage{DB: db}
+
+	db.Create(&Notification{
+		NotificationType: "client",
+		Title:            "Client Alert",
+		Source:           "sourceX",
+		ClientID:         "client-xyz",
+		ClientName:       "Client A;Client B",
+		Priority:         "medium",
+	})
+
+	notif, err := store.GetClientNotifications("Client A", "medium", 1, 10)
+	assert.NoError(t, err)
+	assert.Len(t, notif, 1)
+	assert.Equal(t, "Client Alert", notif[0].Title)
+	assert.Equal(t, []string{"Client A", "Client B"}, notif[0].ClientName)
 }

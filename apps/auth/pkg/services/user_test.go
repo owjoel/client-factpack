@@ -21,7 +21,7 @@ import (
 
 type UserServiceTestSuite struct {
 	suite.Suite
-	mockCognitoClient *mocks.CognitoClientInterface
+	mockCognitoClient *mocks.CognitoClientRepository
 	mockUserService   *UserService
 }
 
@@ -31,7 +31,7 @@ func generateTestJWT(claims jwt.MapClaims) (string, error) {
 }
 
 func (suite *UserServiceTestSuite) SetupTest() {
-	suite.mockCognitoClient = new(mocks.CognitoClientInterface)
+	suite.mockCognitoClient = new(mocks.CognitoClientRepository)
 	suite.mockUserService = &UserService{
 		CognitoClient: suite.mockCognitoClient,
 	}
@@ -178,7 +178,7 @@ func (suite *UserServiceTestSuite) TestAdminCreateUser() {
 			mockAddReturn:     nil,
 			mockAddErr:        nil,
 			expectedErrorText: "error creating username: invalid email format",
-		},		
+		},
 	}
 
 	for _, tc := range tests {

@@ -1,0 +1,227 @@
+{
+  "profile": {
+    "names": [
+      "Amancio Ortega"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1936-03-28",
+    "description": "",
+    "nationality": "Spanish",
+    "currentResidence": {
+      "city": "A Coru\u00f1a",
+      "country": "Spain"
+    },
+    "netWorth": {
+      "estimatedValue": 134.3,
+      "currency": "USD",
+      "source": "September 2024 net worth report"
+    },
+    "industries": [
+      "Fashion",
+      "Real Estate"
+    ],
+    "occupations": [
+      "Founder of Inditex",
+      "Executive Chairman of Pontegadea"
+    ],
+    "pastOccupations": [],
+    "careerTimeline": [
+      {
+        "year": "1963",
+        "event": "Founded Confecciones Goa to sell quilted bathrobes."
+      },
+      {
+        "year": "1975",
+        "event": "Opened first Zara store with wife Rosal\u00eda Mera."
+      },
+      {
+        "year": "2000",
+        "event": "Public appearance prior to Inditex's IPO."
+      },
+      {
+        "year": "2009",
+        "event": "Appointed Knight Grand Cross of the Order of Civil Merit."
+      },
+      {
+        "year": "2011",
+        "event": "Announced retirement from Inditex."
+      },
+      {
+        "year": "2012",
+        "event": "Donated \u20ac20 million to Caritas Internationalis."
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Inditex",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 59.29,
+      "industry": "Fashion",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Zara",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Massimo Dutti",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Oysho",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Zara Home",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Kiddy's Class",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Tempe",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Stradivarius",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Pull and Bear",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        },
+        {
+          "name": "Bershka",
+          "ownershipPercentage": 100,
+          "industry": "Retail",
+          "links": []
+        }
+      ],
+      "links": []
+    },
+    {
+      "name": "Pontegadea",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 100,
+      "industry": "Real Estate",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [
+    {
+      "name": "Torre Picasso",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "EUR"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
+      "name": "Epic Residences and Hotel",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
+      "name": "Troy Block complex",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "USD"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
+      "name": "Property holdings through Pontegadea",
+      "type": "Equity",
+      "value": {
+        "value": 17.2,
+        "currency": "USD"
+      },
+      "industry": "Real Estate",
+      "status": "Active"
+    },
+    {
+      "name": "Enag\u00e1s",
+      "type": "Equity",
+      "value": {
+        "value": 281.64,
+        "currency": "EUR"
+      },
+      "industry": "Energy",
+      "status": "Active"
+    },
+    {
+      "name": "Red El\u00e9ctrica",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "EUR"
+      },
+      "industry": "Energy",
+      "status": "Active"
+    },
+    {
+      "name": "Redes Energ\u00e9ticas Nacionais",
+      "type": "Equity",
+      "value": {
+        "value": null,
+        "currency": "EUR"
+      },
+      "industry": "Energy",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Rosal\u00eda Mera Goyenechea",
+      "relationship": "Ex-wife"
+    },
+    {
+      "name": "Marcos Ortega Mera",
+      "relationship": "Son"
+    },
+    {
+      "name": "Sandra Ortega Mera",
+      "relationship": "Daughter"
+    },
+    {
+      "name": "Flora P\u00e9rez Marcote",
+      "relationship": "Wife"
+    },
+    {
+      "name": "Marta Ortega P\u00e9rez",
+      "relationship": "Daughter"
+    }
+  ],
+  "associates": [],
+  "sources": []
+}

@@ -1,0 +1,111 @@
+{
+  "profile": {
+    "names": [
+      "Jen-Hsun 'Jensen' Huang"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1963-02-17",
+    "description": "",
+    "nationality": "Taiwanese and American",
+    "currentResidence": {
+      "city": "Los Altos Hills",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": 114.5,
+      "currency": "USD",
+      "source": "Forbes, February 2025"
+    },
+    "industries": [
+      "Technology",
+      "Semiconductor"
+    ],
+    "occupations": [
+      "Businessman",
+      "Electrical Engineer",
+      "Philanthropist"
+    ],
+    "pastOccupations": [],
+    "careerTimeline": [
+      {
+        "year": "1993",
+        "event": "Founded Nvidia"
+      },
+      {
+        "year": "2025",
+        "event": "14th wealthiest person according to Forbes"
+      },
+      {
+        "year": "2024",
+        "event": "Nvidia overtakes Microsoft as the world's most valuable company"
+      }
+    ],
+    "socials": []
+  },
+  "ownedCompanies": [
+    {
+      "name": "Nvidia",
+      "ownershipType": "Direct",
+      "ownershipPercentage": 3.6,
+      "industry": "Semiconductor",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Lori Mills",
+      "relationship": "Wife"
+    },
+    {
+      "name": "Spencer Huang",
+      "relationship": "Son"
+    },
+    {
+      "name": "Madison Huang",
+      "relationship": "Daughter"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Chris Malachowsky",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Nvidia"
+      ]
+    },
+    {
+      "name": "Curtis Priem",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Nvidia"
+      ]
+    },
+    {
+      "name": "Lisa Su",
+      "relationship": "Relative",
+      "associatedCompanies": [
+        "AMD"
+      ]
+    },
+    {
+      "name": "Charles Liang",
+      "relationship": "Friend",
+      "associatedCompanies": [
+        "Supermicro"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": 0.9
+    },
+    {
+      "source": "The Wall Street Journal",
+      "confidence": 0.8
+    }
+  ]
+}

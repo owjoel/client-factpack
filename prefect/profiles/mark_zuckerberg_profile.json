@@ -1,0 +1,188 @@
+{
+  "profile": {
+    "names": [
+      "Mark Zuckerberg",
+      "Mark Elliot Zuckerberg"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1984-05-14",
+    "description": "American businessman co-founder of Facebook now Meta Platforms.",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Palo Alto",
+      "country": "USA"
+    },
+    "netWorth": {
+      "estimatedValue": 214.1,
+      "currency": "USD",
+      "source": "Forbes, March 2025"
+    },
+    "industries": [
+      "Technology"
+    ],
+    "occupations": [
+      "Chairman",
+      "CEO",
+      "Controlling Shareholder"
+    ],
+    "pastOccupations": [
+      "Software Developer"
+    ],
+    "careerTimeline": [
+      {
+        "year": "2002",
+        "event": "Attended Harvard College and gained reputation as a programming prodigy."
+      },
+      {
+        "year": "2004-02-04",
+        "event": "Launched 'Thefacebook' with roommates."
+      },
+      {
+        "year": "2008",
+        "event": "Became youngest self-made billionaire."
+      },
+      {
+        "year": "2012-05",
+        "event": "Took company public with majority shares."
+      },
+      {
+        "year": "2015-12",
+        "event": "Established Chan Zuckerberg Initiative with wife."
+      },
+      {
+        "year": "2025-03",
+        "event": "Net worth of USD 214.1 billion, becoming the second richest."
+      },
+      {
+        "year": "2025",
+        "event": "Engaged with Trump administration for competition settlement."
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Facebook",
+        "link": "https://facebook.com/zuck"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Facebook (now Meta Platforms)",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [
+        {
+          "name": "Instagram",
+          "ownershipPercentage": null,
+          "industry": "Social Media",
+          "links": [
+            {
+              "label": "Subsidiary Information",
+              "url": "https://about.instagram.com/"
+            }
+          ]
+        },
+        {
+          "name": "WhatsApp",
+          "ownershipPercentage": null,
+          "industry": "Messenger",
+          "links": [
+            {
+              "label": "Subsidiary Information",
+              "url": "https://www.whatsapp.com/"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "label": "Corporate Website",
+          "url": "https://www.meta.com"
+        }
+      ]
+    }
+  ],
+  "investments": [
+    {
+      "name": "Chan Zuckerberg Initiative",
+      "type": "Other",
+      "value": {
+        "value": 45,
+        "currency": "USD"
+      },
+      "industry": "Philanthropy",
+      "status": "Active"
+    }
+  ],
+  "family": [
+    {
+      "name": "Priscilla Chan",
+      "relationship": "Wife"
+    },
+    {
+      "name": "Arielle Zuckerberg",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Randi Zuckerberg",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Donna Zuckerberg",
+      "relationship": "Sister"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Elon Musk",
+      "relationship": "Competition",
+      "associatedCompanies": [
+        "Tesla"
+      ]
+    },
+    {
+      "name": "Eduardo Saverin",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Dustin Moskovitz",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Chris Hughes",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Andrew McCollum",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes, March 2025",
+      "confidence": 0.9
+    },
+    {
+      "source": "New York Times",
+      "confidence": 0.8
+    },
+    {
+      "source": "The Social Network Film",
+      "confidence": 0.5
+    }
+  ]
+}

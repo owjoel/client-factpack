@@ -1,0 +1,134 @@
+{
+  "profile": {
+    "names": [
+      "Mark Elliot Zuckerberg"
+    ],
+    "gender": "Male",
+    "dateOfBirth": "1984-05-14",
+    "description": "",
+    "nationality": "American",
+    "currentResidence": {
+      "city": "Palo Alto",
+      "country": "United States"
+    },
+    "netWorth": {
+      "estimatedValue": null,
+      "currency": "USD",
+      "source": "Forbes"
+    },
+    "industries": [
+      "Technology"
+    ],
+    "occupations": [
+      "Chairman",
+      "Chief Executive Officer"
+    ],
+    "pastOccupations": [],
+    "careerTimeline": [
+      {
+        "year": "2004",
+        "event": "Co-founded Facebook"
+      },
+      {
+        "year": "2008",
+        "event": "Became world's youngest self-made billionaire"
+      },
+      {
+        "year": "2012",
+        "event": "Took Facebook public"
+      },
+      {
+        "year": "2013",
+        "event": "Launched Internet.org initiative"
+      }
+    ],
+    "socials": [
+      {
+        "platform": "Facebook",
+        "link": "https://www.facebook.com/zuck"
+      }
+    ]
+  },
+  "ownedCompanies": [
+    {
+      "name": "Meta Platforms",
+      "ownershipType": "Direct",
+      "ownershipPercentage": null,
+      "industry": "Technology",
+      "status": "Active",
+      "subsidiaries": [],
+      "links": []
+    }
+  ],
+  "investments": [],
+  "family": [
+    {
+      "name": "Priscilla Chan",
+      "relationship": "Wife"
+    },
+    {
+      "name": "Arielle Zuckerberg",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Randi Zuckerberg",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Donna Zuckerberg",
+      "relationship": "Sister"
+    },
+    {
+      "name": "Karen Kempner",
+      "relationship": "Mother"
+    },
+    {
+      "name": "Edward Zuckerberg",
+      "relationship": "Father"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Eduardo Saverin",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Dustin Moskovitz",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Andrew McCollum",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    },
+    {
+      "name": "Chris Hughes",
+      "relationship": "Co-founder",
+      "associatedCompanies": [
+        "Facebook"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source": "Forbes",
+      "confidence": null
+    },
+    {
+      "source": "The New Yorker",
+      "confidence": null
+    },
+    {
+      "source": "Vanity Fair",
+      "confidence": null
+    }
+  ]
+}

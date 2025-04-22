@@ -31,7 +31,7 @@ type UserInterface interface {
 	GetUserRoleFromToken(token string) (string, error)
 }
 
-type CognitoClientInterface interface {
+type CognitoClientRepository interface {
 	AdminCreateUser(ctx context.Context, params *cip.AdminCreateUserInput, optFns ...func(*cip.Options)) (*cip.AdminCreateUserOutput, error)
 	AdminAddUserToGroup(ctx context.Context, params *cip.AdminAddUserToGroupInput, optFns ...func(*cip.Options)) (*cip.AdminAddUserToGroupOutput, error)
 	AdminRemoveUserFromGroup(ctx context.Context, params *cip.AdminRemoveUserFromGroupInput, optFns ...func(*cip.Options)) (*cip.AdminRemoveUserFromGroupOutput, error)
@@ -44,21 +44,20 @@ type CognitoClientInterface interface {
 	AssociateSoftwareToken(ctx context.Context, params *cip.AssociateSoftwareTokenInput, optFns ...func(*cip.Options)) (*cip.AssociateSoftwareTokenOutput, error)
 	InitiateAuth(ctx context.Context, params *cip.InitiateAuthInput, optFns ...func(*cip.Options)) (*cip.InitiateAuthOutput, error)
 	ForgotPassword(ctx context.Context, params *cip.ForgotPasswordInput, optFns ...func(*cip.Options)) (*cip.ForgotPasswordOutput, error)
-    GetUser(ctx context.Context, input *cip.GetUserInput, opts ...func(*cip.Options)) (*cip.GetUserOutput, error)
+	GetUser(ctx context.Context, input *cip.GetUserInput, opts ...func(*cip.Options)) (*cip.GetUserOutput, error)
 }
 
 // UserService represents the service for user operations.
 type UserService struct {
-	CognitoClient CognitoClientInterface
+	CognitoClient CognitoClientRepository
 }
 
 // NewUserService creates a new user service.
-func NewUserService(client CognitoClientInterface) *UserService {
+func NewUserService(client CognitoClientRepository) *UserService {
 	return &UserService{
 		CognitoClient: client,
 	}
 }
-
 
 func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) error {
 	username, err := createUsername(r.Email)
@@ -81,10 +80,10 @@ func (s *UserService) AdminCreateUser(ctx context.Context, r models.SignUpReq) e
 		return fmt.Errorf("error during sign up: %w", err)
 	}
 	log.Printf("User %s created at %v\n", username, output.User.UserCreateDate)
-	
+
 	// Add User to Group. Allow fail, add user in through AWS console
 	_, err = s.CognitoClient.AdminAddUserToGroup(ctx, &cip.AdminAddUserToGroupInput{
-		GroupName: aws.String(r.Role),
+		GroupName:  aws.String(r.Role),
 		UserPoolId: aws.String(config.UserPoolID),
 		Username:   aws.String(username),
 	})
